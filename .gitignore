@@ -1,0 +1,17 @@
+# =====Folders=====
+__pycache__/
+__pypackages__/
+.idea/
+.ruff_cache/
+.venv/
+build/
+covers/
+dist/
+logs/
+
+# =====Files=====
+*.iml
+*.log
+.python-version
+*.txt
+uv.lock

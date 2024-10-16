@@ -1,0 +1,54 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff-format
+      - id: ruff
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 0.7.18
+    hooks:
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-gfm
+          - mdformat-tables
+        args:
+          - --number
+          - --wrap=keep
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-ast
+      - id: check-builtin-literals
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-merge-conflict
+        args:
+          - --assume-in-merge
+      - id: check-toml
+      - id: check-yaml
+        args:
+          - --allow-multiple-documents
+      - id: end-of-file-fixer
+        exclude_types:
+          - json
+          - xml
+      - id: fix-byte-order-marker
+      - id: forbid-submodules
+      - id: mixed-line-ending
+        args:
+          - --fix=auto
+#      - id: name-tests-test
+      - id: trailing-whitespace
+        args:
+          - --markdown-linebreak-ext=md
+  - repo: https://github.com/pappasam/toml-sort
+    rev: v0.23.1
+    hooks:
+      - id: toml-sort
+        args:
+          - --in-place
+          - --all
+  - repo: meta
+    hooks:
+      - id: check-hooks-apply
+      - id: check-useless-excludes

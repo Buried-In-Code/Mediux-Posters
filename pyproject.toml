@@ -1,0 +1,108 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[project]
+authors = [
+  {email = "BuriedInCode@tuta.io", name = "BuriedInCode"}
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Operating System :: MacOS",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Typing :: Typed"
+]
+dependencies = [
+  "PlexAPI >= 4.15.16",
+  "beautifulsoup4 >= 4.12.3",
+  "pydantic >= 2.9.2",
+  "requests >= 2.32.3",
+  "rich >= 13.9.2",
+  "tomli >= 2.0.1 ; python_version < \"3.11\"",
+  "tomli-w >= 1.1.0",
+  "typer >= 0.12.5"
+]
+description = ""
+dynamic = ["version"]
+keywords = []
+license = {text = "MIT"}
+name = "mediux-posters"
+readme = "README.md"
+requires-python = ">= 3.10"
+
+[project.scripts]
+Mediux-Posters = "mediux_posters.__main__:app"
+
+[project.urls]
+Homepage = "https://pypi.org/project/Jellyfin-Mediux-Posters"
+Issues = "https://github.com/Buried-In-Code/Jellyfin-Mediux-Posters/issues"
+Source = "https://github.com/Buried-In-Code/Jellyfin-Mediux-Posters"
+
+[tool.hatch.build.targets.sdist]
+exclude = [".github/"]
+
+[tool.hatch.version]
+path = "mediux_posters/__init__.py"
+
+[tool.ruff]
+fix = true
+line-length = 100
+output-format = "grouped"
+show-fixes = true
+unsafe-fixes = true
+
+[tool.ruff.format]
+docstring-code-format = true
+line-ending = "native"
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint]
+ignore = [
+  "C901",
+  "COM812",
+  "D",
+  "FBT",
+  "PLR0912",
+  "PLR2004",
+  "PLW2901",
+  "TRY400"
+]
+select = ["ALL"]
+
+[tool.ruff.lint.flake8-annotations]
+allow-star-arg-any = true
+mypy-init-return = true
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.flake8-unused-arguments]
+ignore-variadic-names = true
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+split-on-trailing-comma = false
+
+[tool.ruff.lint.pep8-naming]
+classmethod-decorators = ["classmethod"]
+
+[tool.ruff.lint.per-file-ignores]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.pyupgrade]
+keep-runtime-typing = true
+
+[tool.uv]
+dev-dependencies = [
+  "pre-commit >= 4.0.0"
+]
