@@ -10,7 +10,7 @@ from requests import get
 from requests.exceptions import ConnectionError, HTTPError, ReadTimeout
 from rich.progress import Progress
 
-from mediux_posters import get_project_root
+from mediux_posters import get_cache_root
 from mediux_posters.console import CONSOLE
 from mediux_posters.utils import slugify
 
@@ -106,7 +106,8 @@ class Mediux:
 
             with Progress(console=CONSOLE) as progress:
                 task = progress.add_task(
-                    f"Downloading {output.relative_to(get_project_root())}", total=total_length
+                    f"Downloading {output.relative_to(get_cache_root() / 'covers')}",
+                    total=total_length,
                 )
                 with output.open("wb") as stream:
                     for chunk in response.iter_content(chunk_size=chunk_size):
@@ -248,7 +249,7 @@ class Mediux:
                 self.download_image(id=img_id, output_file=img_file)
 
     def download_show_images(self, show: Show) -> None:
-        cover_folder = get_project_root() / "covers" / "shows" / slugify(show.filename)
+        cover_folder = get_cache_root() / "covers" / "shows" / slugify(show.filename)
         self._download_images(
             cover_folder, {"Poster": show.poster_id, "Backdrop": show.backdrop_id}
         )
@@ -261,11 +262,11 @@ class Mediux:
                 )
 
     def download_movie_images(self, movie: Movie) -> None:
-        cover_folder = get_project_root() / "covers" / "movies" / slugify(movie.filename)
+        cover_folder = get_cache_root() / "covers" / "movies" / slugify(movie.filename)
         self._download_images(cover_folder, {"Poster": movie.poster_id})
 
     def download_collection_images(self, collection: Collection) -> None:
-        cover_folder = get_project_root() / "covers" / "collections" / slugify(collection.name)
+        cover_folder = get_cache_root() / "covers" / "collections" / slugify(collection.name)
         self._download_images(
             cover_folder, {"Poster": collection.poster_id, "Backdrop": collection.backdrop_id}
         )

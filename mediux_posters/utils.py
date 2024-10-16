@@ -6,7 +6,7 @@ import unicodedata
 from pathlib import Path
 from typing import Literal
 
-from mediux_posters import get_project_root
+from mediux_posters import get_cache_root
 
 LOGGER = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ LOGGER = logging.getLogger(__name__)
 def find_poster(
     mediatype: Literal["shows", "movies", "collections"], folder: str, filename: str
 ) -> Path | None:
-    cover_folder = get_project_root() / "covers" / mediatype / slugify(folder)
+    cover_folder = get_cache_root() / "covers" / mediatype / slugify(folder)
     poster_path = cover_folder / f"{slugify(filename)}.jpg"
     if poster_path.exists():
         return poster_path

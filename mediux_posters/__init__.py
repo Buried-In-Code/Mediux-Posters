@@ -3,7 +3,7 @@ __all__ = [
     "get_cache_root",
     "get_config_root",
     "get_data_root",
-    "get_project_root",
+    "get_state_root",
     "setup_logging",
 ]
 __version__ = "0.1.0"
@@ -39,13 +39,16 @@ def get_data_root() -> Path:
     return folder
 
 
-def get_project_root() -> Path:
-    return Path(__file__).parent.parent
+def get_state_root() -> Path:
+    data_home = os.getenv("XDG_STATE_HOME", default=str(Path.home() / ".local" / "state"))
+    folder = Path(data_home).resolve() / "mediux-posters"
+    folder.mkdir(exist_ok=True, parents=True)
+    return folder
 
 
 def setup_logging(debug: bool = False) -> None:
     install(show_locals=True, max_frames=6, console=CONSOLE)
-    log_folder = get_project_root() / "logs"
+    log_folder = get_state_root() / "logs"
     log_folder.mkdir(parents=True, exist_ok=True)
 
     console_handler = RichHandler(
