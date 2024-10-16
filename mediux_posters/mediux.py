@@ -1,4 +1,4 @@
-__all__ = ["Mediux", "MediuxSet", "Show", "Season", "Episode", "Movie"]
+__all__ = ["Mediux", "MediuxSet", "Show", "Season", "Episode", "Movie", "Collection"]
 
 import json
 import logging

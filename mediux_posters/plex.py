@@ -8,9 +8,11 @@ from plexapi.server import PlexServer
 from plexapi.video import Movie, Show
 from requests.exceptions import ConnectionError, HTTPError, ReadTimeout
 
+from mediux_posters import get_cache_root
 from mediux_posters.console import CONSOLE, create_menu
 from mediux_posters.mediux import (
     Collection as MediuxCollection,
+    Mediux,
     Movie as MediuxMovie,
     Show as MediuxShow,
 )
@@ -44,7 +46,35 @@ class Plex:
             return results
         return []
 
-    def update_show(self, show: MediuxShow) -> None:
+    def _load_poster(
+        self,
+        mediatype: Literal["shows", "movies", "collections"],
+        folder: str,
+        filename: str,
+        mediux: Mediux,
+        poster_id: str,
+        obj: Show | Movie | Collection,
+        image_type: Literal["Poster", "Art"],
+    ) -> None:
+        poster_path = find_poster(mediatype=mediatype, folder=folder, filename=filename)
+        if not poster_path.exists():
+            poster_path.parent.mkdir(parents=True, exist_ok=True)
+            mediux.download_image(id=poster_id, output_file=poster_path)
+        if poster_path.exists():
+            with CONSOLE.status(rf"\[Plex] Uploading {poster_path.parent.name}/{poster_path.name}"):
+                try:
+                    if image_type == "Poster":
+                        obj.uploadPoster(filepath=str(poster_path))
+                    elif image_type == "Art":
+                        obj.uploadArt(filepath=str(poster_path))
+                except (ConnectionError, HTTPError, ReadTimeout) as err:
+                    LOGGER.error(
+                        "[Plex] Failed to upload %s poster: %s",
+                        poster_path.relative_to(get_cache_root() / "covers"),
+                        err,
+                    )
+
+    def lookup_show(self, show: MediuxShow, mediux: Mediux) -> None:
         results = self.search(name=show.name, year=show.year, mediatype="show")
         if not results:
             results = self.search(name=show.name, mediatype="show")
@@ -56,64 +86,65 @@ class Plex:
         index = create_menu(
             options=[f"{x.title} ({x.year})" for x in results],
             title=show.filename,
+            subtitle="Plex",
             default="None of the Above",
         )
         if index == 0:
             return
-        series = results[index - 1]
+        show_result = results[index - 1]
 
-        with CONSOLE.status(r"\[Plex] Uploading ...") as status:
-            if poster_path := find_poster(
-                mediatype="shows", folder=show.filename, filename="Poster"
-            ):
-                status.update(rf"\[Plex] Uploading {show.filename} Poster")
-                try:
-                    series.uploadPoster(filepath=str(poster_path))
-                except (ConnectionError, HTTPError, ReadTimeout) as err:
-                    LOGGER.error("[Plex] Failed to upload %s poster: %s", show.filename, err)
-            if backdrop_path := find_poster(
-                mediatype="shows", folder=show.filename, filename="Backdrop"
-            ):
-                status.update(rf"\[Plex] Uploading {show.filename} Backdrop")
-                try:
-                    series.uploadArt(filepath=str(backdrop_path))
-                except (ConnectionError, HTTPError, ReadTimeout) as err:
-                    LOGGER.error("[Plex] Failed to upload %s backdrop: %s", show.filename, err)
-            for season in series.seasons():
-                if season_path := find_poster(
-                    mediatype="shows", folder=show.filename, filename=f"Season-{season.index:02d}"
-                ):
-                    status.update(rf"\[Plex] Uploading {show.filename} S{season.index:02d} Poster")
-                    try:
-                        season.uploadPoster(filepath=str(season_path))
-                    except (ConnectionError, HTTPError, ReadTimeout) as err:
-                        LOGGER.error(
-                            "[Plex] Failed to upload %s S%02d poster: %s",
-                            show.filename,
-                            season.index,
-                            err,
-                        )
-                for episode in season.episodes():
-                    if episode_path := find_poster(
+        if show.poster_id:
+            self._load_poster(
+                mediatype="shows",
+                folder=show.filename,
+                filename="Poster",
+                mediux=mediux,
+                poster_id=show.poster_id,
+                obj=show_result,
+                image_type="Poster",
+            )
+        if show.backdrop_id:
+            self._load_poster(
+                mediatype="shows",
+                folder=show.filename,
+                filename="Backdrop",
+                mediux=mediux,
+                poster_id=show.backdrop_id,
+                obj=show_result,
+                image_type="Art",
+            )
+        for season_result in show_result.seasons():
+            season = next(iter([x for x in show.seasons if x.number == season_result.index]), None)
+            if not season:
+                continue
+            if season.poster_id:
+                self._load_poster(
+                    mediatype="shows",
+                    folder=show.filename,
+                    filename=f"Season-{season.number:02d}",
+                    mediux=mediux,
+                    poster_id=season.poster_id,
+                    obj=season_result,
+                    image_type="Poster",
+                )
+            for episode_result in season_result.episodes():
+                episode = next(
+                    iter([x for x in season.episodes if x.number == episode_result.index]), None
+                )
+                if not episode:
+                    continue
+                if episode.title_card_id:
+                    self._load_poster(
                         mediatype="shows",
                         folder=show.filename,
-                        filename=f"S{season.index:02d}E{episode.index:02d}",
-                    ):
-                        status.update(
-                            rf"\[Plex] Uploading {show.filename} S{season.index:02d}E{episode.index:02d} Title Card"  # noqa: E501
-                        )
-                        try:
-                            episode.uploadPoster(filepath=str(episode_path))
-                        except (ConnectionError, HTTPError, ReadTimeout) as err:
-                            LOGGER.error(
-                                "[Plex] Failed to upload %s S%02dE%02d title card: %s",
-                                show.filename,
-                                season.index,
-                                episode.index,
-                                err,
-                            )
+                        filename=f"S{season.number:02d}E{episode.number:02d}",
+                        mediux=mediux,
+                        poster_id=episode.title_card_id,
+                        obj=episode_result,
+                        image_type="Poster",
+                    )
 
-    def update_movie(self, movie: MediuxMovie, folder: str | None = None) -> None:
+    def lookup_movie(self, movie: MediuxMovie, mediux: Mediux, folder: str | None = None) -> None:
         results = self.search(name=movie.name, year=movie.year, mediatype="movie")
         if not results:
             results = self.search(name=movie.name, mediatype="movie")
@@ -131,19 +162,29 @@ class Plex:
             return
         movie_result = results[index - 1]
 
-        with CONSOLE.status(r"\[Plex] Uploading ...") as status:
-            if poster_path := find_poster(
-                mediatype="collections" if folder else "movies",
-                folder=folder or movie.filename,
-                filename=movie.filename if folder else "Poster",
-            ):
-                status.update(rf"\[Plex] Uploading {movie.filename} Poster")
-                try:
-                    movie_result.uploadPoster(filepath=str(poster_path))
-                except (ConnectionError, HTTPError, ReadTimeout) as err:
-                    LOGGER.error("[Plex] Failed to upload %s poster: %s", movie.filename, err)
+        if movie.poster_id:
+            if folder:
+                self._load_poster(
+                    mediatype="collections",
+                    folder=folder,
+                    filename=movie.filename,
+                    mediux=mediux,
+                    poster_id=movie.poster_id,
+                    obj=movie_result,
+                    image_type="Poster",
+                )
+            else:
+                self._load_poster(
+                    mediatype="movies",
+                    folder=movie.filename,
+                    filename="Poster",
+                    mediux=mediux,
+                    poster_id=movie.poster_id,
+                    obj=movie_result,
+                    image_type="Poster",
+                )
 
-    def update_collection(self, collection: MediuxCollection) -> None:
+    def lookup_collection(self, collection: MediuxCollection, mediux: Mediux) -> None:
         results = self.search(name=collection.name, mediatype="collection")
         if not results:
             LOGGER.warning("[Plex] Unable to find '%s'", collection.name)
@@ -157,23 +198,25 @@ class Plex:
             return
         collection_result = results[index - 1]
 
-        with CONSOLE.status(r"\[Plex] Uploading ...") as status:
-            if poster_path := find_poster(
-                mediatype="collections", folder=collection.name, filename="Poster"
-            ):
-                status.update(rf"\[Plex] Uploading {collection.name} Poster")
-                try:
-                    collection_result.uploadPoster(filepath=str(poster_path))
-                except (ConnectionError, HTTPError, ReadTimeout) as err:
-                    LOGGER.error("[Plex] Failed to upload %s poster: %s", collection.name, err)
-            if backdrop_path := find_poster(
-                mediatype="collections", folder=collection.name, filename="Backdrop"
-            ):
-                status.update(rf"\[Plex] Uploading {collection.name} Backdrop")
-                try:
-                    collection_result.uploadArt(filepath=str(backdrop_path))
-                except (ConnectionError, HTTPError, ReadTimeout) as err:
-                    LOGGER.error("[Plex] Failed to upload %s backdrop: %s", collection.name, err)
-
+        if collection.poster_id:
+            self._load_poster(
+                mediatype="collections",
+                folder=collection.name,
+                filename="Poster",
+                mediux=mediux,
+                poster_id=collection.poster_id,
+                obj=collection_result,
+                image_type="Poster",
+            )
+        if collection.backdrop_id:
+            self._load_poster(
+                mediatype="collections",
+                folder=collection.name,
+                filename="Backdrop",
+                mediux=mediux,
+                poster_id=collection.backdrop_id,
+                obj=collection_result,
+                image_type="Art",
+            )
         for movie in collection.movies:
-            self.update_movie(movie=movie, folder=collection.name)
+            self.lookup_movie(movie=movie, mediux=mediux, folder=collection.name)

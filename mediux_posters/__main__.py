@@ -1,13 +1,11 @@
-import json
 import logging
-from json import JSONDecodeError
 from pathlib import Path
 from platform import python_version
 from typing import Annotated
 
 from typer import Option, Typer
 
-from mediux_posters import __version__, get_cache_root, setup_logging
+from mediux_posters import __version__, setup_logging
 from mediux_posters.jellyfin import Jellyfin
 from mediux_posters.mediux import Mediux
 from mediux_posters.plex import Plex
@@ -52,30 +50,17 @@ def main(
     if url and url.strip().startswith("https://mediux.pro/sets"):
         url_list.append(url.strip())
     for entry in url_list:
-        cache_file = get_cache_root() / "sets" / f"{entry.split('/')[-1]}.json"
-        cache_file.parent.mkdir(parents=True, exist_ok=True)
-        if cache_file.exists():
-            try:
-                with cache_file.open("r") as stream:
-                    set_data = json.load(stream)
-            except JSONDecodeError:
-                set_data = mediux.scrape_set(set_url=entry)
-        else:
-            set_data = mediux.scrape_set(set_url=entry)
-        if set_data:
-            with cache_file.open("w") as stream:
-                json.dump(set_data, stream, ensure_ascii=True, indent=4)
-            data = mediux.process_data(data=set_data)
-            for service in services:
-                if data.show:
-                    mediux.download_show_images(show=data.show)
-                    service.update_show(show=data.show)
-                elif data.movie:
-                    mediux.download_movie_images(movie=data.movie)
-                    service.update_movie(movie=data.movie)
-                elif data.collection:
-                    mediux.download_collection_images(collection=data.collection)
-                    service.update_collection(collection=data.collection)
+        set_data = mediux.scrape_set(set_url=entry)
+        if not set_data:
+            continue
+        data = mediux.process_data(data=set_data)
+        for service in services:
+            if data.show:
+                service.lookup_show(show=data.show, mediux=mediux)
+            elif data.movie:
+                service.lookup_movie(movie=data.movie, mediux=mediux)
+            elif data.collection:
+                service.lookup_collection(collection=data.collection, mediux=mediux)
 
 
 if __name__ == "__main__":

@@ -13,12 +13,9 @@ LOGGER = logging.getLogger(__name__)
 
 def find_poster(
     mediatype: Literal["shows", "movies", "collections"], folder: str, filename: str
-) -> Path | None:
+) -> Path:
     cover_folder = get_cache_root() / "covers" / mediatype / slugify(folder)
-    poster_path = cover_folder / f"{slugify(filename)}.jpg"
-    if poster_path.exists():
-        return poster_path
-    return None
+    return cover_folder / f"{slugify(filename)}.jpg"
 
 
 def slugify(value: str) -> str:
