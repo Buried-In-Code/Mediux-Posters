@@ -9,9 +9,10 @@ from typing import Literal
 from requests import get, post
 from requests.exceptions import ConnectionError, HTTPError, JSONDecodeError, ReadTimeout
 
-from mediux_posters.mediux import Movie, Show
+from mediux_posters.console import CONSOLE, create_menu
+from mediux_posters.mediux import Collection, Movie, Show
 from mediux_posters.settings import Jellyfin as JellyfinSettings
-from mediux_posters.utils import create_menu, find_poster
+from mediux_posters.utils import find_poster
 
 LOGGER = logging.getLogger(__name__)
 
@@ -48,7 +49,7 @@ class Jellyfin:
             LOGGER.error("Service took too long to respond")
         return {}
 
-    def _post(self, endpoint: str, data: bytes, headers: dict[str, str] | None = None) -> None:
+    def _post(self, endpoint: str, data: bytes, headers: dict[str, str] | None = None) -> bool:
         if headers is None:
             headers = self.headers
         try:
@@ -56,6 +57,7 @@ class Jellyfin:
                 f"{self.base_url}{endpoint}", headers=headers, timeout=self.timeout, data=data
             )
             response.raise_for_status()
+            return True
         except ConnectionError:
             LOGGER.error("Unable to connect to '%s%s'", self.base_url, endpoint)
         except HTTPError as err:
@@ -64,28 +66,29 @@ class Jellyfin:
             LOGGER.error("Unable to parse response from '%s%s' as Json", self.base_url, endpoint)
         except ReadTimeout:
             LOGGER.error("Service took too long to respond")
+        return False
 
     def search(
         self, name: str, mediatype: Literal["Series", "Movie", "BoxSet"], year: int | None = None
     ) -> list[dict]:
         response = self._get(
             endpoint="/Search/Hints", params={"searchTerm": name, "includeItemTypes": [mediatype]}
-        ).get("SearchHints")
-        if year:
+        ).get("SearchHints", [])
+        if response and year:
             return [x for x in response if x["ProductionYear"] == year]
         return response
 
     def list_seasons(self, series_id: str) -> list[tuple[str, int, str]]:
-        response = self._get(endpoint=f"/Shows/{series_id}/Seasons").get("Items")
+        response = self._get(endpoint=f"/Shows/{series_id}/Seasons").get("Items", [])
         return [(x["Id"], x["IndexNumber"], x["Name"]) for x in response]
 
     def list_episodes(self, series_id: str, season_id: str) -> list[tuple[str, int, str]]:
         response = self._get(
             endpoint=f"/Shows/{series_id}/Episodes", params={"seasonId": season_id}
-        ).get("Items")
+        ).get("Items", [])
         return [(x["Id"], x["IndexNumber"], x["Name"]) for x in response]
 
-    def update_image(self, id: str, image_type: str, image_path: Path) -> None:  # noqa: A002
+    def _upload_image(self, id: str, image_type: str, image_path: Path) -> None:  # noqa: A002
         mime_type, _ = mimetypes.guess_type(image_path)
         if not mime_type:
             mime_type = "image/jpeg"
@@ -93,21 +96,25 @@ class Jellyfin:
         headers["Content-Type"] = mime_type
         with image_path.open("rb") as stream:
             image_data = b64encode(stream.read())
-        self._post(endpoint=f"/Items/{id}/Images/{image_type}", headers=headers, data=image_data)
+        if not self._post(
+            endpoint=f"/Items/{id}/Images/{image_type}", headers=headers, data=image_data
+        ):
+            LOGGER.error(
+                "[Jellyfin] Failed to upload '%s/%s'", image_path.parent.name, image_path.name
+            )
 
-    def update_series_set(self, show: Show) -> None:
-        LOGGER.info("Searching for '%s (%d)' in Jellyfin", show.name, show.year)
+    def update_show(self, show: Show) -> None:
         results = self.search(name=show.name, year=show.year, mediatype="Series")
         if not results:
             results = self.search(name=show.name, mediatype="Series")
         if not results:
-            LOGGER.warning("Unable to find '%s (%d)' in Jellyfin", show.name, show.year)
+            LOGGER.warning("[Jellyfin] Unable to find '%s'", show.filename)
             return
 
         results.sort(key=lambda x: (x["Name"], x["ProductionYear"]))
         index = create_menu(
             options=[f"{x['Name']} ({x['ProductionYear']})" for x in results],
-            title="Select Series",
+            title=show.filename,
             default="None of the Above",
         )
         if index == 0:
@@ -115,70 +122,55 @@ class Jellyfin:
         series = results[index - 1]
         series_id = series["Id"]
 
-        if poster_path := find_poster(mediatype="show", folder=show.filename, filename="Poster"):
-            LOGGER.info("Updating Poster in Jellyfin")
-            self.update_image(id=series_id, image_type="Primary", image_path=poster_path)
-        if backdrop_path := find_poster(
-            mediatype="show", folder=show.filename, filename="Backdrop"
-        ):
-            LOGGER.info("Updating Backdrop in Jellyfin")
-            self.update_image(id=series_id, image_type="Backdrop", image_path=backdrop_path)
-        for season_id, season_num, _ in self.list_seasons(series_id=series_id):
-            if season_path := find_poster(
-                mediatype="show", folder=show.filename, filename=f"Season-{season_num:02d}"
+        with CONSOLE.status(r"\[Jellyfin] Uploading ...") as status:
+            if poster_path := find_poster(
+                mediatype="shows", folder=show.filename, filename="Poster"
             ):
-                LOGGER.info("Updating Season %02d Poster in Jellyfin", season_num)
-                self.update_image(id=season_id, image_type="Primary", image_path=season_path)
-            for episode_id, episode_num, _ in self.list_episodes(
-                series_id=series_id, season_id=season_id
+                status.update(rf"\[Jellyfin] Uploading {show.filename} Poster")
+                self._upload_image(id=series_id, image_type="Primary", image_path=poster_path)
+            if backdrop_path := find_poster(
+                mediatype="shows", folder=show.filename, filename="Backdrop"
             ):
-                if episode_path := find_poster(
-                    mediatype="show",
-                    folder=show.filename,
-                    filename=f"S{season_num:02d}E{episode_num:02d}",
+                status.update(rf"\[Jellyfin] Uploading {show.filename} Backdrop")
+                self._upload_image(id=series_id, image_type="Backdrop", image_path=backdrop_path)
+            for season_id, season_num, _ in self.list_seasons(series_id=series_id):
+                if season_path := find_poster(
+                    mediatype="shows", folder=show.filename, filename=f"Season-{season_num:02d}"
                 ):
-                    LOGGER.info("Updating Episode %02d Poster in Jellyfin", episode_num)
-                    self.update_image(id=episode_id, image_type="Primary", image_path=episode_path)
-                    self.update_image(id=episode_id, image_type="Thumb", image_path=episode_path)
+                    status.update(
+                        rf"\[Jellyfin] Uploading {show.filename} S{season_num:02d} Poster"
+                    )
+                    self._upload_image(id=season_id, image_type="Primary", image_path=season_path)
+                for episode_id, episode_num, _ in self.list_episodes(
+                    series_id=series_id, season_id=season_id
+                ):
+                    if episode_path := find_poster(
+                        mediatype="shows",
+                        folder=show.filename,
+                        filename=f"S{season_num:02d}E{episode_num:02d}",
+                    ):
+                        status.update(
+                            rf"\[Jellyfin] Uploading {show.filename} S{season_num:02d}E{episode_num:02d} Title Card"  # noqa: E501
+                        )
+                        self._upload_image(
+                            id=episode_id, image_type="Primary", image_path=episode_path
+                        )
+                        self._upload_image(
+                            id=episode_id, image_type="Thumb", image_path=episode_path
+                        )
 
-    def update_collection(self, folder_name: str, collection_name: str) -> None:
-        LOGGER.info("Searching for '%s' in Jellyfin", collection_name)
-        results = self.search(name=collection_name, mediatype="BoxSet")
-        if not results:
-            LOGGER.warning("Unable to find '%s' in Jellyfin", collection_name)
-            return
-
-        results.sort(key=lambda x: x["Name"])
-        index = create_menu(
-            options=[x["Name"] for x in results],
-            title="Select Collection",
-            default="None of the Above",
-        )
-        if index == 0:
-            return
-        collection = results[index - 1]
-        collection_id = collection["Id"]
-
-        if poster_path := find_poster(mediatype="movie", folder=folder_name, filename="Poster"):
-            LOGGER.info("Updating '%s' Poster in Jellyfin", collection_name)
-            self.update_image(id=collection_id, image_type="Primary", image_path=poster_path)
-        if backdrop_path := find_poster(mediatype="movie", folder=folder_name, filename="Backdrop"):
-            LOGGER.info("Updating '%s' Backdrop in Jellyfin", collection_name)
-            self.update_image(id=collection_id, image_type="Backdrop", image_path=backdrop_path)
-
-    def update_movie(self, folder_name: str, movie: Movie) -> None:
-        LOGGER.info("Searching for '%s (%d)' in Jellyfin", movie.name, movie.year)
+    def update_movie(self, movie: Movie, folder: str | None = None) -> None:
         results = self.search(name=movie.name, year=movie.year, mediatype="Movie")
         if not results:
             results = self.search(name=movie.name, mediatype="Movie")
         if not results:
-            LOGGER.warning("Unable to find '%s (%d)' in Jellyfin", movie.name, movie.year)
+            LOGGER.warning("[Jellyfin] Unable to find '%s'", movie.filename)
             return
 
         results.sort(key=lambda x: (x["Name"], x["ProductionYear"]))
         index = create_menu(
             options=[f"{x['Name']} ({x['ProductionYear']})" for x in results],
-            title="Select Movie",
+            title=movie.filename,
             default="None of the Above",
         )
         if index == 0:
@@ -186,8 +178,43 @@ class Jellyfin:
         movie_result = results[index - 1]
         movie_id = movie_result["Id"]
 
-        if poster_path := find_poster(
-            mediatype="movie", folder=folder_name, filename=movie.filename
-        ):
-            LOGGER.info("Updating '%s (%d)' Poster in Jellyfin", movie.name, movie.year)
-            self.update_image(id=movie_id, image_type="Primary", image_path=poster_path)
+        with CONSOLE.status(r"\[Jellyfin] Uploading ...") as status:
+            if poster_path := find_poster(
+                mediatype="collections" if folder else "movies",
+                folder=folder or movie.filename,
+                filename=movie.filename if folder else "Poster",
+            ):
+                status.update(rf"\[Jellyfin] Uploading {movie.filename} Poster")
+                self._upload_image(id=movie_id, image_type="Primary", image_path=poster_path)
+
+    def update_collection(self, collection: Collection) -> None:
+        results = self.search(name=collection.name, mediatype="BoxSet")
+        if not results:
+            LOGGER.warning("[Jellyfin] Unable to find '%s'", collection.name)
+            return
+
+        results.sort(key=lambda x: x["Name"])
+        index = create_menu(
+            options=[x["Name"] for x in results], title=collection.name, default="None of the Above"
+        )
+        if index == 0:
+            return
+        collection_result = results[index - 1]
+        collection_id = collection_result["Id"]
+
+        with CONSOLE.status(r"\[Jellyfin] Uploading ...") as status:
+            if poster_path := find_poster(
+                mediatype="collections", folder=collection.name, filename="Poster"
+            ):
+                status.update(rf"\[Jellyfin] Uploading {collection.name} Poster")
+                self._upload_image(id=collection_id, image_type="Primary", image_path=poster_path)
+            if backdrop_path := find_poster(
+                mediatype="collections", folder=collection.name, filename="Backdrop"
+            ):
+                status.update(rf"\[Jellyfin] Uploading {collection.name} Backdrop")
+                self._upload_image(
+                    id=collection_id, image_type="Backdrop", image_path=backdrop_path
+                )
+
+        for movie in collection.movies:
+            self.update_movie(movie=movie, folder=collection.name)

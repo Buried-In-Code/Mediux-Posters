@@ -17,20 +17,20 @@ app = Typer()
 LOGGER = logging.getLogger("mediux-posters")
 
 
-def read_set_urls(target: Path | None) -> list[str]:
+def read_urls(target: Path | None) -> list[str]:
     if target:
         return [
-            x for x in target.read_text().splitlines() if x.startswith("https://mediux.pro/sets")
+            x.strip()
+            for x in target.read_text().splitlines()
+            if x.strip().startswith("https://mediux.pro/sets")
         ]
     return []
 
 
 @app.command()
 def main(
-    sets_file: Annotated[
-        Path | None, Option("--sets-file", dir_okay=False, exists=True, show_default=False)
-    ] = None,
-    set_url: Annotated[str | None, Option("--set-url", show_default=False)] = None,
+    file: Annotated[Path | None, Option(dir_okay=False, exists=True, show_default=False)] = None,
+    url: Annotated[str | None, Option(show_default=False)] = None,
     debug: Annotated[
         bool, Option("--debug", help="Enable debug mode to show extra information.")
     ] = False,
@@ -43,49 +43,39 @@ def main(
     settings.save()
 
     mediux = Mediux()
-    jellyfin = None
+    services = []
     if settings.jellyfin.api_key:
-        jellyfin = Jellyfin(settings=settings.jellyfin)
-    plex = None
+        services.append(Jellyfin(settings=settings.jellyfin))
     if settings.plex.token:
-        plex = Plex(settings=settings.plex)
-    set_list = read_set_urls(target=sets_file)
-    if set_url:
-        set_list.append(set_url)
-    for set_url in set_list:  # noqa: PLR1704
-        cache_file = get_cache_root() / "sets" / f"{set_url.split('/')[-1]}.json"
+        services.append(Plex(settings=settings.plex))
+    url_list = read_urls(target=file)
+    if url and url.strip().startswith("https://mediux.pro/sets"):
+        url_list.append(url.strip())
+    for entry in url_list:
+        cache_file = get_cache_root() / "sets" / f"{entry.split('/')[-1]}.json"
         cache_file.parent.mkdir(parents=True, exist_ok=True)
         if cache_file.exists():
             try:
                 with cache_file.open("r") as stream:
                     set_data = json.load(stream)
             except JSONDecodeError:
-                set_data = mediux.scrape_set(set_url=set_url)
+                set_data = mediux.scrape_set(set_url=entry)
         else:
-            set_data = mediux.scrape_set(set_url=set_url)
+            set_data = mediux.scrape_set(set_url=entry)
         if set_data:
             with cache_file.open("w") as stream:
                 json.dump(set_data, stream, ensure_ascii=True, indent=4)
             data = mediux.process_data(data=set_data)
-            if data.show:
-                mediux.download_set_images(data=data)
-                if jellyfin:
-                    jellyfin.update_series_set(show=data.show)
-                if plex:
-                    plex.update_series_set(show=data.show)
-            elif data.movies:
-                if data.poster_id or data.backdrop_id:
-                    mediux.download_collection_images(folder_name=data.name, data=data)
-                    if jellyfin:
-                        jellyfin.update_collection(folder_name=data.name, collection_name=data.name)
-                    if plex:
-                        plex.update_collection(folder_name=data.name, collection_name=data.name)
-                for movie in data.movies:
-                    mediux.download_movie_image(folder_name=data.name, movie=movie)
-                    if jellyfin:
-                        jellyfin.update_movie(folder_name=data.name, movie=movie)
-                    if plex:
-                        plex.update_movie(folder_name=data.name, movie=movie)
+            for service in services:
+                if data.show:
+                    mediux.download_show_images(show=data.show)
+                    service.update_show(show=data.show)
+                elif data.movie:
+                    mediux.download_movie_images(movie=data.movie)
+                    service.update_movie(movie=data.movie)
+                elif data.collection:
+                    mediux.download_collection_images(collection=data.collection)
+                    service.update_collection(collection=data.collection)
 
 
 if __name__ == "__main__":
