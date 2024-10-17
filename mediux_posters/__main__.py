@@ -3,6 +3,7 @@ from pathlib import Path
 from platform import python_version
 from typing import Annotated
 
+from plexapi.exceptions import Unauthorized
 from typer import Option, Typer
 
 from mediux_posters import __version__, setup_logging
@@ -45,7 +46,10 @@ def main(
     if settings.jellyfin.api_key:
         services.append(Jellyfin(settings=settings.jellyfin))
     if settings.plex.token:
-        services.append(Plex(settings=settings.plex))
+        try:
+            services.append(Plex(settings=settings.plex))
+        except Unauthorized as err:
+            LOGGER.error(err)
     url_list = read_urls(target=file)
     if url and url.strip().startswith("https://mediux.pro/sets"):
         url_list.append(url.strip())

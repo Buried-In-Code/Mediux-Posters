@@ -193,15 +193,6 @@ class Jellyfin:
                         image_id=episode_id,
                         image_type="Primary",
                     )
-                    self._load_poster(
-                        mediatype="shows",
-                        folder=show.filename,
-                        filename=f"S{season.number:02d}E{episode.number:02d}",
-                        mediux=mediux,
-                        poster_id=episode.title_card_id,
-                        image_id=episode_id,
-                        image_type="Thumb",
-                    )
 
     def lookup_movie(self, movie: Movie, mediux: Mediux, folder: str | None = None) -> None:
         results = self.search(name=movie.name, year=movie.year, mediatype="Movie")
