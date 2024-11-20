@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - README.md
-  workflow_dispatch
+  workflow_dispatch:
 
 jobs:
   rich_codex:
