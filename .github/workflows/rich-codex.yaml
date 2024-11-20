@@ -1,0 +1,22 @@
+name: Rich Codex
+
+on:
+  push:
+    paths:
+      - README.md
+
+jobs:
+  rich_codex:
+    runs-on: ubuntu-latest
+        steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - name: Setup Python
+        run: uv python install '3.13'
+      - name: Install project
+        run: uv sync --dev
+
+      - name: Generate terminal images with rich-codex
+        uses: ewels/rich-codex@v1
+        with:
+          commit_changes: "true"
