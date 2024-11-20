@@ -62,7 +62,6 @@ class Collection:
     name: str
     poster_id: str | None = None
     backdrop_id: str | None = None
-    movies: list[Movie]
 
 
 @dataclass(kw_only=True)
@@ -81,27 +80,16 @@ def parse_to_dict(input_string: str) -> dict:
 
 
 class Mediux:
+    web_url: str = "https://mediux.pro"
+    api_url: str = "https://api.mediux.pro"
+
     def __init__(self, timeout: int = 30):
-        self.web_url = "https://mediux.pro"
-        self.api_url = "https://api.mediux.pro"
         self.timeout = timeout
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",  # noqa: E501
             "Sec-Ch-Ua-Mobile": "?0",
             "Sec-Ch-Ua-Platform": "Windows",
         }
-
-    def list_show_sets(self, show_id: int) -> list[dict]:
-        show_url = f"{self.web_url}/shows/{show_id}"
-        LOGGER.info("Downloading show information from '%s'", show_url)
-
-        return self._list_sets(url=show_url)
-
-    def list_movie_sets(self, movie_id: int) -> list[dict]:
-        movie_url = f"{self.web_url}/movies/{movie_id}"
-        LOGGER.info("Downloading movie information from '%s'", movie_url)
-
-        return self._list_sets(url=movie_url)
 
     def _list_sets(self, url: str) -> list[dict]:
         try:
@@ -124,6 +112,24 @@ class Mediux:
             if "files" in script.text and "set" in script.text and "Set Link\\" not in script.text:
                 return parse_to_dict(script.text).get("sets", [])
         return []
+
+    def list_show_sets(self, tmdb_id: int) -> list[dict]:
+        show_url = f"{self.web_url}/shows/{tmdb_id}"
+        LOGGER.info("Downloading show information from '%s'", show_url)
+
+        return self._list_sets(url=show_url)
+
+    def list_movie_sets(self, tmdb_id: int) -> list[dict]:
+        movie_url = f"{self.web_url}/movies/{tmdb_id}"
+        LOGGER.info("Downloading movie information from '%s'", movie_url)
+
+        return self._list_sets(url=movie_url)
+
+    def list_collection_sets(self, tmdb_id: int) -> list[dict]:
+        collection_url = f"{self.web_url}/collections/{tmdb_id}"
+        LOGGER.info("Downloading collection information from '%s'", collection_url)
+
+        return self._list_sets(url=collection_url)
 
     def scrape_set(self, set_id: int) -> dict:
         set_url = f"{self.web_url}/sets/{set_id}"
@@ -230,16 +236,6 @@ class Mediux:
                 backdrop_id=next(
                     (x["id"] for x in data["files"] if x["fileType"] == "backdrop"), None
                 ),
-                movies=[
-                    Movie(
-                        name=entry["title"],
-                        year=int(entry["release_date"][:4]) if entry["release_date"] else None,
-                        poster_id=self._get_file_id(
-                            data=data, file_type="poster", id_key="movie_id", id_value=entry["id"]
-                        ),
-                    )
-                    for entry in data["collection"].get("movies", [])
-                ],
             )
 
         return MediuxSet(

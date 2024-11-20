@@ -12,6 +12,8 @@ logs/
 # =====Files=====
 *.iml
 *.log
-.python-version
 *.txt
+.pdm-python
+.python-version
+pdm.lock
 uv.lock
