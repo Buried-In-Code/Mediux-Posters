@@ -21,7 +21,7 @@ classifiers = [
   "Typing :: Typed"
 ]
 dependencies = [
-  "PlexAPI >= 4.15.16",
+  "PlexAPI >= 4.16.0",
   "beautifulsoup4 >= 4.12.3",
   "pydantic >= 2.9.2",
   "requests >= 2.32.3",

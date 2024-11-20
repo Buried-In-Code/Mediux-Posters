@@ -1,5 +1,3 @@
-__all__ = ["Mediux", "MediuxSet", "Show", "Season", "Episode", "Movie", "Collection"]
-
 import json
 import logging
 from dataclasses import dataclass
@@ -12,7 +10,6 @@ from rich.progress import Progress
 
 from mediux_posters import get_cache_root
 from mediux_posters.console import CONSOLE
-from mediux_posters.utils import slugify
 
 LOGGER = logging.getLogger(__name__)
 
@@ -85,6 +82,7 @@ def parse_to_dict(input_string: str) -> dict:
 
 class Mediux:
     def __init__(self, timeout: int = 30):
+        self.web_url = "https://mediux.pro"
         self.api_url = "https://api.mediux.pro"
         self.timeout = timeout
         self.headers = {
@@ -93,40 +91,43 @@ class Mediux:
             "Sec-Ch-Ua-Platform": "Windows",
         }
 
-    def _download(self, endpoint: str, output: Path) -> None:
+    def list_show_sets(self, show_id: int) -> list[dict]:
+        show_url = f"{self.web_url}/shows/{show_id}"
+        LOGGER.info("Downloading show information from '%s'", show_url)
+
+        return self._list_sets(url=show_url)
+
+    def list_movie_sets(self, movie_id: int) -> list[dict]:
+        movie_url = f"{self.web_url}/movies/{movie_id}"
+        LOGGER.info("Downloading movie information from '%s'", movie_url)
+
+        return self._list_sets(url=movie_url)
+
+    def _list_sets(self, url: str) -> list[dict]:
         try:
-            response = get(
-                f"{self.api_url}{endpoint}", headers=self.headers, timeout=self.timeout, stream=True
-            )
-            response.raise_for_status()
-
-            total_length = int(response.headers.get("content-length", 0))
-            chunk_size = 1024
-            LOGGER.debug("Downloading %s", output)
-
-            with Progress(console=CONSOLE) as progress:
-                task = progress.add_task(
-                    f"Downloading {output.relative_to(get_cache_root() / 'covers')}",
-                    total=total_length,
-                )
-                with output.open("wb") as stream:
-                    for chunk in response.iter_content(chunk_size=chunk_size):
-                        if chunk:
-                            stream.write(chunk)
-                            progress.update(task, advance=len(chunk))
+            response = get(url, timeout=30)
+            if response.status_code not in (200, 500):
+                LOGGER.error(response.text)
+                return []
         except ConnectionError:
-            LOGGER.error("Unable to connect to '%s%s'", self.api_url, endpoint)
+            LOGGER.error("Unable to connect to '%s'", url)
+            return []
         except HTTPError as err:
             LOGGER.error(err.response.text)
+            return []
         except ReadTimeout:
             LOGGER.error("Service took too long to respond")
+            return []
 
-    def download_image(self, id: str, output_file: Path) -> None:  # noqa: A002
-        self._download(endpoint=f"/assets/{id}", output=output_file)
+        soup = BeautifulSoup(response.text, "html.parser")
+        for script in soup.find_all("script"):
+            if "files" in script.text and "set" in script.text and "Set Link\\" not in script.text:
+                return parse_to_dict(script.text).get("sets", [])
+        return []
 
     def scrape_set(self, set_id: int) -> dict:
-        set_url = f"https://mediux.pro/sets/{set_id}"
-        LOGGER.info("Downloading set information for: %s", set_url)
+        set_url = f"{self.web_url}/sets/{set_id}"
+        LOGGER.info("Downloading set information from '%s'", set_url)
 
         try:
             response = get(set_url, timeout=30)
@@ -148,61 +149,6 @@ class Mediux:
             if "files" in script.text and "set" in script.text and "Set Link\\" not in script.text:
                 return parse_to_dict(script.text).get("set", {})
         return {}
-
-    def scrape_boxset(self, boxset_url: str) -> dict:
-        if not boxset_url.startswith("https://mediux.pro/boxsets"):
-            LOGGER.error("Invalid boxset link: %s", boxset_url)
-            return {}
-
-        LOGGER.info("Downloading boxset information for: %s", boxset_url)
-        try:
-            response = get(boxset_url, timeout=30)
-            if response.status_code not in (200, 500):
-                LOGGER.error(response.text)
-                return {}
-        except ConnectionError:
-            LOGGER.error("Unable to connect to '%s'", boxset_url)
-            return {}
-        except HTTPError as err:
-            LOGGER.error(err.response.text)
-            return {}
-        except ReadTimeout:
-            LOGGER.error("Service took too long to respond")
-            return {}
-
-        soup = BeautifulSoup(response.text, "html.parser")
-        for script in soup.find_all("script"):
-            if "files" in script.text and "set" in script.text and "Set Link\\" not in script.text:
-                return parse_to_dict(script.text).get("boxset", {})
-        return {}
-
-    def scrape_artist(self, username: str, page: int = 1) -> list[dict]:
-        artist_url = f"https://mediux.pro/user/{username}/sets"
-        LOGGER.info("Downloading artist information for: %s", artist_url)
-
-        try:
-            response = get(artist_url, params={"page": page}, timeout=30)
-            if response.status_code not in (200, 500):
-                LOGGER.error(response.text)
-                return []
-        except ConnectionError:
-            LOGGER.error("Unable to connect to '%s'", artist_url)
-            return []
-        except HTTPError as err:
-            LOGGER.error(err.response.text)
-            return []
-        except ReadTimeout:
-            LOGGER.error("Service took too long to respond")
-            return []
-
-        soup = BeautifulSoup(response.text, "html.parser")
-        for script in soup.find_all("script"):
-            if "files" in script.text and "set" in script.text and "Set Link\\" not in script.text:
-                try:
-                    return parse_to_dict(script.text)["children"][2][3]["children"][3]["sets"]
-                except IndexError:
-                    return []
-        return []
 
     def _get_file_id(self, data: dict, file_type: str, id_key: str, id_value: str) -> str | None:
         return next(
@@ -300,34 +246,33 @@ class Mediux:
             id=int(data["id"]), name=data["set_name"], show=show, movie=movie, collection=collection
         )
 
-    def _download_images(self, folder_path: Path, images: dict[str, str]) -> None:
-        folder_path.mkdir(parents=True, exist_ok=True)
-        for img_name, img_id in images.items():
-            img_file = folder_path / f"{slugify(img_name)}.jpg"
-            if img_id and not img_file.exists():
-                self.download_image(id=img_id, output_file=img_file)
+    def _download(self, endpoint: str, output: Path) -> None:
+        try:
+            response = get(
+                f"{self.api_url}{endpoint}", headers=self.headers, timeout=self.timeout, stream=True
+            )
+            response.raise_for_status()
 
-    def download_show_images(self, show: Show) -> None:
-        cover_folder = get_cache_root() / "covers" / "shows" / slugify(show.filename)
-        self._download_images(
-            cover_folder, {"Poster": show.poster_id, "Backdrop": show.backdrop_id}
-        )
-        for season in show.seasons:
-            self._download_images(cover_folder, {f"Season-{season.number:02d}": season.poster_id})
-            for episode in season.episodes:
-                self._download_images(
-                    cover_folder,
-                    {f"S{season.number:02d}E{episode.number:02d}": episode.title_card_id},
+            total_length = int(response.headers.get("content-length", 0))
+            chunk_size = 1024
+            LOGGER.debug("Downloading %s", output)
+
+            with Progress(console=CONSOLE) as progress:
+                task = progress.add_task(
+                    f"Downloading {output.relative_to(get_cache_root() / 'covers')}",
+                    total=total_length,
                 )
+                with output.open("wb") as stream:
+                    for chunk in response.iter_content(chunk_size=chunk_size):
+                        if chunk:
+                            stream.write(chunk)
+                            progress.update(task, advance=len(chunk))
+        except ConnectionError:
+            LOGGER.error("Unable to connect to '%s%s'", self.api_url, endpoint)
+        except HTTPError as err:
+            LOGGER.error(err.response.text)
+        except ReadTimeout:
+            LOGGER.error("Service took too long to respond")
 
-    def download_movie_images(self, movie: Movie) -> None:
-        cover_folder = get_cache_root() / "covers" / "movies" / slugify(movie.filename)
-        self._download_images(cover_folder, {"Poster": movie.poster_id})
-
-    def download_collection_images(self, collection: Collection) -> None:
-        cover_folder = get_cache_root() / "covers" / "collections" / slugify(collection.name)
-        self._download_images(
-            cover_folder, {"Poster": collection.poster_id, "Backdrop": collection.backdrop_id}
-        )
-        for movie in collection.movies:
-            self._download_images(cover_folder, {movie.filename: movie.poster_id})
+    def download_image(self, id: str, output_file: Path) -> None:  # noqa: A002
+        self._download(endpoint=f"/assets/{id}", output=output_file)

@@ -194,7 +194,7 @@ class Jellyfin:
                         image_type="Primary",
                     )
 
-    def lookup_movie(self, movie: Movie, mediux: Mediux, folder: str | None = None) -> None:
+    def lookup_movie(self, movie: Movie, mediux: Mediux) -> None:
         results = self.search(name=movie.name, year=movie.year, mediatype="Movie")
         if not results:
             results = self.search(name=movie.name, mediatype="Movie")
@@ -206,6 +206,7 @@ class Jellyfin:
         index = create_menu(
             options=[f"{x['Name']} ({x['ProductionYear']})" for x in results],
             title=movie.filename,
+            subtitle="Jellyfin",
             default="None of the Above",
         )
         if index == 0:
@@ -214,61 +215,51 @@ class Jellyfin:
         movie_id = movie_result["Id"]
 
         if movie.poster_id:
-            if folder:
-                self._load_poster(
-                    mediatype="collections",
-                    folder=folder,
-                    filename=movie.filename,
-                    mediux=mediux,
-                    poster_id=movie.poster_id,
-                    image_id=movie_id,
-                    image_type="Primary",
-                )
-            else:
-                self._load_poster(
-                    mediatype="movies",
-                    folder=movie.filename,
-                    filename="Poster",
-                    mediux=mediux,
-                    poster_id=movie.poster_id,
-                    image_id=movie_id,
-                    image_type="Primary",
-                )
-
-    def lookup_collection(self, collection: Collection, mediux: Mediux) -> None:
-        results = self.search(name=collection.name, mediatype="BoxSet")
-        if not results:
-            LOGGER.warning("[Jellyfin] Unable to find '%s'", collection.name)
-            return
-
-        results.sort(key=lambda x: x["Name"])
-        index = create_menu(
-            options=[x["Name"] for x in results], title=collection.name, default="None of the Above"
-        )
-        if index == 0:
-            return
-        collection_result = results[index - 1]
-        collection_id = collection_result["Id"]
-
-        if collection.poster_id:
             self._load_poster(
-                mediatype="collections",
-                folder=collection.name,
+                mediatype="movies",
+                folder=movie.filename,
                 filename="Poster",
                 mediux=mediux,
-                poster_id=collection.poster_id,
-                image_id=collection_id,
+                poster_id=movie.poster_id,
+                image_id=movie_id,
                 image_type="Primary",
             )
-        if collection.backdrop_id:
-            self._load_poster(
-                mediatype="collections",
-                folder=collection.name,
-                filename="Backdrop",
-                mediux=mediux,
-                poster_id=collection.backdrop_id,
-                image_id=collection_id,
-                image_type="Backdrop",
+
+    def lookup_collection(self, collection: Collection, mediux: Mediux) -> None:
+        if results := self.search(name=collection.name, mediatype="BoxSet"):
+            results.sort(key=lambda x: x["Name"])
+            index = create_menu(
+                options=[x["Name"] for x in results],
+                title=collection.name,
+                subtitle="Jellyfin",
+                default="None of the Above",
             )
+            if index == 0:
+                return
+            collection_result = results[index - 1]
+            collection_id = collection_result["Id"]
+
+            if collection.poster_id:
+                self._load_poster(
+                    mediatype="collections",
+                    folder=collection.name,
+                    filename="Poster",
+                    mediux=mediux,
+                    poster_id=collection.poster_id,
+                    image_id=collection_id,
+                    image_type="Primary",
+                )
+            if collection.backdrop_id:
+                self._load_poster(
+                    mediatype="collections",
+                    folder=collection.name,
+                    filename="Backdrop",
+                    mediux=mediux,
+                    poster_id=collection.backdrop_id,
+                    image_id=collection_id,
+                    image_type="Backdrop",
+                )
+        else:
+            LOGGER.warning("[Jellyfin] Unable to find '%s'", collection.name)
         for movie in collection.movies:
-            self.lookup_movie(movie=movie, mediux=mediux, folder=collection.name)
+            self.lookup_movie(movie=movie, mediux=mediux)

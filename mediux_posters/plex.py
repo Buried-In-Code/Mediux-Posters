@@ -76,8 +76,20 @@ class Plex:
 
     def lookup_show(self, show: MediuxShow, mediux: Mediux) -> None:
         results = self.search(name=show.name, year=show.year, mediatype="show")
+        results = [
+            x
+            for x in results
+            if show.name.casefold() == x.title.casefold()
+            or show.filename.casefold() == x.title.casefold()
+        ]
         if not results:
             results = self.search(name=show.name, mediatype="show")
+            results = [
+                x
+                for x in results
+                if show.name.casefold() == x.title.casefold()
+                or show.filename.casefold() == x.title.casefold()
+            ]
         if not results:
             LOGGER.warning("[Plex] Unable to find '%s'", show.filename)
             return
@@ -144,10 +156,22 @@ class Plex:
                         image_type="Poster",
                     )
 
-    def lookup_movie(self, movie: MediuxMovie, mediux: Mediux, folder: str | None = None) -> None:
+    def lookup_movie(self, movie: MediuxMovie, mediux: Mediux) -> None:
         results = self.search(name=movie.name, year=movie.year, mediatype="movie")
+        results = [
+            x
+            for x in results
+            if movie.name.casefold() == x.title.casefold()
+            or movie.filename.casefold() == x.title.casefold()
+        ]
         if not results:
             results = self.search(name=movie.name, mediatype="movie")
+            results = [
+                x
+                for x in results
+                if movie.name.casefold() == x.title.casefold()
+                or movie.filename.casefold() == x.title.casefold()
+            ]
         if not results:
             LOGGER.warning("[Plex] Unable to find '%s'", movie.filename)
             return
@@ -156,6 +180,7 @@ class Plex:
         index = create_menu(
             options=[f"{x.title} ({x.year})" for x in results],
             title=movie.filename,
+            subtitle="Plex",
             default="None of the Above",
         )
         if index == 0:
@@ -163,60 +188,52 @@ class Plex:
         movie_result = results[index - 1]
 
         if movie.poster_id:
-            if folder:
-                self._load_poster(
-                    mediatype="collections",
-                    folder=folder,
-                    filename=movie.filename,
-                    mediux=mediux,
-                    poster_id=movie.poster_id,
-                    obj=movie_result,
-                    image_type="Poster",
-                )
-            else:
-                self._load_poster(
-                    mediatype="movies",
-                    folder=movie.filename,
-                    filename="Poster",
-                    mediux=mediux,
-                    poster_id=movie.poster_id,
-                    obj=movie_result,
-                    image_type="Poster",
-                )
+            self._load_poster(
+                mediatype="movies",
+                folder=movie.filename,
+                filename="Poster",
+                mediux=mediux,
+                poster_id=movie.poster_id,
+                obj=movie_result,
+                image_type="Poster",
+            )
 
     def lookup_collection(self, collection: MediuxCollection, mediux: Mediux) -> None:
         results = self.search(name=collection.name, mediatype="collection")
-        if not results:
+        results = [x for x in results if collection.name.casefold() == x.title.casefold()]
+        if results:
+            results.sort(key=lambda x: x.title)
+            index = create_menu(
+                options=[x.title for x in results],
+                title=collection.name,
+                subtitle="Plex",
+                default="None of the Above",
+            )
+            if index == 0:
+                return
+            collection_result = results[index - 1]
+
+            if collection.poster_id:
+                self._load_poster(
+                    mediatype="collections",
+                    folder=collection.name,
+                    filename="Poster",
+                    mediux=mediux,
+                    poster_id=collection.poster_id,
+                    obj=collection_result,
+                    image_type="Poster",
+                )
+            if collection.backdrop_id:
+                self._load_poster(
+                    mediatype="collections",
+                    folder=collection.name,
+                    filename="Backdrop",
+                    mediux=mediux,
+                    poster_id=collection.backdrop_id,
+                    obj=collection_result,
+                    image_type="Art",
+                )
+        else:
             LOGGER.warning("[Plex] Unable to find '%s'", collection.name)
-            return
-
-        results.sort(key=lambda x: x.title)
-        index = create_menu(
-            options=[x.title for x in results], title=collection.name, default="None of the Above"
-        )
-        if index == 0:
-            return
-        collection_result = results[index - 1]
-
-        if collection.poster_id:
-            self._load_poster(
-                mediatype="collections",
-                folder=collection.name,
-                filename="Poster",
-                mediux=mediux,
-                poster_id=collection.poster_id,
-                obj=collection_result,
-                image_type="Poster",
-            )
-        if collection.backdrop_id:
-            self._load_poster(
-                mediatype="collections",
-                folder=collection.name,
-                filename="Backdrop",
-                mediux=mediux,
-                poster_id=collection.backdrop_id,
-                obj=collection_result,
-                image_type="Art",
-            )
         for movie in collection.movies:
-            self.lookup_movie(movie=movie, mediux=mediux, folder=collection.name)
+            self.lookup_movie(movie=movie, mediux=mediux)
