@@ -29,22 +29,34 @@ Pulls Posters, Backdrops and Title Cards.
 ## Usage
 
 <details><summary>Mediux-Posters commands</summary>
-![`uv run Mediux-Posters --help`](docs/img/usage-01.svg)
+
+  ![`uv run Mediux-Posters --help`](docs/img/usage-01.svg)
+
 </details>
 <details><summary>Mediux-Posters Plex commands</summary>
-![`uv run Mediux-Posters plex --help`](docs/img/usage-plex-01.svg)
+
+  ![`uv run Mediux-Posters plex --help`](docs/img/usage-plex-01.svg)
+
 </details>
 <details><summary>Mediux-Posters Plex sync command</summary>
-![`uv run Mediux-Posters plex sync --help`](docs/img/usage-plex-02.svg)
+
+  ![`uv run Mediux-Posters plex sync --help`](docs/img/usage-plex-02.svg)
+
 </details>
 <details><summary>Mediux-Posters Plex set command</summary>
-![`uv run Mediux-Posters plex set --help`](docs/img/usage-plex-03.svg)
+
+  ![`uv run Mediux-Posters plex set --help`](docs/img/usage-plex-03.svg)
+
 </details>
 <details><summary>Mediux-Posters Jellyfin commands</summary>
-![`uv run Mediux-Posters jellyfin --help`](docs/img/usage-jellyfin-01.svg)
+
+  ![`uv run Mediux-Posters jellyfin --help`](docs/img/usage-jellyfin-01.svg)
+
 </details>
 <details><summary>Mediux-Posters Jellyfin sync commands</summary>
-![`uv run Mediux-Posters jellyfin sync --help`](docs/img/usage-jellyfin-02.svg)
+
+  ![`uv run Mediux-Posters jellyfin sync --help`](docs/img/usage-jellyfin-02.svg)
+
 </details>
 
 ## Settings
