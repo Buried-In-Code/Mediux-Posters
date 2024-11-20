@@ -6,6 +6,9 @@ on:
       - README.md
   workflow_dispatch:
 
+permissions:
+  actions: write
+
 jobs:
   rich_codex:
     runs-on: ubuntu-latest
