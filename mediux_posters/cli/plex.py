@@ -9,8 +9,8 @@ from plexapi.video import Movie, Show
 from typer import Option, Typer
 
 from mediux_posters import __version__, get_cache_root, setup_logging
-from mediux_posters.new.mediux import Mediux
-from mediux_posters.new.plex import Plex
+from mediux_posters.mediux import Mediux
+from mediux_posters.plex import Plex
 from mediux_posters.settings import Settings
 from mediux_posters.utils import delete_folder
 
@@ -18,7 +18,9 @@ LOGGER = logging.getLogger(__name__)
 app = Typer()
 
 
-def process_set(mediux: Mediux, set_data: dict, service: Plex, obj: Show | Movie) -> None:
+def process_set(
+    mediux: Mediux, set_data: dict, service: Plex, obj: Show | Movie | Collection
+) -> None:
     data = mediux.process_data(data=set_data)
     if data.show:
         service.upload_show_posters(data=data.show, mediux=mediux, show=obj)
@@ -28,14 +30,14 @@ def process_set(mediux: Mediux, set_data: dict, service: Plex, obj: Show | Movie
         service.upload_collection_posters(data=data.collection, mediux=mediux, collection=obj)
 
 
-def update_plex_show(plex: Plex, mediux: Mediux, users: list[str], tv_show: Show) -> None:
+def update_show(service: Plex, mediux: Mediux, users: list[str], tv_show: Show) -> None:
     tmdb_id = next(
         iter(x.id.removeprefix("tmdb://") for x in tv_show.guids if x.id.startswith("tmdb://")),
         None,
     )
     if not tmdb_id:
         return
-    LOGGER.info(f"{tmdb_id} | {tv_show.title} ({tv_show.year})")
+    LOGGER.info("%s | %s (%s)", tmdb_id, tv_show.title, tv_show.year)
 
     set_list = mediux.list_show_sets(tmdb_id=tmdb_id)
     for username in users:
@@ -47,16 +49,16 @@ def update_plex_show(plex: Plex, mediux: Mediux, users: list[str], tv_show: Show
         set_data = mediux.scrape_set(set_id=int(user_set["id"]))
         if not set_data:
             continue
-        process_set(mediux=mediux, set_data=set_data, service=plex, obj=tv_show)
+        process_set(mediux=mediux, set_data=set_data, service=service, obj=tv_show)
 
 
-def update_plex_movie(plex: Plex, mediux: Mediux, users: list[str], movie: Movie) -> None:
+def update_movie(service: Plex, mediux: Mediux, users: list[str], movie: Movie) -> None:
     tmdb_id = next(
         iter(x.id.removeprefix("tmdb://") for x in movie.guids if x.id.startswith("tmdb://")), None
     )
     if not tmdb_id:
         return
-    LOGGER.info(f"{tmdb_id} | {movie.title} ({movie.year})")
+    LOGGER.info("%s | %s (%s)", tmdb_id, movie.title, movie.year)
 
     set_list = mediux.list_movie_sets(tmdb_id=tmdb_id)
     for username in users:
@@ -68,11 +70,11 @@ def update_plex_movie(plex: Plex, mediux: Mediux, users: list[str], movie: Movie
         set_data = mediux.scrape_set(set_id=int(user_set["id"]))
         if not set_data:
             continue
-        process_set(mediux=mediux, set_data=set_data, service=plex, obj=movie)
+        process_set(mediux=mediux, set_data=set_data, service=service, obj=movie)
 
 
-def update_plex_collection(
-    plex: Plex, mediux: Mediux, users: list[str], collection: Collection
+def update_collection(
+    service: Plex, mediux: Mediux, users: list[str], collection: Collection
 ) -> None:
     tmdb_id = next(
         iter(
@@ -84,7 +86,7 @@ def update_plex_collection(
     )
     if not tmdb_id:
         return
-    LOGGER.info(f"{tmdb_id} | {collection.title}")
+    LOGGER.info("%s | %s", tmdb_id, collection.title)
 
     set_list = mediux.list_collection_sets(tmdb_id=tmdb_id)
     for username in users:
@@ -96,7 +98,7 @@ def update_plex_collection(
         set_data = mediux.scrape_set(set_id=int(user_set["id"]))
         if not set_data:
             continue
-        process_set(mediux=mediux, set_data=set_data, service=plex, obj=collection)
+        process_set(mediux=mediux, set_data=set_data, service=service, obj=collection)
 
 
 @app.command()
@@ -122,27 +124,26 @@ def sync(
     if not settings.plex.token:
         LOGGER.error("This command requires a Plex Token to be set")
         return
+
     try:
         plex = Plex(settings=settings.plex)
     except Unauthorized as err:
         LOGGER.error(err)
         return
-
     mediux = Mediux()
-
     users = ["zardooohasselfrau", "jezzfreeman", "Tiederian", "willtong93", "MiniZaki", "RuviLev"]
 
     if skip_shows:
         for tv_show in plex.list(mediatype="show"):
-            update_plex_show(plex=plex, mediux=mediux, users=users, tv_show=tv_show)
+            update_show(service=plex, mediux=mediux, users=users, tv_show=tv_show)
 
     if skip_movies:
         for movie in plex.list(mediatype="movie"):
-            update_plex_movie(plex=plex, mediux=mediux, users=users, movie=movie)
+            update_movie(service=plex, mediux=mediux, users=users, movie=movie)
 
     if skip_collections:
         for collection in plex.list(mediatype="collection"):
-            update_plex_collection(plex=plex, mediux=mediux, users=users, collection=collection)
+            update_collection(service=plex, mediux=mediux, users=users, collection=collection)
 
 
 @app.command(name="set")

@@ -1,4 +1,4 @@
-__all__ = ["find_poster", "slugify", "delete_folder"]
+__all__ = ["delete_folder", "find_poster", "slugify"]
 
 import logging
 import re

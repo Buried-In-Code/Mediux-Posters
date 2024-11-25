@@ -1,4 +1,4 @@
-__all__ = ["Settings", "Jellyfin", "Plex"]
+__all__ = ["Jellyfin", "Plex", "Settings"]
 
 from pathlib import Path
 from typing import Any, ClassVar
@@ -26,7 +26,8 @@ class SettingsModel(
 
 class Jellyfin(SettingsModel):
     base_url: str = "http://127.0.0.1:8096"
-    api_key: str | None = None
+    token: str | None = None
+    username: str | None = None
 
 
 class Plex(SettingsModel):

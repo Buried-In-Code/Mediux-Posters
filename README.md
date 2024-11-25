@@ -30,31 +30,37 @@ Pulls Posters, Backdrops and Title Cards.
 
 <details><summary>Mediux-Posters commands</summary>
 
+  <!-- RICH-CODEX hide_command: true -->
   ![`uv run Mediux-Posters --help`](docs/img/usage-01.svg)
 
 </details>
 <details><summary>Mediux-Posters Plex commands</summary>
 
+  <!-- RICH-CODEX hide_command: true -->
   ![`uv run Mediux-Posters plex --help`](docs/img/usage-plex-01.svg)
 
 </details>
 <details><summary>Mediux-Posters Plex sync command</summary>
 
+  <!-- RICH-CODEX hide_command: true -->
   ![`uv run Mediux-Posters plex sync --help`](docs/img/usage-plex-02.svg)
 
 </details>
 <details><summary>Mediux-Posters Plex set command</summary>
 
+  <!-- RICH-CODEX hide_command: true -->
   ![`uv run Mediux-Posters plex set --help`](docs/img/usage-plex-03.svg)
 
 </details>
 <details><summary>Mediux-Posters Jellyfin commands</summary>
 
+  <!-- RICH-CODEX hide_command: true -->
   ![`uv run Mediux-Posters jellyfin --help`](docs/img/usage-jellyfin-01.svg)
 
 </details>
 <details><summary>Mediux-Posters Jellyfin sync commands</summary>
 
+  <!-- RICH-CODEX hide_command: true -->
   ![`uv run Mediux-Posters jellyfin sync --help`](docs/img/usage-jellyfin-02.svg)
 
 </details>
