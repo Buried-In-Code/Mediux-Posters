@@ -105,13 +105,13 @@ class Jellyfin:
 
     def _list_seasons(self, show_id: str) -> list[tuple[str, int, str]]:
         response = self._get(endpoint=f"/Shows/{show_id}/Seasons").get("Items", [])
-        return [(x["Id"], x["IndexNumber"], x["Name"]) for x in response]
+        return [(x["Id"], x["IndexNumber"], x["Name"]) for x in response if "Id" in x and "IndexNumber" in x and "Name" in x]
 
     def _list_episodes(self, show_id: str, season_id: str) -> list[tuple[str, int, str]]:
         response = self._get(
             endpoint=f"/Shows/{show_id}/Episodes", params={"seasonId": season_id}
         ).get("Items", [])
-        return [(x["Id"], x["IndexNumber"], x["Name"]) for x in response]
+        return [(x["Id"], x["IndexNumber"], x["Name"]) for x in response if "Id" in x and "IndexNumber" in x and "Name" in x]
 
     def list(self, mediatype: Literal["tvshows", "movies"]) -> list[dict]:
         results = []

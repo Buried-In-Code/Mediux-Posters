@@ -10,7 +10,7 @@ from typer import Option, Typer
 
 from mediux_posters import __version__, get_cache_root, setup_logging
 from mediux_posters.mediux import Mediux
-from mediux_posters.plex import Plex
+from mediux_posters.services.plex import Plex
 from mediux_posters.settings import Settings
 from mediux_posters.utils import delete_folder
 

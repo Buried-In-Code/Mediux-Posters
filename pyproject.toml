@@ -2,6 +2,11 @@
 build-backend = "hatchling.build"
 requires = ["hatchling"]
 
+[dependency-groups]
+dev = [
+  "pre-commit >= 4.0.1"
+]
+
 [project]
 authors = [
   {email = "BuriedInCode@tuta.io", name = "BuriedInCode"}
@@ -104,8 +109,3 @@ convention = "google"
 
 [tool.ruff.lint.pyupgrade]
 keep-runtime-typing = true
-
-[tool.uv]
-dev-dependencies = [
-  "pre-commit >= 4.0.0"
-]
