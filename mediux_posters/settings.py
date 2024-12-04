@@ -4,9 +4,12 @@ from pathlib import Path
 from typing import Any, ClassVar
 
 import tomli_w as tomlwriter
-from pydantic import BaseModel
+from pydantic import Field
+from rich.panel import Panel
 
 from mediux_posters import get_config_root
+from mediux_posters.console import CONSOLE
+from mediux_posters.utils import BaseModel, flatten_dict
 
 try:
     import tomllib as tomlreader  # Python >= 3.11
@@ -14,13 +17,7 @@ except ModuleNotFoundError:
     import tomli as tomlreader  # Python < 3.11
 
 
-class SettingsModel(
-    BaseModel,
-    populate_by_name=True,
-    str_strip_whitespace=True,
-    validate_assignment=True,
-    extra="ignore",
-):
+class SettingsModel(BaseModel, extra="ignore"):
     pass
 
 
@@ -55,6 +52,7 @@ def _stringify_values(content: dict[str, Any]) -> dict[str, Any]:
 class Settings(SettingsModel):
     _file: ClassVar[Path] = get_config_root() / "settings.toml"
 
+    usernames: list[str] = Field(default_factory=list)
     jellyfin: Jellyfin = Jellyfin()
     plex: Plex = Plex()
 
@@ -71,3 +69,23 @@ class Settings(SettingsModel):
             content = self.model_dump(by_alias=False)
             content = _stringify_values(content=content)
             tomlwriter.dump(content, stream)
+
+    @classmethod
+    def display(cls) -> None:
+        default = flatten_dict(content=cls().model_dump())
+        file_overrides = flatten_dict(content=cls.load().model_dump())
+        default_vals = [
+            f"[repr.attrib_name]{k}[/]: [repr.attrib_value]{v}[/]"
+            if k in file_overrides and file_overrides[k] == v
+            else f"[dim][repr.attrib_name]{k}[/]: [repr.attrib_value]{v}[/][/]"
+            for k, v in default.items()
+        ]
+        override_vals = [
+            f"[repr.attrib_name]{k}[/]: [repr.attrib_value]{v}[/]"
+            for k, v in file_overrides.items()
+            if k not in default or default[k] != v
+        ]
+
+        CONSOLE.print(Panel.fit("\n".join(default_vals), title="Default"))
+        if override_vals:
+            CONSOLE.print(Panel.fit("\n".join(override_vals), title=str(cls._file)))

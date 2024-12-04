@@ -1,36 +1,35 @@
 import json
 import logging
-from dataclasses import dataclass
 from pathlib import Path
 
 from bs4 import BeautifulSoup
+from pydantic import Field
 from requests import get
 from requests.exceptions import ConnectionError, HTTPError, ReadTimeout
 from rich.progress import Progress
 
 from mediux_posters import get_cache_root
 from mediux_posters.console import CONSOLE
+from mediux_posters.utils import BaseModel
 
 LOGGER = logging.getLogger(__name__)
 
 
-@dataclass(kw_only=True)
-class Episode:
+class Episode(BaseModel):
     number: int
     name: str
     title_card_id: str | None = None
 
 
-@dataclass(kw_only=True)
-class Season:
+class Season(BaseModel):
     number: int
     name: str
     poster_id: str | None = None
     episodes: list[Episode]
 
 
-@dataclass(kw_only=True)
-class Show:
+class Show(BaseModel):
+    tmdb_id: int
     name: str
     year: int | None = None
     poster_id: str | None = None
@@ -44,8 +43,8 @@ class Show:
         return self.name
 
 
-@dataclass(kw_only=True)
-class Movie:
+class Movie(BaseModel):
+    tmdb_id: int
     name: str
     year: int | None = None
     poster_id: str | None = None
@@ -57,15 +56,14 @@ class Movie:
         return self.name
 
 
-@dataclass(kw_only=True)
-class Collection:
+class Collection(BaseModel):
     name: str
     poster_id: str | None = None
     backdrop_id: str | None = None
+    movies: list[Movie] = Field(default_factory=list)
 
 
-@dataclass(kw_only=True)
-class MediuxSet:
+class MediuxSet(BaseModel):
     id: int
     name: str
     show: Show | None = None
@@ -169,11 +167,12 @@ class Mediux:
             None,
         )
 
-    def process_data(self, data: dict) -> MediuxSet:
+    def process_data(self, data: dict, include_movies: bool = False) -> MediuxSet:
         show, movie, collection = None, None, None
 
         if data.get("show"):
             show = Show(
+                tmdb_id=data["show"]["id"],
                 name=data["show"]["name"],
                 year=int(data["show"]["first_air_date"][:4]),
                 poster_id=self._get_file_id(
@@ -212,6 +211,7 @@ class Mediux:
 
         if data.get("movie"):
             movie = Movie(
+                tmdb_id=data["movie"]["id"],
                 name=data["movie"]["title"],
                 year=int(data["movie"]["release_date"][:4])
                 if data["movie"]["release_date"]
@@ -237,6 +237,18 @@ class Mediux:
                     (x["id"] for x in data["files"] if x["fileType"] == "backdrop"), None
                 ),
             )
+            if include_movies:
+                collection.movies = [
+                    Movie(
+                        tmdb_id=entry["id"],
+                        name=entry["title"],
+                        year=int(entry["release_date"][:4]) if entry["release_date"] else None,
+                        poster_id=self._get_file_id(
+                            data=data, file_type="poster", id_key="movie_id", id_value=entry["id"]
+                        ),
+                    )
+                    for entry in data["collection"].get("movies", [])
+                ]
 
         return MediuxSet(
             id=int(data["id"]), name=data["set_name"], show=show, movie=movie, collection=collection

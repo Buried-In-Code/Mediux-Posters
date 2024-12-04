@@ -1,17 +1,18 @@
+__all__ = ["app"]
+
 import logging
 from pathlib import Path
 from platform import python_version
 from typing import Annotated
 
 from plexapi.collection import Collection
-from plexapi.exceptions import Unauthorized
 from plexapi.video import Movie, Show
 from typer import Option, Typer
 
 from mediux_posters import __version__, get_cache_root, setup_logging
+from mediux_posters.constants import Constants
 from mediux_posters.mediux import Mediux
 from mediux_posters.services.plex import Plex
-from mediux_posters.settings import Settings
 from mediux_posters.utils import delete_folder
 
 LOGGER = logging.getLogger(__name__)
@@ -19,18 +20,25 @@ app = Typer()
 
 
 def process_set(
-    mediux: Mediux, set_data: dict, service: Plex, obj: Show | Movie | Collection
+    set_id: int,
+    obj: Show | Movie | Collection,
+    mediux: Mediux,
+    plex: Plex,
+    include_movies: bool = False,
 ) -> None:
-    data = mediux.process_data(data=set_data)
+    set_data = mediux.scrape_set(set_id=set_id)
+    if not set_data:
+        return
+    data = mediux.process_data(data=set_data, include_movies=include_movies)
     if data.show:
-        service.upload_show_posters(data=data.show, mediux=mediux, show=obj)
+        plex.upload_show_posters(data=data.show, mediux=mediux, show=obj)
     elif data.movie:
-        service.upload_movie_posters(data=data.movie, mediux=mediux, movie=obj)
+        plex.upload_movie_posters(data=data.movie, mediux=mediux, movie=obj)
     elif data.collection:
-        service.upload_collection_posters(data=data.collection, mediux=mediux, collection=obj)
+        plex.upload_collection_posters(data=data.collection, mediux=mediux, collection=obj)
 
 
-def update_show(service: Plex, mediux: Mediux, users: list[str], tv_show: Show) -> None:
+def update_show(tv_show: Show, usernames: list[str], mediux: Mediux, plex: Plex) -> None:
     tmdb_id = next(
         iter(x.id.removeprefix("tmdb://") for x in tv_show.guids if x.id.startswith("tmdb://")),
         None,
@@ -39,20 +47,27 @@ def update_show(service: Plex, mediux: Mediux, users: list[str], tv_show: Show) 
         return
     LOGGER.info("%s | %s (%s)", tmdb_id, tv_show.title, tv_show.year)
 
-    set_list = mediux.list_show_sets(tmdb_id=tmdb_id)
-    for username in users:
-        user_set = next(
-            iter(x for x in set_list if x["user_created"]["username"] == username), None
-        )
-        if not user_set:
-            continue
-        set_data = mediux.scrape_set(set_id=int(user_set["id"]))
-        if not set_data:
-            continue
-        process_set(mediux=mediux, set_data=set_data, service=service, obj=tv_show)
+    if set_list := mediux.list_show_sets(tmdb_id=tmdb_id):
+        if usernames:
+            for username in usernames:
+                user_set = next(
+                    iter(
+                        x for x in set_list if x.get("user_created", {}).get("username") == username
+                    ),
+                    None,
+                )
+                if not user_set:
+                    continue
+                process_set(
+                    set_id=int(user_set.get("id", -1)), obj=tv_show, mediux=mediux, plex=plex
+                )
+        else:
+            process_set(
+                set_id=int(set_list[0].get("id", -1)), obj=tv_show, mediux=mediux, plex=plex
+            )
 
 
-def update_movie(service: Plex, mediux: Mediux, users: list[str], movie: Movie) -> None:
+def update_movie(movie: Movie, usernames: list[str], mediux: Mediux, plex: Plex) -> None:
     tmdb_id = next(
         iter(x.id.removeprefix("tmdb://") for x in movie.guids if x.id.startswith("tmdb://")), None
     )
@@ -60,21 +75,24 @@ def update_movie(service: Plex, mediux: Mediux, users: list[str], movie: Movie) 
         return
     LOGGER.info("%s | %s (%s)", tmdb_id, movie.title, movie.year)
 
-    set_list = mediux.list_movie_sets(tmdb_id=tmdb_id)
-    for username in users:
-        user_set = next(
-            iter(x for x in set_list if x["user_created"]["username"] == username), None
-        )
-        if not user_set:
-            continue
-        set_data = mediux.scrape_set(set_id=int(user_set["id"]))
-        if not set_data:
-            continue
-        process_set(mediux=mediux, set_data=set_data, service=service, obj=movie)
+    if set_list := mediux.list_movie_sets(tmdb_id=tmdb_id):
+        if usernames:
+            for username in usernames:
+                user_set = next(
+                    iter(
+                        x for x in set_list if x.get("user_created", {}).get("username") == username
+                    ),
+                    None,
+                )
+                if not user_set:
+                    continue
+                process_set(set_id=int(user_set.get("id", -1)), obj=movie, mediux=mediux, plex=plex)
+        else:
+            process_set(set_id=int(set_list[0].get("id", -1)), obj=movie, mediux=mediux, plex=plex)
 
 
 def update_collection(
-    service: Plex, mediux: Mediux, users: list[str], collection: Collection
+    collection: Collection, usernames: list[str], mediux: Mediux, plex: Plex
 ) -> None:
     tmdb_id = next(
         iter(
@@ -88,17 +106,24 @@ def update_collection(
         return
     LOGGER.info("%s | %s", tmdb_id, collection.title)
 
-    set_list = mediux.list_collection_sets(tmdb_id=tmdb_id)
-    for username in users:
-        user_set = next(
-            iter(x for x in set_list if x["user_created"]["username"] == username), None
-        )
-        if not user_set:
-            continue
-        set_data = mediux.scrape_set(set_id=int(user_set["id"]))
-        if not set_data:
-            continue
-        process_set(mediux=mediux, set_data=set_data, service=service, obj=collection)
+    if set_list := mediux.list_collection_sets(tmdb_id=tmdb_id):
+        if usernames:
+            for username in usernames:
+                user_set = next(
+                    iter(
+                        x for x in set_list if x.get("user_created", {}).get("username") == username
+                    ),
+                    None,
+                )
+                if not user_set:
+                    continue
+                process_set(
+                    set_id=int(user_set.get("id", -1)), obj=collection, mediux=mediux, plex=plex
+                )
+        else:
+            process_set(
+                set_id=int(set_list[0].get("id", -1)), obj=collection, mediux=mediux, plex=plex
+            )
 
 
 @app.command()
@@ -118,32 +143,23 @@ def sync(
     if clean_cache:
         LOGGER.info("Cleaning Cache")
         delete_folder(folder=get_cache_root())
-
-    settings = Settings.load()
-    settings.save()
-    if not settings.plex.token:
-        LOGGER.error("This command requires a Plex Token to be set")
-        return
-
-    try:
-        plex = Plex(settings=settings.plex)
-    except Unauthorized as err:
-        LOGGER.error(err)
-        return
-    mediux = Mediux()
-    users = ["zardooohasselfrau", "jezzfreeman", "Tiederian", "willtong93", "MiniZaki", "RuviLev"]
+    mediux = Constants.mediux()
+    plex = Constants.plex()
+    settings = Constants.settings()
 
     if skip_shows:
         for tv_show in plex.list(mediatype="show"):
-            update_show(service=plex, mediux=mediux, users=users, tv_show=tv_show)
+            update_show(tv_show=tv_show, usernames=settings.usernames, mediux=mediux, plex=plex)
 
     if skip_movies:
         for movie in plex.list(mediatype="movie"):
-            update_movie(service=plex, mediux=mediux, users=users, movie=movie)
+            update_movie(movie=movie, usernames=settings.usernames, mediux=mediux, plex=plex)
 
     if skip_collections:
         for collection in plex.list(mediatype="collection"):
-            update_collection(service=plex, mediux=mediux, users=users, collection=collection)
+            update_collection(
+                collection=collection, usernames=settings.usernames, mediux=mediux, plex=plex
+            )
 
 
 @app.command(name="set")
@@ -162,41 +178,25 @@ def set_posters(
     if clean_cache:
         LOGGER.info("Cleaning Cache")
         delete_folder(folder=get_cache_root())
-
-    settings = Settings.load()
-    settings.save()
-    if not settings.plex.token:
-        LOGGER.error("This command requires a Plex Token to be set")
-        return
-    try:
-        plex = Plex(settings=settings.plex)
-    except Unauthorized as err:
-        LOGGER.error(err)
-        return
-
-    mediux = Mediux()
+    mediux = Constants.mediux()
+    plex = Constants.plex()
 
     url_list = [x.strip() for x in file.read_text().splitlines()] if file else [url]
     for entry in url_list:
         if not entry.startswith(f"{Mediux.web_url}/sets"):
             continue
-        set_id = entry.split("/")[-1]
+        set_id = int(entry.split("/")[-1])
         set_data = mediux.scrape_set(set_id=set_id)
         if show_data := set_data.get("show"):
-            tmdb_id = int(show_data["id"])
-            if show := plex.search(tmdb_id=tmdb_id):
-                process_set(mediux=mediux, set_data=set_data, service=plex, obj=show)
+            if show := plex.search(tmdb_id=int(show_data["id"])):
+                process_set(set_id=set_id, obj=show, mediux=mediux, plex=plex)
         elif movie_data := set_data.get("movie"):
-            tmdb_id = int(movie_data["id"])
-            if movie := plex.search(tmdb_id=tmdb_id):
-                process_set(mediux=mediux, set_data=set_data, service=plex, obj=movie)
+            if movie := plex.search(tmdb_id=int(movie_data["id"])):
+                process_set(set_id=set_id, obj=movie, mediux=mediux, plex=plex)
         elif collection_data := set_data.get("collection"):
-            tmdb_id = int(collection_data["id"])
-            if collection := plex.search(tmdb_id=tmdb_id):
-                process_set(mediux=mediux, set_data=set_data, service=plex, obj=collection)
-            movie_ids = [x["id"] for x in collection_data["movies"]]
-            for movie_id in movie_ids:
-                if movie := plex.search(tmdb_id=movie_id):
-                    process_set(mediux=mediux, set_data=set_data, service=plex, obj=movie)
+            if collection := plex.search(tmdb_id=int(collection_data["id"])):
+                process_set(
+                    set_id=set_id, obj=collection, mediux=mediux, plex=plex, include_movies=True
+                )
         else:
             LOGGER.error("Unknown data set: %s", set_data)

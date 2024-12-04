@@ -165,8 +165,11 @@ class Plex:
                 obj=collection,
                 image_type="Art",
             )
+        for mediux_movie in data.movies:
+            if movie := self.search(tmdb_id=mediux_movie.tmdb_id):
+                self.upload_movie_posters(data=mediux_movie, mediux=mediux, movie=movie)
 
-    def search(self, tmdb_id: str) -> Show | Movie | Collection | None:
+    def search(self, tmdb_id: int) -> Show | Movie | Collection | None:
         for library in [x for x in self.session.library.sections() if x.type in ("movie", "show")]:
             try:
                 return library.getGuid(f"tmdb://{tmdb_id}")
@@ -175,7 +178,7 @@ class Plex:
         for entry in self.list(mediatype="collection"):
             collection_id = next(
                 iter(
-                    x.tag.lower().removeprefix("tmdb-")
+                    int(x.tag.lower().removeprefix("tmdb-"))
                     for x in entry.labels
                     if x.tag.lower().startswith("tmdb-")
                 ),

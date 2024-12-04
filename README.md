@@ -13,6 +13,8 @@
 Pull Shows, Movies and Collections from Mediux and updates Plex/Jellyfin.
 Pulls Posters, Backdrops and Title Cards.
 
+**_Uses TMDB Id to match shows/movies/collections_**
+
 ## Installation
 
 ### Pipx _(Not Yet Implemented)_
@@ -28,40 +30,49 @@ Pulls Posters, Backdrops and Title Cards.
 
 ## Usage
 
-<details><summary>Mediux-Posters commands</summary>
+<details><summary>Mediux-Posters Commands</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters --help`](docs/img/usage-01.svg)
+  ![`uv run Mediux-Posters --help`](docs/img/mp-commands.svg)
 
 </details>
-<details><summary>Mediux-Posters Plex commands</summary>
+
+### Mediux-Posters jellyfin Commands
+
+<details><summary>Mediux-Posters jellyfin sync</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters plex --help`](docs/img/usage-plex-01.svg)
+  ![`uv run Mediux-Posters jellyfin sync --help`](docs/img/mp-jellyfin-sync.svg)
 
 </details>
-<details><summary>Mediux-Posters Plex sync command</summary>
+
+### Mediux-Posters plex Commands
+
+<details><summary>Mediux-Posters plex sync</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters plex sync --help`](docs/img/usage-plex-02.svg)
+  ![`uv run Mediux-Posters plex sync --help`](docs/img/mp-plex-sync.svg)
 
 </details>
-<details><summary>Mediux-Posters Plex set command</summary>
+<details><summary>Mediux-Posters plex set</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters plex set --help`](docs/img/usage-plex-03.svg)
+  ![`uv run Mediux-Posters plex set --help`](docs/img/mp-plex-set.svg)
 
 </details>
-<details><summary>Mediux-Posters Jellyfin commands</summary>
+
+### Mediux-Posters settings Commands
+
+<details><summary>Mediux-Posters settings view</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters jellyfin --help`](docs/img/usage-jellyfin-01.svg)
+  ![`uv run Mediux-Posters settings view --help`](docs/img/mp-settings-view.svg)
 
 </details>
-<details><summary>Mediux-Posters Jellyfin sync commands</summary>
+<details><summary>Mediux-Posters settings locate</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters jellyfin sync --help`](docs/img/usage-jellyfin-02.svg)
+  ![`uv run Mediux-Posters settings locate --help`](docs/img/mp-settings-locate.svg)
 
 </details>
 
@@ -73,9 +84,12 @@ File will be created on first run.
 ### Example File
 
 ```toml
+usernames = []
+
 [jellyfin]
 base_url = "http://127.0.0.1:8096"
-api_key = "<API Key>"
+token = "<Token>"
+username = "<Username>"
 
 [plex]
 base_url = "http://127.0.0.1:32400"
