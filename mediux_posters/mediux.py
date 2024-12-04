@@ -17,13 +17,13 @@ LOGGER = logging.getLogger(__name__)
 
 class Episode(BaseModel):
     number: int
-    name: str
+    name: str | None = None
     title_card_id: str | None = None
 
 
 class Season(BaseModel):
     number: int
-    name: str
+    name: str | None = None
     poster_id: str | None = None
     episodes: list[Episode]
 
