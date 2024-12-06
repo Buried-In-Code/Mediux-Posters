@@ -36,28 +36,16 @@ Pulls Posters, Backdrops and Title Cards.
   ![`uv run Mediux-Posters --help`](docs/img/mp-commands.svg)
 
 </details>
-
-### Mediux-Posters jellyfin Commands
-
-<details><summary>Mediux-Posters jellyfin sync</summary>
+<details><summary>Mediux-Posters sync</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters jellyfin sync --help`](docs/img/mp-jellyfin-sync.svg)
+  ![`uv run Mediux-Posters sync --help`](docs/img/mp-sync.svg)
 
 </details>
-
-### Mediux-Posters plex Commands
-
-<details><summary>Mediux-Posters plex sync</summary>
+<details><summary>Mediux-Posters set</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters plex sync --help`](docs/img/mp-plex-sync.svg)
-
-</details>
-<details><summary>Mediux-Posters plex set</summary>
-
-  <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters plex set --help`](docs/img/mp-plex-set.svg)
+  ![`uv run Mediux-Posters set --help`](docs/img/mp-set.svg)
 
 </details>
 
@@ -84,6 +72,7 @@ File will be created on first run.
 ### Example File
 
 ```toml
+only_filtered_users = false
 usernames = []
 
 [jellyfin]

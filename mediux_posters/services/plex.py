@@ -3,187 +3,202 @@ __all__ = ["Plex"]
 import logging
 from typing import Literal
 
-from plexapi.collection import Collection
-from plexapi.exceptions import NotFound
+from plexapi.collection import Collection as PlexCollection
 from plexapi.server import PlexServer
-from plexapi.video import Movie, Show
-from requests.exceptions import ConnectionError, HTTPError, ReadTimeout
+from plexapi.video import (
+    Episode as PlexEpisode,
+    Movie as PlexMovie,
+    Season as PlexSeason,
+    Show as PlexShow,
+)
+from requests.exceptions import ConnectionError, HTTPError, ReadTimeout  # noqa: A004
 
 from mediux_posters import get_cache_root
 from mediux_posters.console import CONSOLE
-from mediux_posters.mediux import (
-    Collection as MediuxCollection,
-    Mediux,
-    Movie as MediuxMovie,
-    Show as MediuxShow,
+from mediux_posters.services._base import (
+    BaseCollection,
+    BaseEpisode,
+    BaseMovie,
+    BaseSeason,
+    BaseSeries,
+    BaseService,
 )
 from mediux_posters.settings import Plex as PlexSettings
-from mediux_posters.utils import find_poster
 
 LOGGER = logging.getLogger(__name__)
 
 
-class Plex:
+class Episode(BaseEpisode, arbitrary_types_allowed=True):
+    plex: PlexEpisode | None = None
+
+
+class Season(BaseSeason, arbitrary_types_allowed=True):
+    plex: PlexSeason | None = None
+
+
+class Series(BaseSeries, arbitrary_types_allowed=True):
+    plex: PlexShow | None = None
+
+
+class Movie(BaseMovie, arbitrary_types_allowed=True):
+    plex: PlexMovie | None = None
+
+
+class Collection(BaseCollection, arbitrary_types_allowed=True):
+    plex: PlexCollection | None = None
+
+
+class Plex(BaseService[Series, Season, Episode, Movie, Collection]):
     def __init__(self, settings: PlexSettings):
         self.session = PlexServer(settings.base_url, settings.token)
 
-    def list(
-        self, mediatype: Literal["show", "movie", "collection"]
-    ) -> list[Show, Movie, Collection]:
-        results = []
-        try:
-            libraries = [
-                lib
-                for lib in self.session.library.sections()
-                if lib.type == ("movie" if mediatype == "collection" else mediatype)
-            ]
-            for library in libraries:
-                if mediatype == "collection":
-                    results.extend(library.collections())
-                else:
-                    results.extend(library.all())
-        except ConnectionError:
-            LOGGER.error("Unable to connect to Plex Server")
-        except HTTPError as err:
-            LOGGER.error(err.response.text)
-        except ReadTimeout:
-            LOGGER.error("Service took too long to respond")
-        return results
-
-    def _upload_poster(
-        self,
-        mediatype: Literal["shows", "movies", "collections"],
-        folder: str,
-        filename: str,
-        mediux: Mediux,
-        poster_id: str,
-        obj: Show | Movie | Collection,
-        image_type: Literal["Poster", "Art"],
-    ) -> None:
-        poster_path = find_poster(mediatype=mediatype, folder=folder, filename=filename)
-        if not poster_path.exists():
-            poster_path.parent.mkdir(parents=True, exist_ok=True)
-            mediux.download_image(id=poster_id, output_file=poster_path)
-        if poster_path.exists():
-            with CONSOLE.status(rf"\[Plex] Uploading {poster_path.parent.name}/{poster_path.name}"):
-                try:
-                    if image_type == "Poster":
-                        obj.uploadPoster(filepath=str(poster_path))
-                    elif image_type == "Art":
-                        obj.uploadArt(filepath=str(poster_path))
-                except (ConnectionError, HTTPError, ReadTimeout) as err:
-                    LOGGER.error(
-                        "[Plex] Failed to upload %s poster: %s",
-                        poster_path.relative_to(get_cache_root() / "covers"),
-                        err,
-                    )
-
-    def upload_show_posters(self, data: MediuxShow, mediux: Mediux, show: Show) -> None:
-        if data.poster_id:
-            self._upload_poster(
-                mediatype="shows",
-                folder=data.filename,
-                filename="Poster",
-                mediux=mediux,
-                poster_id=data.poster_id,
-                obj=show,
-                image_type="Poster",
-            )
-        if data.backdrop_id:
-            self._upload_poster(
-                mediatype="shows",
-                folder=data.filename,
-                filename="Backdrop",
-                mediux=mediux,
-                poster_id=data.backdrop_id,
-                obj=show,
-                image_type="Art",
-            )
-        for season in show.seasons():
-            mediux_season = next(iter([x for x in data.seasons if x.number == season.index]), None)
-            if not mediux_season:
-                continue
-            if mediux_season.poster_id:
-                self._upload_poster(
-                    mediatype="shows",
-                    folder=data.filename,
-                    filename=f"Season-{mediux_season.number:02d}",
-                    mediux=mediux,
-                    poster_id=mediux_season.poster_id,
-                    obj=season,
-                    image_type="Poster",
-                )
-            for episode in season.episodes():
-                mediux_episode = next(
-                    iter([x for x in mediux_season.episodes if x.number == episode.index]), None
-                )
-                if not mediux_episode:
-                    continue
-                if mediux_episode.title_card_id:
-                    self._upload_poster(
-                        mediatype="shows",
-                        folder=data.filename,
-                        filename=f"S{mediux_season.number:02d}E{mediux_episode.number:02d}",
-                        mediux=mediux,
-                        poster_id=mediux_episode.title_card_id,
-                        obj=episode,
-                        image_type="Poster",
-                    )
-
-    def upload_movie_posters(self, data: MediuxMovie, mediux: Mediux, movie: Movie) -> None:
-        if data.poster_id:
-            self._upload_poster(
-                mediatype="movies",
-                folder=data.filename,
-                filename="Poster",
-                mediux=mediux,
-                poster_id=data.poster_id,
-                obj=movie,
-                image_type="Poster",
-            )
-
-    def upload_collection_posters(
-        self, data: MediuxCollection, mediux: Mediux, collection: Collection
-    ) -> None:
-        if data.poster_id:
-            self._upload_poster(
-                mediatype="collections",
-                folder=data.name,
-                filename="Poster",
-                mediux=mediux,
-                poster_id=data.poster_id,
-                obj=collection,
-                image_type="Poster",
-            )
-        if data.backdrop_id:
-            self._upload_poster(
-                mediatype="collections",
-                folder=data.name,
-                filename="Backdrop",
-                mediux=mediux,
-                poster_id=data.backdrop_id,
-                obj=collection,
-                image_type="Art",
-            )
-        for mediux_movie in data.movies:
-            if movie := self.search(tmdb_id=mediux_movie.tmdb_id):
-                self.upload_movie_posters(data=mediux_movie, mediux=mediux, movie=movie)
-
-    def search(self, tmdb_id: int) -> Show | Movie | Collection | None:
-        for library in [x for x in self.session.library.sections() if x.type in ("movie", "show")]:
-            try:
-                return library.getGuid(f"tmdb://{tmdb_id}")
-            except NotFound:
-                continue
-        for entry in self.list(mediatype="collection"):
-            collection_id = next(
+    @classmethod
+    def extract_tmdb(cls, entry: PlexShow | PlexMovie | PlexCollection) -> int | None:
+        if isinstance(entry, PlexCollection):
+            return next(
                 iter(
-                    int(x.tag.lower().removeprefix("tmdb-"))
+                    int(x.tag.casefold().removeprefix("tmdb-"))
                     for x in entry.labels
-                    if x.tag.lower().startswith("tmdb-")
+                    if x.tag.casefold().startswith("tmdb-")
                 ),
                 None,
             )
-            if tmdb_id == collection_id:
-                return entry
+        return next(
+            iter(
+                int(x.id.removeprefix("tmdb://")) for x in entry.guids if x.id.startswith("tmdb://")
+            ),
+            None,
+        )
+
+    def _search(
+        self, library_type: Literal["movie", "show", "collection"], search_id: int
+    ) -> Series | Movie | Collection | None:
+        for library in self.session.library.sections():
+            if library.type == "show" and library.type == library_type:
+                for show in library.all():
+                    tmdb_id = self.extract_tmdb(entry=show)
+                    if not tmdb_id or tmdb_id != search_id:
+                        continue
+                    return self._parse_series(show=show)
+            elif library.type == "movie" and library_type in (library.type, "collection"):
+                if library_type == "movie":
+                    for movie in library.all():
+                        tmdb_id = self.extract_tmdb(entry=movie)
+                        if not tmdb_id or tmdb_id != search_id:
+                            continue
+                        return self._parse_movie(movie=movie)
+                elif library_type == "collection":
+                    for collection in library.collections():
+                        tmdb_id = self.extract_tmdb(entry=collection)
+                        if not tmdb_id or tmdb_id != search_id:
+                            continue
+                        return self._parse_collection(collection=collection)
         return None
+
+    def _parse_series(self, show: PlexShow) -> Series:
+        _series = Series(
+            id=show.ratingKey,
+            name=show.title,
+            year=show.year,
+            tmdb_id=self.extract_tmdb(entry=show),
+            plex=show,
+        )
+        for season in show.seasons():
+            _season = Season(id=season.ratingKey, number=season.index, plex=season)
+            for episode in season.episodes():
+                _episode = Episode(id=episode.ratingKey, number=episode.index, plex=episode)
+                _season.episodes.append(_episode)
+            _series.seasons.append(_season)
+        return _series
+
+    def list_series(self, exclude_libraries: list[str] | None = None) -> list[Series]:
+        if exclude_libraries is None:
+            exclude_libraries = []
+        output = []
+        for library in self.session.library.sections():
+            if library.type == "show" and library.title not in exclude_libraries:
+                for show in library.all():
+                    tmdb_id = self.extract_tmdb(entry=show)
+                    if not tmdb_id:
+                        continue
+                    output.append(self._parse_series(show=show))
+        return output
+
+    def get_series(self, tmdb_id: int) -> Series | None:
+        return self._search(library_type="show", search_id=tmdb_id)
+
+    def _parse_movie(self, movie: PlexMovie) -> Movie:
+        return Movie(
+            id=movie.ratingKey,
+            name=movie.title,
+            year=movie.year,
+            tmdb_id=self.extract_tmdb(entry=movie),
+            plex=movie,
+        )
+
+    def list_movies(self, exclude_libraries: list[str] | None = None) -> list[Movie]:
+        if exclude_libraries is None:
+            exclude_libraries = []
+        output = []
+        for library in self.session.library.sections():
+            if library.type == "movie" and library.title not in exclude_libraries:
+                for movie in library.all():
+                    tmdb_id = self.extract_tmdb(entry=movie)
+                    if not tmdb_id:
+                        continue
+                    output.append(self._parse_movie(movie=movie))
+        return output
+
+    def get_movie(self, tmdb_id: int) -> Movie | None:
+        return self._search(library_type="movie", search_id=tmdb_id)
+
+    def _parse_collection(self, collection: PlexCollection) -> Collection:
+        return Collection(
+            id=collection.ratingKey,
+            name=collection.title,
+            tmdb_id=self.extract_tmdb(entry=collection),
+            plex=collection,
+        )
+
+    def list_collections(self, exclude_libraries: list[str] | None = None) -> list[Collection]:
+        if exclude_libraries is None:
+            exclude_libraries = []
+        output = []
+        for library in self.session.library.sections():
+            if library.type == "movie" and library.title not in exclude_libraries:
+                for collection in library.collections():
+                    tmdb_id = self.extract_tmdb(entry=collection)
+                    if not tmdb_id:
+                        continue
+                    output.append(self._parse_collection(collection=collection))
+        return output
+
+    def get_collection(self, tmdb_id: int) -> Collection | None:
+        return self._search(library_type="collection", search_id=tmdb_id)
+
+    def upload_posters(self, obj: Series | Season | Episode | Movie | Collection) -> None:
+        if isinstance(obj, Series | Movie | Collection):
+            options = [
+                (obj.poster, "poster_uploaded", obj.plex.uploadPoster),
+                (obj.backdrop, "backdrop_uploaded", obj.plex.uploadArt),
+            ]
+        elif isinstance(obj, Season):
+            options = [(obj.poster, "poster_uploaded", obj.plex.uploadPoster)]
+        elif isinstance(obj, Episode):
+            options = [(obj.title_card, "title_card_uploaded", obj.plex.uploadPoster)]
+        else:
+            LOGGER.warning("Updating %s posters aren't supported", type(obj).__name__)
+            return
+        for image_file, field, func in options:
+            if not image_file or getattr(obj, field):
+                continue
+            with CONSOLE.status(rf"\[Plex] Uploading {image_file.parent.name}/{image_file.name}"):
+                try:
+                    func(filepath=str(image_file))
+                    setattr(obj, field, True)
+                except (ConnectionError, HTTPError, ReadTimeout) as err:
+                    LOGGER.error(
+                        "[Plex] Failed to upload %s: %s",
+                        image_file.relative_to(get_cache_root() / "covers"),
+                        err,
+                    )

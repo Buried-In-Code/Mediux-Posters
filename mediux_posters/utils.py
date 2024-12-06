@@ -1,15 +1,15 @@
-__all__ = ["BaseModel", "delete_folder", "find_poster", "flatten_dict", "slugify"]
+__all__ = ["BaseModel", "MediaType", "delete_folder", "flatten_dict", "slugify"]
 
 import logging
 import re
 import unicodedata
+from enum import Enum
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any
 
 from pydantic import BaseModel as PydanticModel
 from rich.panel import Panel
 
-from mediux_posters import get_cache_root
 from mediux_posters.console import CONSOLE
 
 LOGGER = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ class BaseModel(
     populate_by_name=True,
     str_strip_whitespace=True,
     validate_assignment=True,
-    extra="forbid",
+    extra="ignore",
 ):
     def display(self) -> None:
         content = flatten_dict(content=self.model_dump())
@@ -30,11 +30,12 @@ class BaseModel(
         CONSOLE.print(Panel.fit("\n".join(content_vals), title=type(self).__name__))
 
 
-def find_poster(
-    mediatype: Literal["shows", "movies", "collections"], folder: str, filename: str
-) -> Path:
-    cover_folder = get_cache_root() / "covers" / mediatype / slugify(folder)
-    return cover_folder / f"{slugify(filename)}.jpg"
+class MediaType(str, Enum):
+    SERIES = "series"
+    SEASON = "season"
+    EPISODE = "episode"
+    MOVIE = "movie"
+    COLLECTION = "collection"
 
 
 def slugify(value: str) -> str:

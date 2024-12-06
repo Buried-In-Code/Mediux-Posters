@@ -12,22 +12,23 @@ from mediux_posters.console import CONSOLE
 from mediux_posters.utils import BaseModel, flatten_dict
 
 try:
+    from typing import Self  # Python >= 3.11
+except ImportError:
+    from typing_extensions import Self  # Python < 3.11
+
+try:
     import tomllib as tomlreader  # Python >= 3.11
 except ModuleNotFoundError:
     import tomli as tomlreader  # Python < 3.11
 
 
-class SettingsModel(BaseModel, extra="ignore"):
-    pass
-
-
-class Jellyfin(SettingsModel):
+class Jellyfin(BaseModel):
     base_url: str = "http://127.0.0.1:8096"
     token: str | None = None
     username: str | None = None
 
 
-class Plex(SettingsModel):
+class Plex(BaseModel):
     base_url: str = "http://127.0.0.1:32400"
     token: str | None = None
 
@@ -49,15 +50,16 @@ def _stringify_values(content: dict[str, Any]) -> dict[str, Any]:
     return output
 
 
-class Settings(SettingsModel):
+class Settings(BaseModel):
     _file: ClassVar[Path] = get_config_root() / "settings.toml"
 
+    only_filtered_users: bool = False
     usernames: list[str] = Field(default_factory=list)
     jellyfin: Jellyfin = Jellyfin()
     plex: Plex = Plex()
 
     @classmethod
-    def load(cls) -> "Settings":
+    def load(cls) -> Self:
         if not cls._file.exists():
             cls().save()
         with cls._file.open("rb") as stream:

@@ -1,12 +1,11 @@
 __all__ = ["Constants"]
 
 import logging
-from functools import lru_cache
 
 from plexapi.exceptions import Unauthorized
-from typer import Abort
 
 from mediux_posters.mediux import Mediux
+from mediux_posters.services import BaseService
 from mediux_posters.services.jellyfin import Jellyfin
 from mediux_posters.services.plex import Plex
 from mediux_posters.settings import Settings
@@ -21,7 +20,6 @@ class Constants:
     _settings: Settings | None = None
 
     @staticmethod
-    @lru_cache(maxsize=1)
     def settings() -> Settings:
         if Constants._settings is None:
             Constants._settings = Settings.load()
@@ -29,33 +27,37 @@ class Constants:
         return Constants._settings
 
     @staticmethod
-    @lru_cache(maxsize=1)
-    def jellyfin() -> Jellyfin:
+    def jellyfin() -> Jellyfin | None:
         if Constants._jellyfin is None:
             settings = Constants.settings()
             if not settings.jellyfin.token or not settings.jellyfin.username:
-                LOGGER.error("This command requires a Jellyfin token and username to be set")
-                raise Abort
+                return None
             Constants._jellyfin = Jellyfin(settings=settings.jellyfin)
         return Constants._jellyfin
 
     @staticmethod
-    @lru_cache(maxsize=1)
-    def plex() -> Plex:
+    def plex() -> Plex | None:
         if Constants._plex is None:
             settings = Constants.settings()
             try:
                 if not settings.plex.token:
-                    LOGGER.error("This command requires a Plex Token to be set")
-                    raise Abort
+                    return None
                 Constants._plex = Plex(settings=settings.plex)
             except Unauthorized as err:
-                LOGGER.error(err)
-                raise Abort from err
+                LOGGER.warning(err)
+                return None
         return Constants._plex
 
     @staticmethod
-    @lru_cache(maxsize=1)
+    def service_list() -> list[BaseService]:
+        output = []
+        if Constants.jellyfin():
+            output.append(Constants.jellyfin())
+        if Constants.plex():
+            output.append(Constants.plex())
+        return output
+
+    @staticmethod
     def mediux() -> Mediux:
         if Constants._mediux is None:
             Constants._mediux = Mediux()
