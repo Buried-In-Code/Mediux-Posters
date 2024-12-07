@@ -17,16 +17,10 @@ Pulls Posters, Backdrops and Title Cards.
 
 ## Installation
 
-### Pipx _(Not Yet Implemented)_
+### Pipx
 
-1. Ensure you have [Pipx](https://pipxproject.github.io/pipx/) installed: `pipx --version`
+1. Ensure you have [Pipx](https://pipx.pypa.io/stable/) installed: `pipx --version`
 2. Install the project: `pipx install Mediux-Posters`
-
-### From Source
-
-1. Ensure you have a supported version of [Python](https://www.python.org/) installed: `python --version`
-2. Clone the repository: `git clone https://github.com/Buried-In-Code/Mediux-Posters`
-3. Install the project: `pip install .`
 
 ## Usage
 
