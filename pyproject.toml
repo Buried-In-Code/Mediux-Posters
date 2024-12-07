@@ -28,12 +28,12 @@ classifiers = [
 dependencies = [
   "PlexAPI >= 4.16.0",
   "beautifulsoup4 >= 4.12.3",
-  "pydantic >= 2.9.2",
+  "pydantic >= 2.10.3",
   "requests >= 2.32.3",
-  "rich >= 13.9.2",
+  "rich >= 13.9.4",
   "tomli >= 2.0.1 ; python_version < \"3.11\"",
   "tomli-w >= 1.1.0",
-  "typer >= 0.12.5"
+  "typer >= 0.15.1"
 ]
 description = ""
 dynamic = ["version"]
@@ -47,9 +47,9 @@ requires-python = ">= 3.10"
 Mediux-Posters = "mediux_posters.__main__:app"
 
 [project.urls]
-Homepage = "https://pypi.org/project/Jellyfin-Mediux-Posters"
-Issues = "https://github.com/Buried-In-Code/Jellyfin-Mediux-Posters/issues"
-Source = "https://github.com/Buried-In-Code/Jellyfin-Mediux-Posters"
+Homepage = "https://pypi.org/project/Mediux-Posters"
+Issues = "https://github.com/Buried-In-Code/Mediux-Posters/issues"
+Source = "https://github.com/Buried-In-Code/Mediux-Posters"
 
 [tool.hatch.build.targets.sdist]
 exclude = [".github/"]
@@ -74,12 +74,14 @@ ignore = [
   "C901",
   "COM812",
   "D",
+  "EM101",
   "FBT",
   "PLR0911",
   "PLR0912",
   "PLR0913",
   "PLR2004",
   "PLW2901",
+  "TRY003",
   "TRY300",
   "TRY400"
 ]

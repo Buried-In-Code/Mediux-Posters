@@ -3,24 +3,48 @@ __all__ = ["Jellyfin"]
 import logging
 import mimetypes
 from base64 import b64encode
-from pathlib import Path
 from typing import Literal
 
 from requests import get, post
-from requests.exceptions import ConnectionError, HTTPError, JSONDecodeError, ReadTimeout
+from requests.exceptions import (
+    ConnectionError,  # noqa: A004
+    HTTPError,
+    JSONDecodeError,
+    ReadTimeout,
+)
 
 from mediux_posters.console import CONSOLE
-from mediux_posters.mediux import Mediux, Movie as MediuxMovie, Show as MediuxShow
+from mediux_posters.services._base import (
+    BaseEpisode,
+    BaseMovie,
+    BaseSeason,
+    BaseSeries,
+    BaseService,
+)
 from mediux_posters.settings import Jellyfin as JellyfinSettings
-from mediux_posters.utils import find_poster
 
 LOGGER = logging.getLogger(__name__)
 
 
-class Jellyfin:
+class Episode(BaseEpisode):
+    pass
+
+
+class Season(BaseSeason):
+    pass
+
+
+class Series(BaseSeries):
+    pass
+
+
+class Movie(BaseMovie):
+    pass
+
+
+class Jellyfin(BaseService[Series, Season, Episode, Movie, None]):
     def __init__(self, settings: JellyfinSettings, timeout: int = 30):
         self.base_url = settings.base_url
-        self.username = settings.username
         self.headers = {"X-Emby-Token": settings.token}
         self.timeout = timeout
 
@@ -84,141 +108,179 @@ class Jellyfin:
             LOGGER.error("Service took too long to respond")
         return False
 
-    def _get_user(self) -> dict:
-        return next(
-            iter(x for x in self._get(endpoint="/Users") if x.get("Name") == self.username), {}
+    def _search(
+        self, library_type: Literal["tvshows", "movies"], search_id: int
+    ) -> Series | Movie | None:
+        libraries = self._get(endpoint="/Library/MediaFolders").get("Items", [])
+        libraries = [x for x in libraries if x.get("CollectionType") == library_type]
+
+        for library in libraries:
+            for show in self._get(
+                endpoint="/Items",
+                params={
+                    "hasTmdbId": True,
+                    "fields": ["ProviderIds"],
+                    "ParentId": library.get("Id"),
+                    "Recursive": True,
+                    "IncludeItemTypes": "Series",
+                },
+            ).get("Items", []):
+                tmdb_id = self.extract_tmdb(entry=show)
+                if not tmdb_id or tmdb_id != search_id:
+                    continue
+                return self._parse_series(show=show)
+            for movie in self._get(
+                endpoint="/Items",
+                params={
+                    "hasTmdbId": True,
+                    "fields": ["ProviderIds"],
+                    "ParentId": library.get("Id"),
+                    "Recursive": True,
+                    "IncludeItemTypes": "Movie",
+                },
+            ).get("Items", []):
+                tmdb_id = self.extract_tmdb(entry=movie)
+                if not tmdb_id or tmdb_id != search_id:
+                    continue
+                return self._parse_movie(movie=movie)
+        return None
+
+    def _parse_series(self, show: dict) -> Series:
+        _series = Series(
+            id=show["Id"],
+            name=show["Name"],
+            year=show["ProductionYear"],
+            tmdb_id=self.extract_tmdb(entry=show),
+        )
+        for season in self._get(endpoint=f"/Shows/{_series.id}/Seasons").get("Items", []):
+            _season = Season(id=season["Id"], number=season["IndexNumber"])
+            for episode in self._get(
+                endpoint=f"/Shows/{_series.id}/Episodes", params={"seasonId": _season.id}
+            ).get("Items", []):
+                if "IndexNumber" not in episode:
+                    continue
+                _episode = Episode(id=episode["Id"], number=episode["IndexNumber"])
+                _season.episodes.append(_episode)
+            _series.seasons.append(_season)
+        return _series
+
+    def list_series(self, exclude_libraries: list[str] | None = None) -> list[Series]:
+        if exclude_libraries is None:
+            exclude_libraries = []
+        libraries = self._get(endpoint="/Library/MediaFolders").get("Items", [])
+        libraries = [
+            x
+            for x in libraries
+            if x.get("CollectionType") == "tvshows" and x.get("Name") not in exclude_libraries
+        ]
+
+        output = []
+        for library in libraries:
+            for show in self._get(
+                endpoint="/Items",
+                params={
+                    "hasTmdbId": True,
+                    "fields": ["ProviderIds"],
+                    "ParentId": library.get("Id"),
+                    "Recursive": True,
+                    "IncludeItemTypes": "Series",
+                },
+            ).get("Items", []):
+                tmdb_id = self.extract_tmdb(entry=show)
+                if not tmdb_id:
+                    continue
+                output.append(self._parse_series(show=show))
+        return output
+
+    def get_series(self, tmdb_id: int) -> Series | None:
+        return self._search(library_type="tvshows", search_id=tmdb_id)
+
+    def _parse_movie(self, movie: dict) -> Movie:
+        return Movie(
+            id=movie["Id"],
+            name=movie["Name"],
+            year=movie["ProductionYear"],
+            tmdb_id=self.extract_tmdb(entry=movie),
         )
 
-    def _get_libraries(self) -> list[dict]:
-        return self._get(endpoint="/Library/MediaFolders").get("Items", [])
+    def list_movies(self, exclude_libraries: list[str] | None = None) -> list[Movie]:
+        if exclude_libraries is None:
+            exclude_libraries = []
+        libraries = self._get(endpoint="/Library/MediaFolders").get("Items", [])
+        libraries = [
+            x
+            for x in libraries
+            if x.get("CollectionType") == "tvshows" and x.get("Name") not in exclude_libraries
+        ]
 
-    def _get_items(self, user_id: str, library_id: str) -> list[dict]:
-        return self._get(
-            endpoint="/Items",
-            params={
-                "userId": user_id,
-                "hasTmdbId": True,
-                "parentId": library_id,
-                "fields": ["ProviderIds"],
-            },
-        ).get("Items", [])
-
-    def _list_seasons(self, show_id: str) -> list[tuple[str, int, str]]:
-        response = self._get(endpoint=f"/Shows/{show_id}/Seasons").get("Items", [])
-        return [(x["Id"], x["IndexNumber"], x["Name"]) for x in response if "Id" in x and "IndexNumber" in x and "Name" in x]
-
-    def _list_episodes(self, show_id: str, season_id: str) -> list[tuple[str, int, str]]:
-        response = self._get(
-            endpoint=f"/Shows/{show_id}/Episodes", params={"seasonId": season_id}
-        ).get("Items", [])
-        return [(x["Id"], x["IndexNumber"], x["Name"]) for x in response if "Id" in x and "IndexNumber" in x and "Name" in x]
-
-    def list(self, mediatype: Literal["tvshows", "movies"]) -> list[dict]:
-        results = []
-        user = self._get_user()
-        for library in self._get_libraries():
-            if library.get("CollectionType") != mediatype:
-                continue
-            results.extend(self._get_items(user_id=user.get("Id"), library_id=library.get("Id")))
-        return results
-
-    def _upload_image(self, item_id: str, image_type: str, image_path: Path) -> None:
-        mime_type, _ = mimetypes.guess_type(image_path)
-        if not mime_type:
-            mime_type = "image/jpeg"
-        headers = self.headers
-        headers["Content-Type"] = mime_type
-        with image_path.open("rb") as stream:
-            image_data = b64encode(stream.read())
-        if not self._post(
-            endpoint=f"/Items/{item_id}/Images/{image_type}", headers=headers, body=image_data
-        ):
-            LOGGER.error(
-                "[Jellyfin] Failed to upload '%s/%s'", image_path.parent.name, image_path.name
-            )
-
-    def _upload_poster(
-        self,
-        mediatype: Literal["shows", "movies", "collections"],
-        folder: str,
-        filename: str,
-        mediux: Mediux,
-        poster_id: str,
-        image_id: str,
-        image_type: Literal["Primary", "Backdrop", "Thumb"],
-    ) -> None:
-        poster_path = find_poster(mediatype=mediatype, folder=folder, filename=filename)
-        if not poster_path.exists():
-            poster_path.parent.mkdir(parents=True, exist_ok=True)
-            mediux.download_image(id=poster_id, output_file=poster_path)
-        if poster_path.exists():
-            with CONSOLE.status(
-                rf"\[Jellyfin] Uploading {poster_path.parent.name}/{poster_path.name}"
-            ):
-                self._upload_image(item_id=image_id, image_type=image_type, image_path=poster_path)
-
-    def upload_show_posters(self, data: MediuxShow, mediux: Mediux, show_id: str) -> None:
-        if data.poster_id:
-            self._upload_poster(
-                mediatype="shows",
-                folder=data.filename,
-                filename="Poster",
-                mediux=mediux,
-                poster_id=data.poster_id,
-                image_id=show_id,
-                image_type="Primary",
-            )
-        if data.backdrop_id:
-            self._upload_poster(
-                mediatype="shows",
-                folder=data.filename,
-                filename="Backdrop",
-                mediux=mediux,
-                poster_id=data.backdrop_id,
-                image_id=show_id,
-                image_type="Backdrop",
-            )
-        for season_id, season_num, _ in self._list_seasons(show_id=show_id):
-            mediux_season = next(iter(x for x in data.seasons if x.number == season_num), None)
-            if not mediux_season:
-                continue
-            if mediux_season.poster_id:
-                self._upload_poster(
-                    mediatype="shows",
-                    folder=data.filename,
-                    filename=f"Season-{mediux_season.number:02d}",
-                    mediux=mediux,
-                    poster_id=mediux_season.poster_id,
-                    image_id=season_id,
-                    image_type="Primary",
-                )
-            for episode_id, episode_num, _ in self._list_episodes(
-                show_id=show_id, season_id=season_id
-            ):
-                mediux_episode = next(
-                    iter(x for x in mediux_season.episodes if x.number == episode_num), None
-                )
-                if not mediux_episode:
+        output = []
+        for library in libraries:
+            for movie in self._get(
+                endpoint="/Items",
+                params={
+                    "hasTmdbId": True,
+                    "fields": ["ProviderIds"],
+                    "ParentId": library.get("Id"),
+                    "Recursive": True,
+                    "IncludeItemTypes": "Movie",
+                },
+            ).get("Items", []):
+                tmdb_id = self.extract_tmdb(entry=movie)
+                if not tmdb_id:
                     continue
-                if mediux_episode.title_card_id:
-                    self._upload_poster(
-                        mediatype="shows",
-                        folder=data.filename,
-                        filename=f"S{mediux_season.number:02d}E{mediux_episode.number:02d}",
-                        mediux=mediux,
-                        poster_id=mediux_episode.title_card_id,
-                        image_id=episode_id,
-                        image_type="Primary",
-                    )
+                output.append(self._parse_movie(movie=movie))
+        return output
 
-    def upload_movie_posters(self, data: MediuxMovie, mediux: Mediux, movie_id: str) -> None:
-        if data.poster_id:
-            self._upload_poster(
-                mediatype="movies",
-                folder=data.filename,
-                filename="Poster",
-                mediux=mediux,
-                poster_id=data.poster_id,
-                image_id=movie_id,
-                image_type="Primary",
-            )
+    def get_movie(self, tmdb_id: int) -> Movie | None:
+        return self._search(library_type="movies", search_id=tmdb_id)
+
+    def list_collections(self, exclude_libraries: list[str] | None = None) -> list:  # noqa: ARG002
+        return []
+
+    def get_collection(self, tmdb_id: int) -> None:  # noqa: ARG002
+        return None
+
+    def upload_posters(self, obj: Series | Season | Episode | Movie | None) -> None:
+        if isinstance(obj, Series | Movie):
+            options = [
+                (obj.poster, "poster_uploaded", "Primary"),
+                (obj.backdrop, "backdrop_uploaded", "Backdrop"),
+            ]
+        elif isinstance(obj, Season):
+            options = [(obj.poster, "poster_uploaded", "Primary")]
+        elif isinstance(obj, Episode):
+            options = [(obj.title_card, "title_card_uploaded", "Primary")]
+        else:
+            LOGGER.warning("Updating %s posters aren't supported", type(obj).__name__)
+            return
+        for image_file, field, image_type in options:
+            if not image_file or getattr(obj, field):
+                continue
+            with CONSOLE.status(
+                rf"\[Jellyfin] Uploading {image_file.parent.name}/{image_file.name}"
+            ):
+                mime_type, _ = mimetypes.guess_type(image_file)
+                if not mime_type:
+                    mime_type = "image/jpeg"
+                headers = self.headers
+                headers["Content-Type"] = mime_type
+                with image_file.open("rb") as stream:
+                    image_data = b64encode(stream.read())
+                if not self._post(
+                    endpoint=f"/Items/{obj.id}/Images/{image_type}",
+                    headers=headers,
+                    body=image_data,
+                ):
+                    LOGGER.error(
+                        "[Jellyfin] Failed to upload '%s/%s'",
+                        image_file.parent.name,
+                        image_file.name,
+                    )
+                else:
+                    setattr(obj, field, True)
+
+    @classmethod
+    def extract_tmdb(cls, entry: dict) -> int | None:
+        if tmdb_id := entry.get("ProviderIds", {}).get("Tmdb"):
+            return int(tmdb_id)
+        return None
