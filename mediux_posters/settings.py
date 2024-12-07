@@ -25,7 +25,6 @@ except ModuleNotFoundError:
 class Jellyfin(BaseModel):
     base_url: str = "http://127.0.0.1:8096"
     token: str | None = None
-    username: str | None = None
 
 
 class Plex(BaseModel):
@@ -53,8 +52,9 @@ def _stringify_values(content: dict[str, Any]) -> dict[str, Any]:
 class Settings(BaseModel):
     _file: ClassVar[Path] = get_config_root() / "settings.toml"
 
-    only_filtered_users: bool = False
-    usernames: list[str] = Field(default_factory=list)
+    exclude_usernames: list[str] = Field(default_factory=list)
+    only_priority_usernames: bool = False
+    priority_usernames: list[str] = Field(default_factory=list)
     jellyfin: Jellyfin = Jellyfin()
     plex: Plex = Plex()
 

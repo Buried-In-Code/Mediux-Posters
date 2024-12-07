@@ -105,7 +105,7 @@ def sync_posters(
                 set_list = mediux.list_sets(mediatype=entry.mediatype, tmdb_id=entry.tmdb_id)
                 if not set_list:
                     continue
-                for username in Constants.settings().usernames:
+                for username in Constants.settings().priority_usernames:
                     if set_data := next(
                         iter(
                             x
@@ -129,13 +129,15 @@ def sync_posters(
                         )
                         if entry.all_posters_uploaded:
                             break
-                if not Constants.settings().only_filtered_users and not entry.all_posters_uploaded:
+                if (
+                    not Constants.settings().only_priority_usernames
+                    and not entry.all_posters_uploaded
+                ):
                     for set_data in set_list:
-                        LOGGER.info(
-                            "Downloading '%s' by '%s'",
-                            set_data.get("set_name"),
-                            set_data.get("user_created", {}).get("username"),
-                        )
+                        username = set_data.get("user_created", {}).get("username")
+                        if username in Constants.settings().exclude_usernames:
+                            continue
+                        LOGGER.info("Downloading '%s' by '%s'", set_data.get("set_name"), username)
                         set_data = mediux.scrape_set(set_id=set_data.get("id"))
                         download_posters(
                             mediux_data=set_data,

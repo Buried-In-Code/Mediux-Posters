@@ -72,18 +72,34 @@ File will be created on first run.
 ### Example File
 
 ```toml
-only_filtered_users = false
-usernames = []
+exclude_usernames = []
+only_priority_usernames = false
+priority_usernames = []
 
 [jellyfin]
 base_url = "http://127.0.0.1:8096"
 token = "<Token>"
-username = "<Username>"
 
 [plex]
 base_url = "http://127.0.0.1:32400"
 token = "<Token>"
 ```
+
+### Details
+
+- `exclude_usernames`
+
+  A list of usernames whose sets should be ignored when running a sync.
+
+- `only_priority_usernames`
+
+  A boolean flag that limits downloading sets to ones created by the users specified in `priority_usernames`.
+  If set to `false`, all sets will be considered unless explicitly excluded in `exclude_usernames`.
+
+- `priority_usernames`
+
+  A list of usernames whose sets should take priority when running a sync.
+  If `only_priority_usernames` is set to `true`, only sets from these users will be used.
 
 ## Socials
 

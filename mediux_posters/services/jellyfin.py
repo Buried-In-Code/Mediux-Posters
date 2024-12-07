@@ -45,7 +45,6 @@ class Movie(BaseMovie):
 class Jellyfin(BaseService[Series, Season, Episode, Movie, None]):
     def __init__(self, settings: JellyfinSettings, timeout: int = 30):
         self.base_url = settings.base_url
-        self.username = settings.username
         self.headers = {"X-Emby-Token": settings.token}
         self.timeout = timeout
 

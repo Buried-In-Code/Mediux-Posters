@@ -30,7 +30,7 @@ class Constants:
     def jellyfin() -> Jellyfin | None:
         if Constants._jellyfin is None:
             settings = Constants.settings()
-            if not settings.jellyfin.token or not settings.jellyfin.username:
+            if not settings.jellyfin.token:
                 return None
             Constants._jellyfin = Jellyfin(settings=settings.jellyfin)
         return Constants._jellyfin

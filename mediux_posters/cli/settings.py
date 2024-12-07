@@ -6,7 +6,7 @@ from mediux_posters.console import CONSOLE
 from mediux_posters.constants import Constants
 from mediux_posters.settings import Settings
 
-app = Typer()
+app = Typer(help="Commands for viewing app settings.")
 
 
 @app.command(name="view", help="Display the current and default settings.")
