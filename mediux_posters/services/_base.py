@@ -51,6 +51,8 @@ class BaseSeries(BaseModel):
 
     @property
     def display_name(self) -> str:
+        if self.name.endswith(f"({self.year})"):
+            return self.name
         if self.year:
             return f"{self.name} ({self.year})"
         return self.name
@@ -78,6 +80,8 @@ class BaseMovie(BaseModel):
 
     @property
     def display_name(self) -> str:
+        if self.name.endswith(f"({self.year})"):
+            return self.name
         if self.year:
             return f"{self.name} ({self.year})"
         return self.name

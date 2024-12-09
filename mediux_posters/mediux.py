@@ -227,11 +227,7 @@ class Mediux:
         service.upload_posters(obj=_movie)
 
     def download_collection_posters(
-        self,
-        data: dict,
-        _collection: BaseCollection,
-        service: BaseService,
-        include_movies: bool = False,
+        self, data: dict, _collection: BaseCollection, service: BaseService
     ) -> None:
         if poster_id := _get_file_id(
             data=data, file_type="poster", id_key="collection_id", id_value=str(_collection.tmdb_id)
@@ -246,18 +242,17 @@ class Mediux:
                 obj=_collection, filename="Backdrop", image_id=backdrop_id
             )
         service.upload_posters(obj=_collection)
-        if include_movies:
-            for movie in data.get("collection", {}).get("movies", []):
-                _movie = service.get_movie(tmdb_id=int(movie.get("id", -1)))
-                if not _movie:
-                    LOGGER.warning(
-                        "[%s] Unable to find '%s (%s)'",
-                        type(service).__name__,
-                        movie.get("title"),
-                        movie.get("release_date", "0000")[:4],
-                    )
-                    continue
-                self.download_movie_posters(data=data, _movie=_movie, service=service)
+        for movie in data.get("collection", {}).get("movies", []):
+            _movie = service.get_movie(tmdb_id=int(movie.get("id", -1)))
+            if not _movie:
+                LOGGER.warning(
+                    "[%s] Unable to find '%s (%s)'",
+                    type(service).__name__,
+                    movie.get("title"),
+                    (movie.get("release_date") or "0000")[:4],
+                )
+                continue
+            self.download_movie_posters(data=data, _movie=_movie, service=service)
 
     def list_sets(self, mediatype: MediaType, tmdb_id: int) -> list[dict]:
         if mediatype == MediaType.SERIES:

@@ -26,7 +26,6 @@ def download_posters(
     obj: BaseSeries | BaseMovie | BaseCollection,
     mediux: Mediux,
     service: BaseService,
-    include_movies: bool = False,
     abort_on_unknown: bool = False,
     debug: bool = False,
 ) -> None:
@@ -35,9 +34,7 @@ def download_posters(
     elif mediux_data.get("movie") and isinstance(obj, BaseMovie):
         mediux.download_movie_posters(data=mediux_data, _movie=obj, service=service)
     elif mediux_data.get("collection") and isinstance(obj, BaseCollection):
-        mediux.download_collection_posters(
-            data=mediux_data, _collection=obj, service=service, include_movies=include_movies
-        )
+        mediux.download_collection_posters(data=mediux_data, _collection=obj, service=service)
     else:
         LOGGER.error("Unknown data set: %s", mediux_data)
         if debug:
@@ -59,7 +56,8 @@ def sync_posters(
             "-l",
             show_default=False,
             default_factory=list,
-            help="List of libraries to skip during synchronization. Specify this option multiple times for skipping multiple libraries.",
+            help="List of libraries to skip during synchronization. "
+            "Specify this option multiple times for skipping multiple libraries.",
         ),
     ],
     clean_cache: Annotated[
@@ -68,7 +66,8 @@ def sync_posters(
             "--clean",
             "-c",
             show_default=False,
-            help="Clean the cache before starting the synchronization process. Removes all cached files.",
+            help="Clean the cache before starting the synchronization process. "
+            "Removes all cached files.",
         ),
     ] = False,
     debug: Annotated[
@@ -91,8 +90,8 @@ def sync_posters(
     for service in Constants.service_list():
         for mediatype, func in {
             MediaType.SERIES: service.list_series,
-            MediaType.MOVIE: service.list_movies,
             MediaType.COLLECTION: service.list_collections,
+            MediaType.MOVIE: service.list_movies,
         }.items():
             with CONSOLE.status(f"[{type(service).__name__}] Fetching {mediatype.value} media"):
                 entries = func(exclude_libraries=exclude_libraries)
@@ -137,6 +136,11 @@ def sync_posters(
                         username = set_data.get("user_created", {}).get("username")
                         if username in Constants.settings().exclude_usernames:
                             continue
+                        if (
+                            Constants.settings().priority_usernames
+                            and username in Constants.settings().priority_usernames
+                        ):
+                            continue
                         LOGGER.info("Downloading '%s' by '%s'", set_data.get("set_name"), username)
                         set_data = mediux.scrape_set(set_id=set_data.get("id"))
                         download_posters(
@@ -158,7 +162,8 @@ def set_posters(
             dir_okay=False,
             exists=True,
             show_default=False,
-            help="Path to a file containing URLs of Mediux sets, one per line. The file must exist and cannot be a directory.",
+            help="Path to a file containing URLs of Mediux sets, one per line. "
+            "The file must exist and cannot be a directory.",
         ),
     ] = None,
     urls: Annotated[
@@ -167,7 +172,8 @@ def set_posters(
             "--url",
             "-u",
             show_default=False,
-            help="List of URLs of Mediux sets to process. Specify this option multiple times for multiple URLs.",
+            help="List of URLs of Mediux sets to process. "
+            "Specify this option multiple times for multiple URLs.",
         ),
     ] = None,
     clean_cache: Annotated[
@@ -176,7 +182,8 @@ def set_posters(
             "--clean",
             "-c",
             show_default=False,
-            help="Clean the cache before starting the synchronization process. Removes all cached files.",
+            help="Clean the cache before starting the synchronization process."
+            "Removes all cached files.",
         ),
     ] = False,
     debug: Annotated[
@@ -209,8 +216,8 @@ def set_posters(
         )
         tmdb_id = (
             (set_data.get("show") or {}).get("id")
-            or (set_data.get("movie") or {}).get("id")
             or (set_data.get("collection") or {}).get("id")
+            or (set_data.get("movie") or {}).get("id")
         )
         if tmdb_id:
             tmdb_id = int(tmdb_id)
@@ -220,8 +227,8 @@ def set_posters(
             ):
                 obj = (
                     service.get_series(tmdb_id=tmdb_id)
-                    or service.get_movie(tmdb_id=tmdb_id)
                     or service.get_collection(tmdb_id=tmdb_id)
+                    or service.get_movie(tmdb_id=tmdb_id)
                 )
             if not obj:
                 LOGGER.warning(
@@ -236,7 +243,6 @@ def set_posters(
                 obj=obj,
                 mediux=mediux,
                 service=service,
-                include_movies=True,
                 abort_on_unknown=True,
                 debug=debug,
             )
