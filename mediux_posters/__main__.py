@@ -105,14 +105,9 @@ def sync_posters(
                 if not set_list:
                     continue
                 for username in Constants.settings().priority_usernames:
-                    if set_data := next(
-                        iter(
-                            x
-                            for x in set_list
-                            if x.get("user_created", {}).get("username") == username
-                        ),
-                        None,
-                    ):
+                    for set_data in [
+                        x for x in set_list if x.get("user_created", {}).get("username") == username
+                    ]:
                         LOGGER.info(
                             "Downloading '%s' by '%s'",
                             set_data.get("set_name"),
