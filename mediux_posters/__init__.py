@@ -48,8 +48,6 @@ def get_state_root() -> Path:
 
 def setup_logging(debug: bool = False) -> None:
     install(show_locals=True, max_frames=6, console=CONSOLE)
-    log_folder = get_state_root() / "logs"
-    log_folder.mkdir(parents=True, exist_ok=True)
 
     console_handler = RichHandler(
         rich_tracebacks=True,
@@ -62,11 +60,11 @@ def setup_logging(debug: bool = False) -> None:
     )
     console_handler.setLevel(logging.DEBUG if debug else logging.INFO)
     console_handler.setFormatter(logging.Formatter("%(message)s"))
-    file_handler = logging.FileHandler(filename=log_folder / "mediux-posters.log")
-    file_handler.setLevel(logging.DEBUG)
+    file_handler = logging.FileHandler(filename=get_state_root() / "mediux-posters.log")
+    file_handler.setLevel(logging.DEBUG if debug else logging.INFO)
     logging.basicConfig(
         format="[%(asctime)s] [%(levelname)-8s] {%(name)s} | %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
-        level=logging.DEBUG,
+        level=logging.DEBUG if debug else logging.INFO,
         handlers=[console_handler, file_handler],
     )
