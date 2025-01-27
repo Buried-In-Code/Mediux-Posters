@@ -5,15 +5,16 @@ from platform import python_version
 from typing import Annotated
 from uuid import uuid4
 
+from plexapi.exceptions import Unauthorized
 from typer import Abort, Option, Typer
 
 from mediux_posters import __version__, get_cache_root, setup_logging
 from mediux_posters.cli import settings_app
 from mediux_posters.console import CONSOLE
-from mediux_posters.constants import Constants
 from mediux_posters.mediux import Mediux
-from mediux_posters.services import BaseService
+from mediux_posters.services import BaseService, Jellyfin, Plex
 from mediux_posters.services._base import BaseCollection, BaseMovie, BaseSeries
+from mediux_posters.settings import Settings
 from mediux_posters.utils import MediaType, delete_folder
 
 app = Typer()
@@ -85,9 +86,19 @@ def sync_posters(
     if clean_cache:
         LOGGER.info("Cleaning Cache")
         delete_folder(folder=get_cache_root())
-    mediux = Constants.mediux()
+    settings = Settings.load()
+    settings.save()
+    mediux = Mediux()
+    service_list = []
+    if settings.jellyfin.token:
+        service_list.append(Jellyfin(settings=settings.jellyfin))
+    try:
+        if settings.plex.token:
+            service_list.append(Plex(settings=settings.plex))
+    except Unauthorized as err:
+        LOGGER.warning(err)
 
-    for service in Constants.service_list():
+    for service in service_list:
         for mediatype, func in {
             MediaType.SERIES: service.list_series,
             MediaType.COLLECTION: service.list_collections,
@@ -104,7 +115,7 @@ def sync_posters(
                 set_list = mediux.list_sets(mediatype=entry.mediatype, tmdb_id=entry.tmdb_id)
                 if not set_list:
                     continue
-                for username in Constants.settings().priority_usernames:
+                for username in settings.priority_usernames:
                     for set_data in [
                         x for x in set_list if x.get("user_created", {}).get("username") == username
                     ]:
@@ -123,18 +134,12 @@ def sync_posters(
                         )
                         if entry.all_posters_uploaded:
                             break
-                if (
-                    not Constants.settings().only_priority_usernames
-                    and not entry.all_posters_uploaded
-                ):
+                if not settings.only_priority_usernames and not entry.all_posters_uploaded:
                     for set_data in set_list:
                         username = set_data.get("user_created", {}).get("username")
-                        if username in Constants.settings().exclude_usernames:
+                        if username in settings.exclude_usernames:
                             continue
-                        if (
-                            Constants.settings().priority_usernames
-                            and username in Constants.settings().priority_usernames
-                        ):
+                        if settings.priority_usernames and username in settings.priority_usernames:
                             continue
                         LOGGER.info("Downloading '%s' by '%s'", set_data.get("set_name"), username)
                         set_data = mediux.scrape_set(set_id=set_data.get("id"))
@@ -196,7 +201,17 @@ def set_posters(
     if clean_cache:
         LOGGER.info("Cleaning Cache")
         delete_folder(folder=get_cache_root())
-    mediux = Constants.mediux()
+    settings = Settings.load()
+    settings.save()
+    mediux = Mediux()
+    service_list = []
+    if settings.jellyfin.token:
+        service_list.append(Jellyfin(settings=settings.jellyfin))
+    try:
+        if settings.plex.token:
+            service_list.append(Plex(settings=settings.plex))
+    except Unauthorized as err:
+        LOGGER.warning(err)
 
     url_list = [x.strip() for x in file.read_text().splitlines()] if file else urls
     for entry in url_list:
@@ -216,7 +231,7 @@ def set_posters(
         )
         if tmdb_id:
             tmdb_id = int(tmdb_id)
-        for service in Constants.service_list():
+        for service in service_list:
             with CONSOLE.status(
                 f"Searching {type(service).__name__} for '{set_data.get('set_name')} [{tmdb_id}]'"
             ):

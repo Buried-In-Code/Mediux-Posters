@@ -1,4 +1,4 @@
-__all__ = ["BaseModel", "MediaType", "delete_folder", "flatten_dict", "slugify"]
+__all__ = ["BaseModel", "MediaType", "blank_is_none", "delete_folder", "flatten_dict", "slugify"]
 
 import logging
 import re
@@ -68,3 +68,8 @@ def flatten_dict(content: dict[str, Any], parent_key: str = "") -> dict[str, Any
         else:
             items[new_key] = value
     return dict(sorted(items.items()))
+
+
+def blank_is_none(value: str) -> str | None:
+    """Enforces blank strings to be None."""
+    return value if value else None

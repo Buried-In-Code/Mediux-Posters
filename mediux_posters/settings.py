@@ -1,15 +1,15 @@
 __all__ = ["Jellyfin", "Plex", "Settings"]
 
 from pathlib import Path
-from typing import Any, ClassVar
+from typing import Annotated, Any, ClassVar
 
 import tomli_w as tomlwriter
-from pydantic import Field
+from pydantic import BeforeValidator, Field
 from rich.panel import Panel
 
 from mediux_posters import get_config_root
 from mediux_posters.console import CONSOLE
-from mediux_posters.utils import BaseModel, flatten_dict
+from mediux_posters.utils import BaseModel, blank_is_none, flatten_dict
 
 try:
     from typing import Self  # Python >= 3.11
@@ -24,12 +24,12 @@ except ModuleNotFoundError:
 
 class Jellyfin(BaseModel):
     base_url: str = "http://127.0.0.1:8096"
-    token: str | None = None
+    token: Annotated[str | None, BeforeValidator(blank_is_none)] = None
 
 
 class Plex(BaseModel):
     base_url: str = "http://127.0.0.1:32400"
-    token: str | None = None
+    token: Annotated[str | None, BeforeValidator(blank_is_none)] = None
 
 
 def _stringify_values(content: dict[str, Any]) -> dict[str, Any]:
