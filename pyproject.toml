@@ -35,7 +35,7 @@ dependencies = [
   "tomli-w >= 1.2.0",
   "typer >= 0.15.1"
 ]
-description = ""
+description = "Pull Shows, Movies and Collections from Mediux and updates Plex/Jellyfin. Pulls Posters, Backdrops and Title Cards."
 dynamic = ["version"]
 keywords = []
 license = {text = "MIT"}
