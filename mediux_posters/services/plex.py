@@ -4,6 +4,7 @@ import logging
 from typing import Literal
 
 from plexapi.collection import Collection as PlexCollection
+from plexapi.exceptions import BadRequest
 from plexapi.server import PlexServer
 from plexapi.video import (
     Episode as PlexEpisode,
@@ -196,7 +197,7 @@ class Plex(BaseService[Series, Season, Episode, Movie, Collection]):
                 try:
                     func(filepath=str(image_file))
                     setattr(obj, field, True)
-                except (ConnectionError, HTTPError, ReadTimeout) as err:
+                except (ConnectionError, HTTPError, ReadTimeout, BadRequest) as err:
                     LOGGER.error(
                         "[Plex] Failed to upload %s: %s",
                         image_file.relative_to(get_cache_root() / "covers"),
