@@ -6,6 +6,9 @@ requires = ["hatchling"]
 dev = [
   "pre-commit >= 4.1.0"
 ]
+docs = [
+    "rich-codex>=1.2.7",
+]
 
 [project]
 authors = [

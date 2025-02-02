@@ -47,7 +47,7 @@ def get_state_root() -> Path:
 
 
 def setup_logging(debug: bool = False) -> None:
-    install(show_locals=True, max_frames=6, console=CONSOLE)
+    install(show_locals=True, max_frames=3, console=CONSOLE)
 
     console_handler = RichHandler(
         rich_tracebacks=True,

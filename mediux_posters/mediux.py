@@ -12,13 +12,12 @@ from rich.progress import Progress
 
 from mediux_posters import get_cache_root
 from mediux_posters.console import CONSOLE
-from mediux_posters.services import BaseService
 from mediux_posters.services._base import (
     BaseCollection,
     BaseEpisode,
     BaseMovie,
     BaseSeason,
-    BaseSeries,
+    BaseShow,
 )
 from mediux_posters.utils import MediaType, slugify
 
@@ -116,7 +115,7 @@ class Mediux:
 
     def _download_image(
         self,
-        obj: BaseSeries | BaseSeason | BaseEpisode | BaseMovie | BaseCollection,
+        obj: BaseShow | BaseSeason | BaseEpisode | BaseMovie | BaseCollection,
         filename: str,
         image_id: str,
     ) -> Path | None:
@@ -134,128 +133,100 @@ class Mediux:
             return poster_path
         return None
 
-    def download_series_posters(
-        self, data: dict, _series: BaseSeries, service: BaseService
-    ) -> None:
+    def download_show_posters(self, data: dict, show: BaseShow) -> None:
         if poster_id := _get_file_id(
-            data=data, file_type="poster", id_key="show_id", id_value=str(_series.tmdb_id)
+            data=data, file_type="poster", id_key="show_id", id_value=str(show.tmdb_id)
         ):
-            _series.poster = self._download_image(
-                obj=_series, filename="Poster", image_id=poster_id
-            )
+            show.poster = self._download_image(obj=show, filename="Poster", image_id=poster_id)
         if backdrop_id := _get_file_id(
-            data=data,
-            file_type="backdrop",
-            id_key="show_id_backdrop",
-            id_value=str(_series.tmdb_id),
+            data=data, file_type="backdrop", id_key="show_id_backdrop", id_value=str(show.tmdb_id)
         ):
-            _series.backdrop = self._download_image(
-                obj=_series, filename="Backdrop", image_id=backdrop_id
+            show.backdrop = self._download_image(
+                obj=show, filename="Backdrop", image_id=backdrop_id
             )
-        service.upload_posters(obj=_series)
 
-        for _season in _series.seasons:
-            season = next(
+        for season in show.seasons:
+            season_data = next(
                 iter(
                     x
                     for x in data.get("show", {}).get("seasons", [])
-                    if int(x.get("season_number", "-1")) == _season.number
+                    if int(x.get("season_number", "-1")) == season.number
                 ),
                 None,
             )
-            if not season:
+            if not season_data:
                 LOGGER.warning(
                     "[%s] Unable to find '%s S%02d'",
                     type(self).__name__,
-                    _series.display_name,
-                    _season.number,
+                    show.display_name,
+                    season.number,
                 )
                 continue
             if poster_id := _get_file_id(
-                data=data, file_type="poster", id_key="season_id", id_value=season.get("id")
+                data=data, file_type="poster", id_key="season_id", id_value=season_data.get("id")
             ):
-                _season.poster = self._download_image(
-                    obj=_series, filename=f"S{_season.number:02}", image_id=poster_id
+                season.poster = self._download_image(
+                    obj=show, filename=f"S{season.number:02}", image_id=poster_id
                 )
-            service.upload_posters(obj=_season)
 
-            for _episode in _season.episodes:
-                episode = next(
+            for episode in season.episodes:
+                episode_data = next(
                     iter(
                         x
-                        for x in season.get("episodes", [])
-                        if int(x.get("episode_number", "-1")) == _episode.number
+                        for x in season_data.get("episodes", [])
+                        if int(x.get("episode_number", "-1")) == episode.number
                     ),
                     None,
                 )
-                if not episode:
+                if not episode_data:
                     LOGGER.warning(
                         "[%s] Unable to find '%s S%02dE%02d'",
                         type(self).__name__,
-                        _series.display_name,
-                        _season.number,
-                        _episode.number,
+                        show.display_name,
+                        season.number,
+                        episode.number,
                     )
                     continue
                 if title_card_id := _get_file_id(
                     data=data,
                     file_type="title_card",
                     id_key="episode_id",
-                    id_value=episode.get("id"),
+                    id_value=episode_data.get("id"),
                 ):
-                    _episode.title_card = self._download_image(
-                        obj=_series,
-                        filename=f"S{_season.number:02}E{_episode.number:02}",
+                    episode.title_card = self._download_image(
+                        obj=show,
+                        filename=f"S{season.number:02}E{episode.number:02}",
                         image_id=title_card_id,
                     )
-                service.upload_posters(obj=_episode)
 
-    def download_movie_posters(self, data: dict, _movie: BaseMovie, service: BaseService) -> None:
+    def download_movie_posters(self, data: dict, movie: BaseMovie) -> None:
         if poster_id := _get_file_id(
-            data=data, file_type="poster", id_key="movie_id", id_value=str(_movie.tmdb_id)
+            data=data, file_type="poster", id_key="movie_id", id_value=str(movie.tmdb_id)
         ):
-            _movie.poster = self._download_image(obj=_movie, filename="Poster", image_id=poster_id)
+            movie.poster = self._download_image(obj=movie, filename="Poster", image_id=poster_id)
         if backdrop_id := _get_file_id(
-            data=data,
-            file_type="backdrop",
-            id_key="movie_id_backdrop",
-            id_value=str(_movie.tmdb_id),
+            data=data, file_type="backdrop", id_key="movie_id_backdrop", id_value=str(movie.tmdb_id)
         ):
-            _movie.backdrop = self._download_image(
-                obj=_movie, filename="Backdrop", image_id=backdrop_id
+            movie.backdrop = self._download_image(
+                obj=movie, filename="Backdrop", image_id=backdrop_id
             )
-        service.upload_posters(obj=_movie)
 
-    def download_collection_posters(
-        self, data: dict, _collection: BaseCollection, service: BaseService
-    ) -> None:
+    def download_collection_posters(self, data: dict, collection: BaseCollection) -> None:
         if poster_id := _get_file_id(
-            data=data, file_type="poster", id_key="collection_id", id_value=str(_collection.tmdb_id)
+            data=data, file_type="poster", id_key="collection_id", id_value=str(collection.tmdb_id)
         ):
-            _collection.poster = self._download_image(
-                obj=_collection, filename="Poster", image_id=poster_id
+            collection.poster = self._download_image(
+                obj=collection, filename="Poster", image_id=poster_id
             )
         if backdrop_id := next(
             (x["id"] for x in data["files"] if x["fileType"] == "backdrop"), None
         ):
-            _collection.backdrop = self._download_image(
-                obj=_collection, filename="Backdrop", image_id=backdrop_id
+            collection.backdrop = self._download_image(
+                obj=collection, filename="Backdrop", image_id=backdrop_id
             )
-        service.upload_posters(obj=_collection)
-        for movie in data.get("collection", {}).get("movies", []):
-            _movie = service.get_movie(tmdb_id=int(movie.get("id", -1)))
-            if not _movie:
-                LOGGER.warning(
-                    "[%s] Unable to find '%s (%s)'",
-                    type(service).__name__,
-                    movie.get("title"),
-                    (movie.get("release_date") or "0000")[:4],
-                )
-                continue
-            self.download_movie_posters(data=data, _movie=_movie, service=service)
 
     def list_sets(self, mediatype: MediaType, tmdb_id: int) -> list[dict]:
-        if mediatype == MediaType.SERIES:
+        if mediatype == MediaType.SHOW:
             url = f"{self.web_url}/shows/{tmdb_id}"
         elif mediatype == MediaType.MOVIE:
             url = f"{self.web_url}/movies/{tmdb_id}"

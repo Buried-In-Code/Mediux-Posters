@@ -31,7 +31,7 @@ class BaseModel(
 
 
 class MediaType(str, Enum):
-    SERIES = "series"
+    SHOW = "show"
     SEASON = "season"
     EPISODE = "episode"
     MOVIE = "movie"
