@@ -162,8 +162,12 @@ def sync_posters(
             "Specify this option multiple times for skipping multiple libraries.",
         ),
     ],
-    start: Annotated[int, Option("--start", "-s")] = 0,
-    end: Annotated[int, Option("--end", "-e")] = 100_000,
+    start: Annotated[
+        int, Option("--start", "-s", help="The starting index for processing media.")
+    ] = 0,
+    end: Annotated[
+        int, Option("--end", "-e", help="The ending index for processing media.")
+    ] = 100_000,
     clean_cache: Annotated[
         bool, Option("--clean", "-c", show_default=False, help="Clean the cache before starting.")
     ] = False,
