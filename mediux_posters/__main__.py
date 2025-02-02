@@ -169,7 +169,7 @@ def sync_posters(
         int, Option("--end", "-e", help="The ending index for processing media.")
     ] = 100_000,
     clean_cache: Annotated[
-        bool, Option("--clean", "-c", show_default=False, help="Clean the cache before starting.")
+        bool, Option("--clean", "-C", show_default=False, help="Clean the cache before starting.")
     ] = False,
     debug: Annotated[
         bool,
@@ -251,7 +251,7 @@ def show_posters(
         ),
     ] = None,
     clean_cache: Annotated[
-        bool, Option("--clean", "-c", show_default=False, help="Clean the cache before starting.")
+        bool, Option("--clean", "-C", show_default=False, help="Clean the cache before starting.")
     ] = False,
     debug: Annotated[
         bool,
@@ -263,11 +263,17 @@ def show_posters(
 ) -> None:
     settings, mediux, service_list = setup(clean_cache=clean_cache, debug=debug)
 
-    for service in service_list:
+    for idx, service in enumerate(service_list):
+        CONSOLE.rule(
+            f"[{idx + 1}/{len(service_list)}] {type(service).__name__} Service",
+            align="left",
+            style="title",
+        )
         url_list = [x.strip() for x in file.read_text().splitlines()] if file else urls
-        for entry in url_list:
+        for index, entry in enumerate(url_list):
             if not entry.startswith(f"{Mediux.web_url}/shows"):
                 continue
+            CONSOLE.rule(f"[{index + 1}/{len(url_list)}] {entry}", align="left", style="subtitle")
             tmdb_id = int(entry.split("/")[-1])
             with CONSOLE.status(f"Searching {type(service).__name__} for TMDB id: '{tmdb_id}'"):
                 obj = service.get_show(tmdb_id=tmdb_id)
@@ -314,7 +320,7 @@ def collection_posters(
         ),
     ] = None,
     clean_cache: Annotated[
-        bool, Option("--clean", "-c", show_default=False, help="Clean the cache before starting.")
+        bool, Option("--clean", "-C", show_default=False, help="Clean the cache before starting.")
     ] = False,
     debug: Annotated[
         bool,
@@ -326,11 +332,17 @@ def collection_posters(
 ) -> None:
     settings, mediux, service_list = setup(clean_cache=clean_cache, debug=debug)
 
-    for service in service_list:
+    for idx, service in enumerate(service_list):
+        CONSOLE.rule(
+            f"[{idx + 1}/{len(service_list)}] {type(service).__name__} Service",
+            align="left",
+            style="title",
+        )
         url_list = [x.strip() for x in file.read_text().splitlines()] if file else urls
-        for entry in url_list:
+        for index, entry in enumerate(url_list):
             if not entry.startswith(f"{Mediux.web_url}/collections"):
                 continue
+            CONSOLE.rule(f"[{index + 1}/{len(url_list)}] {entry}", align="left", style="subtitle")
             tmdb_id = int(entry.split("/")[-1])
             with CONSOLE.status(f"Searching {type(service).__name__} for TMDB id: '{tmdb_id}'"):
                 obj = service.get_collection(tmdb_id=tmdb_id)
@@ -376,7 +388,7 @@ def movie_posters(
         ),
     ] = None,
     clean_cache: Annotated[
-        bool, Option("--clean", "-c", show_default=False, help="Clean the cache before starting.")
+        bool, Option("--clean", "-C", show_default=False, help="Clean the cache before starting.")
     ] = False,
     debug: Annotated[
         bool,
@@ -388,11 +400,17 @@ def movie_posters(
 ) -> None:
     settings, mediux, service_list = setup(clean_cache=clean_cache, debug=debug)
 
-    for service in service_list:
+    for idx, service in enumerate(service_list):
+        CONSOLE.rule(
+            f"[{idx + 1}/{len(service_list)}] {type(service).__name__} Service",
+            align="left",
+            style="title",
+        )
         url_list = [x.strip() for x in file.read_text().splitlines()] if file else urls
-        for entry in url_list:
+        for index, entry in enumerate(url_list):
             if not entry.startswith(f"{Mediux.web_url}/movies"):
                 continue
+            CONSOLE.rule(f"[{index + 1}/{len(url_list)}] {entry}", align="left", style="subtitle")
             tmdb_id = int(entry.split("/")[-1])
             with CONSOLE.status(f"Searching {type(service).__name__} for TMDB id: '{tmdb_id}'"):
                 obj = service.get_movie(tmdb_id=tmdb_id)
@@ -436,7 +454,7 @@ def set_posters(
         ),
     ] = None,
     clean_cache: Annotated[
-        bool, Option("--clean", "-c", show_default=False, help="Clean the cache before starting.")
+        bool, Option("--clean", "-C", show_default=False, help="Clean the cache before starting.")
     ] = False,
     debug: Annotated[
         bool,
@@ -448,11 +466,17 @@ def set_posters(
 ) -> None:
     settings, mediux, service_list = setup(clean_cache=clean_cache, debug=debug)
 
-    for service in service_list:
+    for idx, service in enumerate(service_list):
+        CONSOLE.rule(
+            f"[{idx + 1}/{len(service_list)}] {type(service).__name__} Service",
+            align="left",
+            style="title",
+        )
         url_list = [x.strip() for x in file.read_text().splitlines()] if file else urls
-        for entry in url_list:
+        for index, entry in enumerate(url_list):
             if not entry.startswith(f"{Mediux.web_url}/sets"):
                 continue
+            CONSOLE.rule(f"[{index + 1}/{len(url_list)}] {entry}", align="left", style="subtitle")
             set_id = int(entry.split("/")[-1])
             set_data = mediux.scrape_set(set_id=set_id)
             tmdb_id = (
