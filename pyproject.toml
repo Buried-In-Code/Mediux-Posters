@@ -6,6 +6,9 @@ requires = ["hatchling"]
 dev = [
   "pre-commit >= 4.1.0"
 ]
+docs = [
+  "rich-codex >= 1.2.7"
+]
 
 [project]
 authors = [
@@ -27,7 +30,7 @@ classifiers = [
 ]
 dependencies = [
   "PlexAPI >= 4.16.1",
-  "beautifulsoup4 >= 4.12.3",
+  "beautifulsoup4 >= 4.13.0",
   "pydantic >= 2.10.6",
   "requests >= 2.32.3",
   "rich >= 13.9.4",

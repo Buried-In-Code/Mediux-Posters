@@ -14,13 +14,7 @@ from requests.exceptions import (
 )
 
 from mediux_posters.console import CONSOLE
-from mediux_posters.services._base import (
-    BaseEpisode,
-    BaseMovie,
-    BaseSeason,
-    BaseSeries,
-    BaseService,
-)
+from mediux_posters.services._base import BaseEpisode, BaseMovie, BaseSeason, BaseService, BaseShow
 from mediux_posters.settings import Jellyfin as JellyfinSettings
 
 LOGGER = logging.getLogger(__name__)
@@ -34,7 +28,7 @@ class Season(BaseSeason):
     pass
 
 
-class Series(BaseSeries):
+class Show(BaseShow):
     pass
 
 
@@ -42,7 +36,7 @@ class Movie(BaseMovie):
     pass
 
 
-class Jellyfin(BaseService[Series, Season, Episode, Movie, None]):
+class Jellyfin(BaseService[Show, Season, Episode, None, Movie]):
     def __init__(self, settings: JellyfinSettings, timeout: int = 30):
         self.base_url = settings.base_url
         self.headers = {"X-Emby-Token": settings.token}
@@ -110,7 +104,7 @@ class Jellyfin(BaseService[Series, Season, Episode, Movie, None]):
 
     def _search(
         self, library_type: Literal["tvshows", "movies"], search_id: int
-    ) -> Series | Movie | None:
+    ) -> Show | Movie | None:
         libraries = self._get(endpoint="/Library/MediaFolders").get("Items", [])
         libraries = [x for x in libraries if x.get("CollectionType") == library_type]
 
@@ -128,7 +122,7 @@ class Jellyfin(BaseService[Series, Season, Episode, Movie, None]):
                 tmdb_id = self.extract_tmdb(entry=show)
                 if not tmdb_id or tmdb_id != search_id:
                     continue
-                return self._parse_series(show=show)
+                return self._parse_show(show_data=show)
             for movie in self._get(
                 endpoint="/Items",
                 params={
@@ -145,33 +139,33 @@ class Jellyfin(BaseService[Series, Season, Episode, Movie, None]):
                 return self._parse_movie(movie=movie)
         return None
 
-    def _parse_series(self, show: dict) -> Series:
-        _series = Series(
-            id=show["Id"],
-            name=show["Name"],
-            year=show["ProductionYear"],
-            tmdb_id=self.extract_tmdb(entry=show),
+    def _parse_show(self, show_data: dict) -> Show:
+        show = Show(
+            id=show_data["Id"],
+            name=show_data["Name"],
+            year=show_data["ProductionYear"],
+            tmdb_id=self.extract_tmdb(entry=show_data),
         )
-        for season in self._get(endpoint=f"/Shows/{_series.id}/Seasons").get("Items", []):
-            _season = Season(id=season["Id"], number=season["IndexNumber"])
-            for episode in self._get(
-                endpoint=f"/Shows/{_series.id}/Episodes", params={"seasonId": _season.id}
+        for season_data in self._get(endpoint=f"/Shows/{show.id}/Seasons").get("Items", []):
+            season = Season(id=season_data["Id"], number=season_data["IndexNumber"])
+            for episode_data in self._get(
+                endpoint=f"/Shows/{show.id}/Episodes", params={"seasonId": season.id}
             ).get("Items", []):
-                if "IndexNumber" not in episode:
+                if "IndexNumber" not in episode_data:
                     continue
-                _episode = Episode(id=episode["Id"], number=episode["IndexNumber"])
-                _season.episodes.append(_episode)
-            _series.seasons.append(_season)
-        return _series
+                episode = Episode(id=episode_data["Id"], number=episode_data["IndexNumber"])
+                season.episodes.append(episode)
+            show.seasons.append(season)
+        return show
 
-    def list_series(self, exclude_libraries: list[str] | None = None) -> list[Series]:
-        if exclude_libraries is None:
-            exclude_libraries = []
+    def list_shows(self, skip_libraries: list[str] | None = None) -> list[Show]:
+        if skip_libraries is None:
+            skip_libraries = []
         libraries = self._get(endpoint="/Library/MediaFolders").get("Items", [])
         libraries = [
             x
             for x in libraries
-            if x.get("CollectionType") == "tvshows" and x.get("Name") not in exclude_libraries
+            if x.get("CollectionType") == "tvshows" and x.get("Name") not in skip_libraries
         ]
 
         output = []
@@ -189,10 +183,10 @@ class Jellyfin(BaseService[Series, Season, Episode, Movie, None]):
                 tmdb_id = self.extract_tmdb(entry=show)
                 if not tmdb_id:
                     continue
-                output.append(self._parse_series(show=show))
+                output.append(self._parse_show(show_data=show))
         return output
 
-    def get_series(self, tmdb_id: int) -> Series | None:
+    def get_show(self, tmdb_id: int) -> Show | None:
         return self._search(library_type="tvshows", search_id=tmdb_id)
 
     def _parse_movie(self, movie: dict) -> Movie:
@@ -203,14 +197,14 @@ class Jellyfin(BaseService[Series, Season, Episode, Movie, None]):
             tmdb_id=self.extract_tmdb(entry=movie),
         )
 
-    def list_movies(self, exclude_libraries: list[str] | None = None) -> list[Movie]:
-        if exclude_libraries is None:
-            exclude_libraries = []
+    def list_movies(self, skip_libraries: list[str] | None = None) -> list[Movie]:
+        if skip_libraries is None:
+            skip_libraries = []
         libraries = self._get(endpoint="/Library/MediaFolders").get("Items", [])
         libraries = [
             x
             for x in libraries
-            if x.get("CollectionType") == "tvshows" and x.get("Name") not in exclude_libraries
+            if x.get("CollectionType") == "tvshows" and x.get("Name") not in skip_libraries
         ]
 
         output = []
@@ -234,14 +228,14 @@ class Jellyfin(BaseService[Series, Season, Episode, Movie, None]):
     def get_movie(self, tmdb_id: int) -> Movie | None:
         return self._search(library_type="movies", search_id=tmdb_id)
 
-    def list_collections(self, exclude_libraries: list[str] | None = None) -> list:  # noqa: ARG002
+    def list_collections(self, skip_libraries: list[str] | None = None) -> list:  # noqa: ARG002
         return []
 
     def get_collection(self, tmdb_id: int) -> None:  # noqa: ARG002
         return None
 
-    def upload_posters(self, obj: Series | Season | Episode | Movie | None) -> None:
-        if isinstance(obj, Series | Movie):
+    def upload_posters(self, obj: Show | Season | Episode | Movie | None) -> None:
+        if isinstance(obj, Show | Movie):
             options = [
                 (obj.poster, "poster_uploaded", "Primary"),
                 (obj.backdrop, "backdrop_uploaded", "Backdrop"),
@@ -254,7 +248,7 @@ class Jellyfin(BaseService[Series, Season, Episode, Movie, None]):
             LOGGER.warning("Updating %s posters aren't supported", type(obj).__name__)
             return
         for image_file, field, image_type in options:
-            if not image_file or getattr(obj, field):
+            if not image_file or not image_file.exists() or getattr(obj, field):
                 continue
             with CONSOLE.status(
                 rf"\[Jellyfin] Uploading {image_file.parent.name}/{image_file.name}"

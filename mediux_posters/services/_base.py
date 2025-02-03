@@ -1,4 +1,4 @@
-__all__ = ["BaseCollection", "BaseEpisode", "BaseMovie", "BaseSeason", "BaseSeries", "BaseService"]
+__all__ = ["BaseCollection", "BaseEpisode", "BaseMovie", "BaseSeason", "BaseService", "BaseShow"]
 
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -36,8 +36,8 @@ class BaseSeason(BaseModel):
         return self.poster_uploaded and all(x.all_posters_uploaded for x in self.episodes)
 
 
-class BaseSeries(BaseModel):
-    mediatype: ClassVar[MediaType] = MediaType.SERIES
+class BaseShow(BaseModel):
+    mediatype: ClassVar[MediaType] = MediaType.SHOW
     id: str | int
     name: str
     year: int
@@ -116,31 +116,31 @@ class BaseCollection(BaseModel):
         )
 
 
-T = TypeVar("T", bound=BaseSeries)
+T = TypeVar("T", bound=BaseShow)
 S = TypeVar("S", bound=BaseSeason)
 E = TypeVar("E", bound=BaseEpisode)
-M = TypeVar("M", bound=BaseMovie)
 C = TypeVar("C", bound=BaseCollection)
+M = TypeVar("M", bound=BaseMovie)
 
 
-class BaseService(ABC, Generic[T, S, E, M, C]):
+class BaseService(ABC, Generic[T, S, E, C, M]):
     @abstractmethod
-    def list_series(self, exclude_libraries: list[str] | None = None) -> list[T]: ...
-
-    @abstractmethod
-    def get_series(self, tmdb_id: int) -> T | None: ...
+    def list_shows(self, skip_libraries: list[str] | None = None) -> list[T]: ...
 
     @abstractmethod
-    def list_movies(self, exclude_libraries: list[str] | None = None) -> list[M]: ...
+    def get_show(self, tmdb_id: int) -> T | None: ...
 
     @abstractmethod
-    def get_movie(self, tmdb_id: int) -> M | None: ...
-
-    @abstractmethod
-    def list_collections(self, exclude_libraries: list[str] | None = None) -> list[C]: ...
+    def list_collections(self, skip_libraries: list[str] | None = None) -> list[C]: ...
 
     @abstractmethod
     def get_collection(self, tmdb_id: int) -> C | None: ...
+
+    @abstractmethod
+    def list_movies(self, skip_libraries: list[str] | None = None) -> list[M]: ...
+
+    @abstractmethod
+    def get_movie(self, tmdb_id: int) -> M | None: ...
 
     @abstractmethod
     def upload_posters(self, obj: T | S | E | M | C) -> None: ...

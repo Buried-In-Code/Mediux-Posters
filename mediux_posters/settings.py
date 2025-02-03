@@ -89,5 +89,4 @@ class Settings(BaseModel):
         ]
 
         CONSOLE.print(Panel.fit("\n".join(default_vals), title="Default"))
-        if override_vals:
-            CONSOLE.print(Panel.fit("\n".join(override_vals), title=str(cls._file)))
+        CONSOLE.print(Panel.fit("\n".join(override_vals), title=str(cls._file)))

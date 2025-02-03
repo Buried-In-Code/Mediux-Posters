@@ -27,36 +27,46 @@ Pulls Posters, Backdrops and Title Cards.
 <details><summary>Mediux-Posters Commands</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters --help`](docs/img/mp-commands.svg)
+  ![`uv run Mediux-Posters --help`](docs/img/mediux-posters_commands.svg)
 
 </details>
 <details><summary>Mediux-Posters sync</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters sync --help`](docs/img/mp-sync.svg)
+  ![`uv run Mediux-Posters sync --help`](docs/img/mediux-posters_sync.svg)
 
 </details>
 <details><summary>Mediux-Posters set</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters set --help`](docs/img/mp-set.svg)
+  ![`uv run Mediux-Posters set --help`](docs/img/mediux-posters_set.svg)
 
 </details>
-
-### Mediux-Posters settings Commands
-
-<details><summary>Mediux-Posters settings view</summary>
+<details><summary>Mediux-Posters show</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters settings view --help`](docs/img/mp-settings-view.svg)
+  ![`uv run Mediux-Posters show --help`](docs/img/mediux-posters_show.svg)
 
 </details>
-<details><summary>Mediux-Posters settings locate</summary>
+<details><summary>Mediux-Posters collection</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters settings locate --help`](docs/img/mp-settings-locate.svg)
+  ![`uv run Mediux-Posters collection --help`](docs/img/mediux-posters_collection.svg)
 
 </details>
+<details><summary>Mediux-Posters movie</summary>
+
+  <!-- RICH-CODEX hide_command: true -->
+  ![`uv run Mediux-Posters movie --help`](docs/img/mediux-posters_movie.svg)
+
+</details>
+<details><summary>Mediux-Posters settings</summary>
+
+  <!-- RICH-CODEX hide_command: true -->
+  ![`uv run Mediux-Posters settings --help`](docs/img/mediux-posters_settings.svg)
+
+</details>
+
 
 ## Settings
 
