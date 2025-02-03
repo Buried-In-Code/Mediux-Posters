@@ -16,7 +16,7 @@ from mediux_posters.mediux import Mediux
 from mediux_posters.services import BaseService, Jellyfin, Plex
 from mediux_posters.services._base import BaseCollection, BaseMovie, BaseShow
 from mediux_posters.settings import Settings
-from mediux_posters.utils import MediaType, delete_folder
+from mediux_posters.utils import MediaType, delete_folder, slugify
 
 app = Typer()
 LOGGER = logging.getLogger("mediux-posters")
@@ -42,13 +42,13 @@ def view_settings() -> None:
 
 
 def setup(
-    clean_cache: bool = False, debug: bool = False
+    full_clean: bool = False, debug: bool = False
 ) -> tuple[Settings, Mediux, list[BaseService]]:
     setup_logging(debug=debug)
     LOGGER.info("Python v%s", python_version())
     LOGGER.info("Mediux Posters v%s", __version__)
 
-    if clean_cache:
+    if full_clean:
         LOGGER.info("Cleaning Cache")
         delete_folder(folder=get_cache_root())
     settings = Settings.load()
@@ -168,8 +168,20 @@ def sync_posters(
     end: Annotated[
         int, Option("--end", "-e", help="The ending index for processing media.")
     ] = 100_000,
-    clean_cache: Annotated[
-        bool, Option("--clean", "-C", show_default=False, help="Clean the cache before starting.")
+    full_clean: Annotated[
+        bool,
+        Option(
+            "--full-clean", "-C", show_default=False, help="Delete the whole cache before starting."
+        ),
+    ] = False,
+    simple_clean: Annotated[
+        bool,
+        Option(
+            "--simple-clean",
+            "-c",
+            show_default=False,
+            help="Delete the cache of each media instead of the whole cache.",
+        ),
     ] = False,
     debug: Annotated[
         bool,
@@ -179,7 +191,7 @@ def sync_posters(
         ),
     ] = False,
 ) -> None:
-    settings, mediux, service_list = setup(clean_cache=clean_cache, debug=debug)
+    settings, mediux, service_list = setup(full_clean=full_clean, debug=debug)
     skip_mediatypes = [x.value for x in skip_mediatypes]
 
     for idx, service in enumerate(service_list):
@@ -207,6 +219,14 @@ def sync_posters(
                     align="left",
                     style="subtitle",
                 )
+                if simple_clean:
+                    LOGGER.info("Cleaning %s cache", entry.display_name)
+                    delete_folder(
+                        folder=get_cache_root()
+                        / "covers"
+                        / entry.mediatype.value
+                        / slugify(entry.display_name)
+                    )
                 LOGGER.info(
                     "[%s] Searching Mediux for '%s' sets",
                     type(service).__name__,
@@ -250,8 +270,20 @@ def show_posters(
             "Specify this option multiple times for multiple URLs.",
         ),
     ] = None,
-    clean_cache: Annotated[
-        bool, Option("--clean", "-C", show_default=False, help="Clean the cache before starting.")
+    full_clean: Annotated[
+        bool,
+        Option(
+            "--full-clean", "-C", show_default=False, help="Delete the whole cache before starting."
+        ),
+    ] = False,
+    simple_clean: Annotated[
+        bool,
+        Option(
+            "--simple-clean",
+            "-c",
+            show_default=False,
+            help="Delete the cache of each media instead of the whole cache.",
+        ),
     ] = False,
     debug: Annotated[
         bool,
@@ -261,7 +293,7 @@ def show_posters(
         ),
     ] = False,
 ) -> None:
-    settings, mediux, service_list = setup(clean_cache=clean_cache, debug=debug)
+    settings, mediux, service_list = setup(full_clean=full_clean, debug=debug)
 
     for idx, service in enumerate(service_list):
         CONSOLE.rule(
@@ -273,13 +305,25 @@ def show_posters(
         for index, entry in enumerate(url_list):
             if not entry.startswith(f"{Mediux.web_url}/shows"):
                 continue
-            CONSOLE.rule(f"[{index + 1}/{len(url_list)}] {entry}", align="left", style="subtitle")
             tmdb_id = int(entry.split("/")[-1])
             with CONSOLE.status(f"Searching {type(service).__name__} for TMDB id: '{tmdb_id}'"):
                 obj = service.get_show(tmdb_id=tmdb_id)
                 if not obj:
                     LOGGER.warning("[%s] Unable to find '%d'", type(service).__name__, tmdb_id)
                     continue
+            CONSOLE.rule(
+                f"[{index + 1}/{len(url_list)}] {obj.display_name} [{obj.tmdb_id}]",
+                align="left",
+                style="subtitle",
+            )
+            if simple_clean:
+                LOGGER.info("Cleaning %s cache", obj.display_name)
+                delete_folder(
+                    folder=get_cache_root()
+                    / "covers"
+                    / obj.mediatype.value
+                    / slugify(obj.display_name)
+                )
             set_list = mediux.list_sets(mediatype=MediaType.SHOW, tmdb_id=tmdb_id)
             for set_data in filter_sets(set_list=set_list, settings=settings, mediux=mediux):
                 LOGGER.info(
@@ -319,8 +363,20 @@ def collection_posters(
             "Specify this option multiple times for multiple URLs.",
         ),
     ] = None,
-    clean_cache: Annotated[
-        bool, Option("--clean", "-C", show_default=False, help="Clean the cache before starting.")
+    full_clean: Annotated[
+        bool,
+        Option(
+            "--full-clean", "-C", show_default=False, help="Delete the whole cache before starting."
+        ),
+    ] = False,
+    simple_clean: Annotated[
+        bool,
+        Option(
+            "--simple-clean",
+            "-c",
+            show_default=False,
+            help="Delete the cache of each media instead of the whole cache.",
+        ),
     ] = False,
     debug: Annotated[
         bool,
@@ -330,7 +386,7 @@ def collection_posters(
         ),
     ] = False,
 ) -> None:
-    settings, mediux, service_list = setup(clean_cache=clean_cache, debug=debug)
+    settings, mediux, service_list = setup(full_clean=full_clean, debug=debug)
 
     for idx, service in enumerate(service_list):
         CONSOLE.rule(
@@ -342,13 +398,25 @@ def collection_posters(
         for index, entry in enumerate(url_list):
             if not entry.startswith(f"{Mediux.web_url}/collections"):
                 continue
-            CONSOLE.rule(f"[{index + 1}/{len(url_list)}] {entry}", align="left", style="subtitle")
             tmdb_id = int(entry.split("/")[-1])
             with CONSOLE.status(f"Searching {type(service).__name__} for TMDB id: '{tmdb_id}'"):
                 obj = service.get_collection(tmdb_id=tmdb_id)
                 if not obj:
                     LOGGER.warning("[%s] Unable to find '%d'", type(service).__name__, tmdb_id)
                     continue
+            CONSOLE.rule(
+                f"[{index + 1}/{len(url_list)}] {obj.display_name} [{obj.tmdb_id}]",
+                align="left",
+                style="subtitle",
+            )
+            if simple_clean:
+                LOGGER.info("Cleaning %s cache", obj.display_name)
+                delete_folder(
+                    folder=get_cache_root()
+                    / "covers"
+                    / obj.mediatype.value
+                    / slugify(obj.display_name)
+                )
             set_list = mediux.list_sets(mediatype=MediaType.COLLECTION, tmdb_id=tmdb_id)
             for set_data in filter_sets(set_list=set_list, settings=settings, mediux=mediux):
                 LOGGER.info(
@@ -387,8 +455,20 @@ def movie_posters(
             "Specify this option multiple times for multiple URLs.",
         ),
     ] = None,
-    clean_cache: Annotated[
-        bool, Option("--clean", "-C", show_default=False, help="Clean the cache before starting.")
+    full_clean: Annotated[
+        bool,
+        Option(
+            "--full-clean", "-C", show_default=False, help="Delete the whole cache before starting."
+        ),
+    ] = False,
+    simple_clean: Annotated[
+        bool,
+        Option(
+            "--simple-clean",
+            "-c",
+            show_default=False,
+            help="Delete the cache of each media instead of the whole cache.",
+        ),
     ] = False,
     debug: Annotated[
         bool,
@@ -398,7 +478,7 @@ def movie_posters(
         ),
     ] = False,
 ) -> None:
-    settings, mediux, service_list = setup(clean_cache=clean_cache, debug=debug)
+    settings, mediux, service_list = setup(full_clean=full_clean, debug=debug)
 
     for idx, service in enumerate(service_list):
         CONSOLE.rule(
@@ -410,13 +490,25 @@ def movie_posters(
         for index, entry in enumerate(url_list):
             if not entry.startswith(f"{Mediux.web_url}/movies"):
                 continue
-            CONSOLE.rule(f"[{index + 1}/{len(url_list)}] {entry}", align="left", style="subtitle")
             tmdb_id = int(entry.split("/")[-1])
             with CONSOLE.status(f"Searching {type(service).__name__} for TMDB id: '{tmdb_id}'"):
                 obj = service.get_movie(tmdb_id=tmdb_id)
                 if not obj:
                     LOGGER.warning("[%s] Unable to find '%d'", type(service).__name__, tmdb_id)
                     continue
+            CONSOLE.rule(
+                f"[{index + 1}/{len(url_list)}] {obj.display_name} [{obj.tmdb_id}]",
+                align="left",
+                style="subtitle",
+            )
+            if simple_clean:
+                LOGGER.info("Cleaning %s cache", obj.display_name)
+                delete_folder(
+                    folder=get_cache_root()
+                    / "covers"
+                    / obj.mediatype.value
+                    / slugify(obj.display_name)
+                )
             set_list = mediux.list_sets(mediatype=MediaType.MOVIE, tmdb_id=tmdb_id)
             for set_data in filter_sets(set_list=set_list, settings=settings, mediux=mediux):
                 LOGGER.info(
@@ -453,8 +545,20 @@ def set_posters(
             "Specify this option multiple times for multiple URLs.",
         ),
     ] = None,
-    clean_cache: Annotated[
-        bool, Option("--clean", "-C", show_default=False, help="Clean the cache before starting.")
+    full_clean: Annotated[
+        bool,
+        Option(
+            "--full-clean", "-C", show_default=False, help="Delete the whole cache before starting."
+        ),
+    ] = False,
+    simple_clean: Annotated[
+        bool,
+        Option(
+            "--simple-clean",
+            "-c",
+            show_default=False,
+            help="Delete the cache of each media instead of the whole cache.",
+        ),
     ] = False,
     debug: Annotated[
         bool,
@@ -464,7 +568,7 @@ def set_posters(
         ),
     ] = False,
 ) -> None:
-    settings, mediux, service_list = setup(clean_cache=clean_cache, debug=debug)
+    settings, mediux, service_list = setup(full_clean=full_clean, debug=debug)
 
     for idx, service in enumerate(service_list):
         CONSOLE.rule(
@@ -476,7 +580,6 @@ def set_posters(
         for index, entry in enumerate(url_list):
             if not entry.startswith(f"{Mediux.web_url}/sets"):
                 continue
-            CONSOLE.rule(f"[{index + 1}/{len(url_list)}] {entry}", align="left", style="subtitle")
             set_id = int(entry.split("/")[-1])
             set_data = mediux.scrape_set(set_id=set_id)
             tmdb_id = (
@@ -502,6 +605,19 @@ def set_posters(
                         tmdb_id,
                     )
                     continue
+            CONSOLE.rule(
+                f"[{index + 1}/{len(url_list)}] {obj.display_name} [{obj.tmdb_id}]",
+                align="left",
+                style="subtitle",
+            )
+            if simple_clean:
+                LOGGER.info("Cleaning %s cache", obj.display_name)
+                delete_folder(
+                    folder=get_cache_root()
+                    / "covers"
+                    / obj.mediatype.value
+                    / slugify(obj.display_name)
+                )
             LOGGER.info(
                 "Downloading '%s' by '%s'",
                 set_data.get("set_name"),
