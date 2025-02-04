@@ -227,6 +227,14 @@ def sync_posters(
                         / entry.mediatype.value
                         / slugify(entry.display_name)
                     )
+                    if isinstance(entry, BaseCollection):
+                        for movie in entry.movies:
+                            delete_folder(
+                                folder=get_cache_root()
+                                / "covers"
+                                / movie.mediatype.value
+                                / slugify(movie.display_name)
+                            )
                 LOGGER.info(
                     "[%s] Searching Mediux for '%s' sets",
                     type(service).__name__,
@@ -324,6 +332,14 @@ def show_posters(
                     / obj.mediatype.value
                     / slugify(obj.display_name)
                 )
+                if isinstance(obj, BaseCollection):
+                    for movie in obj.movies:
+                        delete_folder(
+                            folder=get_cache_root()
+                            / "covers"
+                            / movie.mediatype.value
+                            / slugify(movie.display_name)
+                        )
             set_list = mediux.list_sets(mediatype=MediaType.SHOW, tmdb_id=tmdb_id)
             for set_data in filter_sets(set_list=set_list, settings=settings, mediux=mediux):
                 LOGGER.info(
@@ -417,6 +433,14 @@ def collection_posters(
                     / obj.mediatype.value
                     / slugify(obj.display_name)
                 )
+                if isinstance(obj, BaseCollection):
+                    for movie in obj.movies:
+                        delete_folder(
+                            folder=get_cache_root()
+                            / "covers"
+                            / movie.mediatype.value
+                            / slugify(movie.display_name)
+                        )
             set_list = mediux.list_sets(mediatype=MediaType.COLLECTION, tmdb_id=tmdb_id)
             for set_data in filter_sets(set_list=set_list, settings=settings, mediux=mediux):
                 LOGGER.info(
@@ -509,6 +533,14 @@ def movie_posters(
                     / obj.mediatype.value
                     / slugify(obj.display_name)
                 )
+                if isinstance(obj, BaseCollection):
+                    for movie in obj.movies:
+                        delete_folder(
+                            folder=get_cache_root()
+                            / "covers"
+                            / movie.mediatype.value
+                            / slugify(movie.display_name)
+                        )
             set_list = mediux.list_sets(mediatype=MediaType.MOVIE, tmdb_id=tmdb_id)
             for set_data in filter_sets(set_list=set_list, settings=settings, mediux=mediux):
                 LOGGER.info(
@@ -618,6 +650,14 @@ def set_posters(
                     / obj.mediatype.value
                     / slugify(obj.display_name)
                 )
+                if isinstance(obj, BaseCollection):
+                    for movie in obj.movies:
+                        delete_folder(
+                            folder=get_cache_root()
+                            / "covers"
+                            / movie.mediatype.value
+                            / slugify(movie.display_name)
+                        )
             LOGGER.info(
                 "Downloading '%s' by '%s'",
                 set_data.get("set_name"),
