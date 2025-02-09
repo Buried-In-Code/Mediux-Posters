@@ -174,15 +174,6 @@ def sync_posters(
             "--full-clean", "-C", show_default=False, help="Delete the whole cache before starting."
         ),
     ] = False,
-    simple_clean: Annotated[
-        bool,
-        Option(
-            "--simple-clean",
-            "-c",
-            show_default=False,
-            help="Delete the cache of each media instead of the whole cache.",
-        ),
-    ] = False,
     debug: Annotated[
         bool,
         Option(
@@ -215,26 +206,10 @@ def sync_posters(
                 entries = func(skip_libraries=skip_libraries)[start:end]
             for index, entry in enumerate(entries):
                 CONSOLE.rule(
-                    f"[{index + 1}/{len(entries)}] {entry.display_name} [{entry.tmdb_id}]",
+                    f"[{index + 1}/{len(entries)}] {entry.display_name} [tmdb-{entry.tmdb_id}]",
                     align="left",
                     style="subtitle",
                 )
-                if simple_clean:
-                    LOGGER.info("Cleaning %s cache", entry.display_name)
-                    delete_folder(
-                        folder=get_cache_root()
-                        / "covers"
-                        / entry.mediatype.value
-                        / slugify(entry.display_name)
-                    )
-                    if isinstance(entry, BaseCollection):
-                        for movie in entry.movies:
-                            delete_folder(
-                                folder=get_cache_root()
-                                / "covers"
-                                / movie.mediatype.value
-                                / slugify(movie.display_name)
-                            )
                 LOGGER.info(
                     "[%s] Searching Mediux for '%s' sets",
                     type(service).__name__,
@@ -320,7 +295,7 @@ def show_posters(
                     LOGGER.warning("[%s] Unable to find '%d'", type(service).__name__, tmdb_id)
                     continue
             CONSOLE.rule(
-                f"[{index + 1}/{len(url_list)}] {obj.display_name} [{obj.tmdb_id}]",
+                f"[{index + 1}/{len(url_list)}] {obj.display_name} [tmdb-{obj.tmdb_id}]",
                 align="left",
                 style="subtitle",
             )
@@ -421,7 +396,7 @@ def collection_posters(
                     LOGGER.warning("[%s] Unable to find '%d'", type(service).__name__, tmdb_id)
                     continue
             CONSOLE.rule(
-                f"[{index + 1}/{len(url_list)}] {obj.display_name} [{obj.tmdb_id}]",
+                f"[{index + 1}/{len(url_list)}] {obj.display_name} [tmdb-{obj.tmdb_id}]",
                 align="left",
                 style="subtitle",
             )
@@ -521,7 +496,7 @@ def movie_posters(
                     LOGGER.warning("[%s] Unable to find '%d'", type(service).__name__, tmdb_id)
                     continue
             CONSOLE.rule(
-                f"[{index + 1}/{len(url_list)}] {obj.display_name} [{obj.tmdb_id}]",
+                f"[{index + 1}/{len(url_list)}] {obj.display_name} [tmdb-{obj.tmdb_id}]",
                 align="left",
                 style="subtitle",
             )
@@ -622,7 +597,7 @@ def set_posters(
             if tmdb_id:
                 tmdb_id = int(tmdb_id)
             with CONSOLE.status(
-                f"Searching {type(service).__name__} for '{set_data.get('set_name')} [{tmdb_id}]'"
+                f"Searching {type(service).__name__} for '{set_data.get('set_name')} [tmdb-{tmdb_id}]'"
             ):
                 obj = (
                     service.get_show(tmdb_id=tmdb_id)
@@ -638,7 +613,7 @@ def set_posters(
                     )
                     continue
             CONSOLE.rule(
-                f"[{index + 1}/{len(url_list)}] {obj.display_name} [{obj.tmdb_id}]",
+                f"[{index + 1}/{len(url_list)}] {obj.display_name} [tmdb-{obj.tmdb_id}]",
                 align="left",
                 style="subtitle",
             )
