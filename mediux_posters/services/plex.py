@@ -4,7 +4,7 @@ import logging
 from typing import Literal
 
 from plexapi.collection import Collection as PlexCollection
-from plexapi.exceptions import BadRequest
+from plexapi.exceptions import BadRequest, NotFound
 from plexapi.server import PlexServer
 from plexapi.video import (
     Episode as PlexEpisode,
@@ -74,26 +74,29 @@ class Plex(BaseService[Show, Season, Episode, Collection, Movie]):
     def _search(
         self, library_type: Literal["movie", "show", "collection"], search_id: int
     ) -> Show | Movie | Collection | None:
-        for library in self.session.library.sections():
-            if library.type == "show" and library.type == library_type:
-                for show in library.all():
-                    tmdb_id = self.extract_tmdb(entry=show)
-                    if not tmdb_id or tmdb_id != search_id:
-                        continue
-                    return self._parse_show(plex_show=show)
-            elif library.type == "movie" and library_type in (library.type, "collection"):
-                if library_type == "movie":
-                    for movie in library.all():
-                        tmdb_id = self.extract_tmdb(entry=movie)
+        try:
+            for library in self.session.library.sections():
+                if library.type == "show" and library.type == library_type:
+                    for show in library.all():
+                        tmdb_id = self.extract_tmdb(entry=show)
                         if not tmdb_id or tmdb_id != search_id:
                             continue
-                        return self._parse_movie(movie=movie)
-                elif library_type == "collection":
-                    for collection in library.collections():
-                        tmdb_id = self.extract_tmdb(entry=collection)
-                        if not tmdb_id or tmdb_id != search_id:
-                            continue
-                        return self._parse_collection(collection=collection)
+                        return self._parse_show(plex_show=show)
+                elif library.type == "movie" and library_type in (library.type, "collection"):
+                    if library_type == "movie":
+                        for movie in library.all():
+                            tmdb_id = self.extract_tmdb(entry=movie)
+                            if not tmdb_id or tmdb_id != search_id:
+                                continue
+                            return self._parse_movie(movie=movie)
+                    elif library_type == "collection":
+                        for collection in library.collections():
+                            tmdb_id = self.extract_tmdb(entry=collection)
+                            if not tmdb_id or tmdb_id != search_id:
+                                continue
+                            return self._parse_collection(collection=collection)
+        except ReadTimeout as err:
+            LOGGER.error("[Plex] Failed to find %s with id %s: %s", library_type, search_id, err)
         return None
 
     def _parse_show(self, plex_show: PlexShow) -> Show:
@@ -199,7 +202,7 @@ class Plex(BaseService[Show, Season, Episode, Collection, Movie]):
                 try:
                     func(filepath=str(image_file))
                     setattr(obj, field, True)
-                except (ConnectionError, HTTPError, ReadTimeout, BadRequest) as err:
+                except (ConnectionError, HTTPError, ReadTimeout, BadRequest, NotFound) as err:
                     LOGGER.error(
                         "[Plex] Failed to upload %s: %s",
                         image_file.relative_to(get_cache_root() / "covers"),

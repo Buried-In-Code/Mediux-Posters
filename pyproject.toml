@@ -30,7 +30,7 @@ classifiers = [
 ]
 dependencies = [
   "PlexAPI >= 4.16.1",
-  "beautifulsoup4 >= 4.13.0",
+  "beautifulsoup4 >= 4.13.3",
   "pydantic >= 2.10.6",
   "requests >= 2.32.3",
   "rich >= 13.9.4",

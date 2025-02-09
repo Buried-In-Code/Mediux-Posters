@@ -36,12 +36,6 @@ Pulls Posters, Backdrops and Title Cards.
   ![`uv run Mediux-Posters sync --help`](docs/img/mediux-posters_sync.svg)
 
 </details>
-<details><summary>Mediux-Posters set</summary>
-
-  <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters set --help`](docs/img/mediux-posters_set.svg)
-
-</details>
 <details><summary>Mediux-Posters show</summary>
 
   <!-- RICH-CODEX hide_command: true -->
@@ -60,6 +54,12 @@ Pulls Posters, Backdrops and Title Cards.
   ![`uv run Mediux-Posters movie --help`](docs/img/mediux-posters_movie.svg)
 
 </details>
+<details><summary>Mediux-Posters set</summary>
+
+  <!-- RICH-CODEX hide_command: true -->
+  ![`uv run Mediux-Posters set --help`](docs/img/mediux-posters_set.svg)
+
+</details>
 <details><summary>Mediux-Posters settings</summary>
 
   <!-- RICH-CODEX hide_command: true -->
@@ -67,6 +67,16 @@ Pulls Posters, Backdrops and Title Cards.
 
 </details>
 
+## Notes
+
+ - When running a sync/show/collection/movie it will keep downloading sets until all the needed posters are found.
+    - **Show:** Poster and Backdrop
+    - **Season:** Poster
+    - **Episode:** Title Card
+    - **Collection:** Poster and Backdrop
+    - **Movie:** Poster and Backdrop
+ - To enable support for Collections in Plex, each Collection needs to have a label with its tmdb-id, in the format of `tmdb-<number>`\
+   If using Kometa, refer to [this comment](https://github.com/Buried-In-Code/Mediux-Posters/issues/12#issuecomment-2622002859) to have Kometa add these labels.
 
 ## Settings
 
