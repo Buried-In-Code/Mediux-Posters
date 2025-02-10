@@ -53,6 +53,7 @@ class Settings(BaseModel):
     _file: ClassVar[Path] = get_config_root() / "settings.toml"
 
     exclude_usernames: list[str] = Field(default_factory=list)
+    kometa_integration: bool = False
     only_priority_usernames: bool = False
     priority_usernames: list[str] = Field(default_factory=list)
     jellyfin: Jellyfin = Jellyfin()

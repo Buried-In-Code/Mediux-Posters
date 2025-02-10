@@ -90,29 +90,27 @@ def filter_sets(
 
 def update_posters(
     mediux_data: dict,
-    obj: BaseShow | BaseMovie | BaseCollection,
+    obj: BaseShow | BaseCollection | BaseMovie,
     mediux: Mediux,
     service: BaseService,
+    kometa_integration: bool,
     abort_on_unknown: bool = False,
     debug: bool = False,
 ) -> None:
     if mediux_data.get("show") and isinstance(obj, BaseShow):
         mediux.download_show_posters(data=mediux_data, show=obj)
-        service.upload_posters(obj=obj)
+        service.upload_posters(obj=obj, kometa_integration=kometa_integration)
         for season in obj.seasons:
-            service.upload_posters(obj=season)
+            service.upload_posters(obj=season, kometa_integration=kometa_integration)
             for episode in season.episodes:
-                service.upload_posters(obj=episode)
-    elif mediux_data.get("movie") and isinstance(obj, BaseMovie):
-        mediux.download_movie_posters(data=mediux_data, movie=obj)
-        service.upload_posters(obj=obj)
+                service.upload_posters(obj=episode, kometa_integration=kometa_integration)
     elif mediux_data.get("collection") and isinstance(obj, BaseCollection):
         mediux.download_collection_posters(data=mediux_data, collection=obj)
-        service.upload_posters(obj=obj)
+        service.upload_posters(obj=obj, kometa_integration=kometa_integration)
         for movie_data in mediux_data.get("collection", {}).get("movies", []):
             if movie := service.get_movie(tmdb_id=int(movie_data.get("id", -1))):
                 mediux.download_movie_posters(data=mediux_data, movie=movie)
-                service.upload_posters(obj=movie)
+                service.upload_posters(obj=movie, kometa_integration=kometa_integration)
             else:
                 LOGGER.warning(
                     "[%s] Unable to find '%s (%s)'",
@@ -120,6 +118,9 @@ def update_posters(
                     movie_data.get("title"),
                     (movie_data.get("release_date") or "0000")[:4],
                 )
+    elif mediux_data.get("movie") and isinstance(obj, BaseMovie):
+        mediux.download_movie_posters(data=mediux_data, movie=obj)
+        service.upload_posters(obj=obj, kometa_integration=kometa_integration)
     else:
         LOGGER.error("Unknown data set: %s", mediux_data)
         if debug:
@@ -223,7 +224,12 @@ def sync_posters(
                         set_data.get("user_created", {}).get("username"),
                     )
                     update_posters(
-                        mediux_data=set_data, obj=entry, mediux=mediux, service=service, debug=debug
+                        mediux_data=set_data,
+                        obj=entry,
+                        mediux=mediux,
+                        service=service,
+                        kometa_integration=settings.kometa_integration,
+                        debug=debug,
                     )
                     if entry.all_posters_uploaded:
                         break
@@ -323,7 +329,12 @@ def show_posters(
                     set_data.get("user_created", {}).get("username"),
                 )
                 update_posters(
-                    mediux_data=set_data, obj=obj, mediux=mediux, service=service, debug=debug
+                    mediux_data=set_data,
+                    obj=obj,
+                    mediux=mediux,
+                    service=service,
+                    kometa_integration=settings.kometa_integration,
+                    debug=debug,
                 )
                 if obj.all_posters_uploaded:
                     break
@@ -424,7 +435,12 @@ def collection_posters(
                     set_data.get("user_created", {}).get("username"),
                 )
                 update_posters(
-                    mediux_data=set_data, obj=obj, mediux=mediux, service=service, debug=debug
+                    mediux_data=set_data,
+                    obj=obj,
+                    mediux=mediux,
+                    service=service,
+                    kometa_integration=settings.kometa_integration,
+                    debug=debug,
                 )
                 if obj.all_posters_uploaded:
                     break
@@ -524,7 +540,12 @@ def movie_posters(
                     set_data.get("user_created", {}).get("username"),
                 )
                 update_posters(
-                    mediux_data=set_data, obj=obj, mediux=mediux, service=service, debug=debug
+                    mediux_data=set_data,
+                    obj=obj,
+                    mediux=mediux,
+                    service=service,
+                    kometa_integration=settings.kometa_integration,
+                    debug=debug,
                 )
                 if obj.all_posters_uploaded:
                     break
@@ -597,7 +618,7 @@ def set_posters(
             if tmdb_id:
                 tmdb_id = int(tmdb_id)
             with CONSOLE.status(
-                f"Searching {type(service).__name__} for '{set_data.get('set_name')} [tmdb-{tmdb_id}]'"
+                f"Searching {type(service).__name__} for '{set_data.get('set_name')} [{tmdb_id}]'"
             ):
                 obj = (
                     service.get_show(tmdb_id=tmdb_id)
@@ -643,6 +664,7 @@ def set_posters(
                 obj=obj,
                 mediux=mediux,
                 service=service,
+                kometa_integration=settings.kometa_integration,
                 abort_on_unknown=True,
                 debug=debug,
             )
