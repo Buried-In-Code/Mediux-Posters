@@ -69,14 +69,14 @@ Pulls Posters, Backdrops and Title Cards.
 
 ## Notes
 
- - When running a sync/show/collection/movie it will keep downloading sets until all the needed posters are found.
-    - **Show:** Poster and Backdrop
-    - **Season:** Poster
-    - **Episode:** Title Card
-    - **Collection:** Poster and Backdrop
-    - **Movie:** Poster and Backdrop
- - To enable support for Collections in Plex, each Collection needs to have a label with its tmdb-id, in the format of `tmdb-<number>`\
-   If using Kometa, refer to [this comment](https://github.com/Buried-In-Code/Mediux-Posters/issues/12#issuecomment-2622002859) to have Kometa add these labels.
+- When running a sync/show/collection/movie it will keep downloading sets until all the needed posters are found.
+  - **Show:** Poster and Backdrop
+  - **Season:** Poster
+  - **Episode:** Title Card
+  - **Collection:** Poster and Backdrop
+  - **Movie:** Poster and Backdrop
+- To enable support for Collections in Plex, each Collection needs to have a label with its tmdb-id, in the format of `tmdb-<number>`\
+  If using Kometa, refer to [this comment](https://github.com/Buried-In-Code/Mediux-Posters/issues/12#issuecomment-2622002859) to have Kometa add these labels.
 
 ## Settings
 
@@ -87,6 +87,7 @@ File will be created on first run.
 
 ```toml
 exclude_usernames = []
+kometa_integration = false
 only_priority_usernames = false
 priority_usernames = []
 
@@ -104,6 +105,10 @@ token = "<Token>"
 - `exclude_usernames`
 
   A list of usernames whose sets should be ignored when running a sync.
+
+- `kometa_integration`
+
+  If enabled, will remove the `Overlay` label from any media Mediux-Posters uploads a poster/backdrop/title-card to.
 
 - `only_priority_usernames`
 

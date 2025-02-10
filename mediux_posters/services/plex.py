@@ -182,7 +182,9 @@ class Plex(BaseService[Show, Season, Episode, Collection, Movie]):
     def get_collection(self, tmdb_id: int) -> Collection | None:
         return self._search(library_type="collection", search_id=tmdb_id)
 
-    def upload_posters(self, obj: Show | Season | Episode | Movie | Collection) -> None:
+    def upload_posters(
+        self, obj: Show | Season | Episode | Movie | Collection, kometa_integration: bool
+    ) -> None:
         if isinstance(obj, Show | Movie | Collection):
             options = [
                 (obj.poster, "poster_uploaded", obj.plex.uploadPoster),
@@ -202,6 +204,8 @@ class Plex(BaseService[Show, Season, Episode, Collection, Movie]):
                 try:
                     func(filepath=str(image_file))
                     setattr(obj, field, True)
+                    if kometa_integration:
+                        obj.plex.removeLabel("Overlay").reload()
                 except (ConnectionError, HTTPError, ReadTimeout, BadRequest, NotFound) as err:
                     LOGGER.error(
                         "[Plex] Failed to upload %s: %s",

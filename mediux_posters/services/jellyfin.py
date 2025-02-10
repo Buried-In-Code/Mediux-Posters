@@ -234,7 +234,11 @@ class Jellyfin(BaseService[Show, Season, Episode, None, Movie]):
     def get_collection(self, tmdb_id: int) -> None:  # noqa: ARG002
         return None
 
-    def upload_posters(self, obj: Show | Season | Episode | Movie | None) -> None:
+    def upload_posters(
+        self,
+        obj: Show | Season | Episode | Movie | None,
+        kometa_integration: bool,  # noqa: ARG002
+    ) -> None:
         if isinstance(obj, Show | Movie):
             options = [
                 (obj.poster, "poster_uploaded", "Primary"),
