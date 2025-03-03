@@ -204,7 +204,7 @@ class Jellyfin(BaseService[Show, Season, Episode, None, Movie]):
         libraries = [
             x
             for x in libraries
-            if x.get("CollectionType") == "tvshows" and x.get("Name") not in skip_libraries
+            if x.get("CollectionType") == "movies" and x.get("Name") not in skip_libraries
         ]
 
         output = []
