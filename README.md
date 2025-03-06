@@ -10,10 +10,9 @@
 
 [![Github - Contributors](https://img.shields.io/github/contributors/Buried-In-Code/Mediux-Posters.svg?logo=Github&label=Contributors&style=flat-square)](https://github.com/Buried-In-Code/Mediux-Posters/graphs/contributors)
 
-Pull Shows, Movies and Collections from Mediux and updates Plex/Jellyfin.
-Pulls Posters, Backdrops and Title Cards.
+Fetches Show, Movie, and Collection cover art from Mediux and updates Plex/Jellyfin using TMDB IDs.
 
-**_Uses TMDB Id to match shows/movies/collections_**
+_Jellyfin Collections are not yet supported._
 
 ## Installation
 

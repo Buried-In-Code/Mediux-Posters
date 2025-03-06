@@ -147,10 +147,13 @@ class Mediux:
 
         for season in show.seasons:
             season_data = next(
-                iter(
+                (
                     x
                     for x in data.get("show", {}).get("seasons", [])
                     if int(x.get("season_number", "-1")) == season.number
+                    and _get_file_id(
+                        data=data, file_type="poster", id_key="season_id", id_value=str(x.get("id"))
+                    )
                 ),
                 None,
             )
@@ -162,19 +165,28 @@ class Mediux:
                     season.number,
                 )
                 continue
-            if poster_id := _get_file_id(
-                data=data, file_type="poster", id_key="season_id", id_value=season_data.get("id")
-            ):
-                season.poster = self._download_image(
-                    obj=show, filename=f"S{season.number:02}", image_id=poster_id
-                )
+            poster_id = _get_file_id(
+                data=data,
+                file_type="poster",
+                id_key="season_id",
+                id_value=str(season_data.get("id")),
+            )
+            season.poster = self._download_image(
+                obj=show, filename=f"S{season.number:02}", image_id=poster_id
+            )
 
             for episode in season.episodes:
                 episode_data = next(
-                    iter(
+                    (
                         x
                         for x in season_data.get("episodes", [])
                         if int(x.get("episode_number", "-1")) == episode.number
+                        and _get_file_id(
+                            data=data,
+                            file_type="title_card",
+                            id_key="episode_id",
+                            id_value=str(x.get("id")),
+                        )
                     ),
                     None,
                 )
@@ -187,17 +199,17 @@ class Mediux:
                         episode.number,
                     )
                     continue
-                if title_card_id := _get_file_id(
+                title_card_id = _get_file_id(
                     data=data,
                     file_type="title_card",
                     id_key="episode_id",
-                    id_value=episode_data.get("id"),
-                ):
-                    episode.title_card = self._download_image(
-                        obj=show,
-                        filename=f"S{season.number:02}E{episode.number:02}",
-                        image_id=title_card_id,
-                    )
+                    id_value=str(episode_data.get("id")),
+                )
+                episode.title_card = self._download_image(
+                    obj=show,
+                    filename=f"S{season.number:02}E{episode.number:02}",
+                    image_id=title_card_id,
+                )
 
     def download_movie_posters(self, data: dict, movie: BaseMovie) -> None:
         if poster_id := _get_file_id(
