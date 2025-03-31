@@ -16,5 +16,3 @@ logs/
 .envrc
 .pdm-python
 .python-version
-pdm.lock
-uv.lock
