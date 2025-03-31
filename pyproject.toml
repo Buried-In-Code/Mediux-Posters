@@ -4,10 +4,10 @@ requires = ["hatchling"]
 
 [dependency-groups]
 dev = [
-  "pre-commit >= 4.1.0"
+  "pre-commit >= 4.2.0"
 ]
 docs = [
-  "rich-codex >= 1.2.7"
+  "rich-codex >= 1.2.10"
 ]
 
 [project]
@@ -31,12 +31,12 @@ classifiers = [
 dependencies = [
   "PlexAPI >= 4.16.1",
   "beautifulsoup4 >= 4.13.3",
-  "pydantic >= 2.10.6",
+  "pydantic >= 2.11.1",
   "requests >= 2.32.3",
-  "rich >= 13.9.4",
+  "rich >= 14.0.0",
   "tomli >= 2.2.1 ; python_version < '3.11'",
   "tomli-w >= 1.2.0",
-  "typer >= 0.15.1"
+  "typer >= 0.15.2"
 ]
 description = "Pull Shows, Movies and Collections from Mediux and updates Plex/Jellyfin. Pulls Posters, Backdrops and Title Cards."
 dynamic = ["version"]

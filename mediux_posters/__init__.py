@@ -6,7 +6,7 @@ __all__ = [
     "get_state_root",
     "setup_logging",
 ]
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 
 import logging
 import os

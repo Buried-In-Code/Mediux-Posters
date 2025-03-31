@@ -150,7 +150,8 @@ class Mediux:
                 (
                     x
                     for x in data.get("show", {}).get("seasons", [])
-                    if int(x.get("season_number", "-1")) == season.number
+                    if str(x.get("season_number", "-1")).isdigit()
+                    and int(x.get("season_number", "-1")) == season.number
                     and _get_file_id(
                         data=data, file_type="poster", id_key="season_id", id_value=str(x.get("id"))
                     )
@@ -180,7 +181,8 @@ class Mediux:
                     (
                         x
                         for x in season_data.get("episodes", [])
-                        if int(x.get("episode_number", "-1")) == episode.number
+                        if str(x.get("episode_number", "-1")).isdigit()
+                        and int(x.get("episode_number", "-1")) == episode.number
                         and _get_file_id(
                             data=data,
                             file_type="title_card",
