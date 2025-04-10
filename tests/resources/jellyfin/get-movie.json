@@ -1,0 +1,43 @@
+{
+  "Items": [{
+    "Name": "Kiki's Delivery Service",
+    "ServerId": "dc3a12fa42114b4b9e119db7af393829",
+    "Id": "3fc8b00200041d83e3118646d82ba4e4",
+    "HasSubtitles": true,
+    "Container": "mkv",
+    "PremiereDate": "1989-07-29T00:00:00.0000000Z",
+    "OfficialRating": "G",
+    "ChannelId": null,
+    "CommunityRating": 7.8,
+    "RunTimeTicks": 61827610000,
+    "ProductionYear": 1989,
+    "ProviderIds": {
+      "Imdb": "tt0097814",
+      "Tmdb": "16859"
+    },
+    "IsFolder": false,
+    "Type": "Movie",
+    "VideoType": "VideoFile",
+    "ImageTags": {
+      "Primary": "b7fe0bfb8a23d763de09ed31c4ca94da",
+      "Logo": "de1002590d65277240ee5ccf59272c47",
+      "Thumb": "0016d6f941fbe2d52d77b4f7a44bc9c7"
+    },
+    "BackdropImageTags": ["a49c502b3b18219ef9337dd4bc1d4f1d"],
+    "ImageBlurHashes": {
+      "Backdrop": {
+        "a49c502b3b18219ef9337dd4bc1d4f1d": "WLD0fiXAES-=IVtl?wWoI;bXM{t6Nh%MWbNKxaRkgOxYt8bcslNG"
+      },
+      "Primary": {
+        "b7fe0bfb8a23d763de09ed31c4ca94da": "dpE3**M}X9of%%WXt7j[NfxtadR*NMf5V@fkRjRkkCoL"
+      },
+      "Logo": {
+        "de1002590d65277240ee5ccf59272c47": "NEK-qPD%%MxuofWB?bRjxu%MRjM{~qj[%MxuWBWB"
+      },
+      "Thumb": {
+        "0016d6f941fbe2d52d77b4f7a44bc9c7": "WFBg_CSQ9*~pIYNsK+%3-WImbHe.0gxur]I@%KRRtKE9IqxtWFxo"
+      }},
+    "LocationType": "FileSystem",
+    "MediaType": "Video"
+  }]
+}
