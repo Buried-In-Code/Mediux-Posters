@@ -1,0 +1,270 @@
+__all__ = ["Jellyfin"]
+
+import logging
+import mimetypes
+from base64 import b64encode
+from json import JSONDecodeError
+from platform import release, system
+from typing import Literal
+
+from httpx import Client, HTTPStatusError, RequestError, TimeoutException
+from pydantic import TypeAdapter, ValidationError
+from ratelimit import limits, sleep_and_retry
+
+from mediux_posters import __version__
+from mediux_posters.constants import CONSOLE
+from mediux_posters.errors import AuthenticationError, ServiceError
+from mediux_posters.services._base import BaseService
+from mediux_posters.services.jellyfin.schemas import (
+    Collection,
+    Episode,
+    Library,
+    Movie,
+    Season,
+    Show,
+)
+
+LOGGER = logging.getLogger(__name__)
+MINUTE = 60
+
+
+class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
+    def __init__(self, base_url: str, token: str):
+        self.client = Client(
+            base_url=base_url,
+            headers={
+                "Accept": "application/json",
+                "X-Emby-Token": token,
+                "User-Agent": f"Mediux-Posters/{__version__}/{system()}: {release()}",
+            },
+        )
+
+    @classmethod
+    def extract_id(cls, entry: dict, prefix: str = "Tmdb") -> str | None:
+        return entry.get("ProviderIds", {}).get(prefix)
+
+    @sleep_and_retry
+    @limits(calls=30, period=MINUTE)
+    def _perform_get_request(
+        self, endpoint: str, params: dict[str, str | list[str]] | None = None
+    ) -> dict:
+        if params is None:
+            params = {}
+
+        try:
+            response = self.client.get(endpoint, params=params)
+            response.raise_for_status()
+            return response.json()
+        except RequestError as err:
+            raise ServiceError(f"Unable to connect to '{err.request.url.path}'") from err
+        except HTTPStatusError as err:
+            try:
+                error_msg = f"{err.response.json()['title']}: {err.response.json()['detail']}"
+                if err.response.status_code in (401, 403):
+                    raise AuthenticationError(f"{err.response.status_code}: {error_msg}")
+                raise ServiceError(f"{err.response.status_code}: {error_msg}")
+            except JSONDecodeError as err:
+                raise ServiceError("Unable to parse response as Json") from err
+        except JSONDecodeError as err:
+            raise ServiceError("Unable to parse response as Json") from err
+        except TimeoutException as err:
+            raise ServiceError("Service took too long to respond") from err
+
+    @sleep_and_retry
+    @limits(calls=30, period=MINUTE)
+    def _perform_post_request(
+        self, endpoint: str, body: bytes, headers: dict[str, str] | None = None
+    ) -> None:
+        if headers is None:
+            headers = {}
+
+        try:
+            response = self.client.post(endpoint, headers=headers, data=body)
+            response.raise_for_status()
+        except RequestError as err:
+            raise ServiceError(f"Unable to connect to '{err.request.url.path}'") from err
+        except HTTPStatusError as err:
+            try:
+                error_msg = f"{err.response.json()['title']}: {err.response.json()['detail']}"
+                if err.response.status_code in (401, 403):
+                    raise AuthenticationError(f"{err.response.status_code}: {error_msg}")
+                raise ServiceError(f"{err.response.status_code}: {error_msg}")
+            except JSONDecodeError as err:
+                raise ServiceError("Unable to parse response as Json") from err
+        except JSONDecodeError as err:
+            raise ServiceError("Unable to parse response as Json") from err
+        except TimeoutException as err:
+            raise ServiceError("Service took too long to respond") from err
+
+    def _list_libraries(
+        self,
+        media_type: Literal["movies", "tvshows", "unknown"],
+        skip_libraries: list[str] | None = None,
+    ) -> list[Library]:
+        skip_libraries = skip_libraries or []
+        results = [
+            x
+            for x in self._perform_get_request(endpoint="/Library/MediaFolders").get("Items", [])
+            if x.get("CollectionType") == media_type
+        ]
+        results = [x for x in results if x.get("Name") not in skip_libraries]
+        try:
+            return TypeAdapter(list[Library]).validate_python(results)
+        except ValidationError as err:
+            raise ServiceError(err) from err
+
+    def _parse_show(self, jellyfin_show: dict) -> Show:
+        show = TypeAdapter(Show).validate_python(jellyfin_show)
+        for jellyfin_season in self._list_seasons(show_id=show.id):
+            season = TypeAdapter(Season).validate_python(jellyfin_season)
+            for jellyfin_episode in self._list_episodes(show_id=show.id, season_id=season.id):
+                episode = TypeAdapter(Episode).validate_python(jellyfin_episode)
+                season.episodes.append(episode)
+            show.seasons.append(season)
+        return show
+
+    def _list_shows(
+        self,
+        skip_libraries: list[str] | None = None,
+        tmdb_id: int | None = None,
+        series_id: str | None = None,
+    ) -> list[Show]:
+        libraries = self._list_libraries(media_type="tvshows", skip_libraries=skip_libraries)
+        output = []
+        for library in libraries:
+            results = self._perform_get_request(
+                endpoint="/Items",
+                params={
+                    "hasTmdbId": True,
+                    "fields": ["ProviderIds"],
+                    "ParentId": library.id,
+                    "Recursive": True,
+                    "IncludeItemTypes": "Series",
+                    "Ids": [series_id],
+                },
+            ).get("Items", [])
+            for result in results:
+                tmdb = self.extract_id(entry=result)
+                if not tmdb or (tmdb_id is not None and int(tmdb) != tmdb_id):
+                    continue
+                try:
+                    output.append(self._parse_show(jellyfin_show=result))
+                except ValidationError as err:
+                    raise ServiceError(err) from err
+        return output
+
+    def _list_seasons(self, show_id: str) -> list[dict]:
+        return self._perform_get_request(
+            endpoint=f"/Shows/{show_id}/Seasons", params={"fields": ["ProviderIds"]}
+        ).get("Items", [])
+
+    def _list_episodes(self, show_id: str, season_id: str) -> list[dict]:
+        return self._perform_get_request(
+            endpoint=f"/Shows/{show_id}/Episodes",
+            params={"seasonId": season_id, "fields": ["ProviderIds"]},
+        ).get("Items", [])
+
+    def list_shows(self, skip_libraries: list[str] | None = None) -> list[Show]:
+        return self._list_shows(skip_libraries=skip_libraries)
+
+    def get_show(self, tmdb_id: int) -> Show | None:
+        return next(iter(self._list_shows(tmdb_id=tmdb_id)), None)
+
+    def _list_collections(
+        self,
+        skip_libraries: list[str] | None = None,
+        tmdb_id: int | None = None,
+        collection_id: str | None = None,
+    ) -> list[Collection]:
+        libraries = self._list_libraries(media_type="unknown", skip_libraries=skip_libraries)
+        output = []
+        for _library in libraries:
+            pass
+        return output
+
+    def list_collections(self, skip_libraries: list[str] | None = None) -> list[Collection]:
+        return self._list_collections(skip_libraries=skip_libraries)
+
+    def get_collection(self, tmdb_id: int) -> Collection | None:
+        return next(iter(self._list_collections(tmdb_id=tmdb_id)), None)
+
+    def _parse_movie(self, jellyfin_movie: dict) -> Movie:
+        return TypeAdapter(Movie).validate_python(jellyfin_movie)
+
+    def _list_movies(
+        self,
+        skip_libraries: list[str] | None = None,
+        tmdb_id: int | None = None,
+        movie_id: str | None = None,
+    ) -> list[Movie]:
+        libraries = self._list_libraries(media_type="movies", skip_libraries=skip_libraries)
+        output = []
+        for library in libraries:
+            results = self._perform_get_request(
+                endpoint="/Items",
+                params={
+                    "hasTmdbId": True,
+                    "fields": ["ProviderIds"],
+                    "ParentId": library.id,
+                    "Recursive": True,
+                    "IncludeItemTypes": "Movie",
+                    "Ids": [movie_id],
+                },
+            ).get("Items", [])
+            for result in results:
+                tmdb = self.extract_id(entry=result)
+                if not tmdb or (tmdb_id is not None and int(tmdb) != tmdb_id):
+                    continue
+                try:
+                    output.append(self._parse_movie(jellyfin_movie=result))
+                except ValidationError as err:
+                    raise ServiceError(err) from err
+        return output
+
+    def list_movies(self, skip_libraries: list[str] | None = None) -> list[Movie]:
+        return self._list_movies(skip_libraries=skip_libraries)
+
+    def get_movie(self, tmdb_id: int) -> Movie | None:
+        return next(iter(self._list_movies(tmdb_id=tmdb_id)), None)
+
+    def upload_posters(
+        self,
+        obj: Show | Season | Episode | Movie | Collection,
+        kometa_integration: bool,  # noqa: ARG002
+    ) -> None:
+        if isinstance(obj, Show | Movie):
+            options = [
+                (obj.poster, "poster_uploaded", "Primary"),
+                (obj.backdrop, "backdrop_uploaded", "Backdrop"),
+            ]
+        elif isinstance(obj, Season):
+            options = [(obj.poster, "poster_uploaded", "Primary")]
+        elif isinstance(obj, Episode):
+            options = [(obj.title_card, "title_card_uploaded", "Primary")]
+        else:
+            LOGGER.warning("Updating %s posters aren't supported", type(obj).__name__)
+            return
+        for image_file, field, image_type in options:
+            if not image_file or not image_file.exists() or getattr(obj, field):
+                continue
+            with CONSOLE.status(
+                rf"\[Jellyfin] Uploading {image_file.parent.name}/{image_file.name}"
+            ):
+                mime_type, _ = mimetypes.guess_type(image_file)
+                if not mime_type:
+                    mime_type = "image/jpeg"
+                headers = {"Content-Type": mime_type}
+                with image_file.open("rb") as stream:
+                    image_data = b64encode(stream.read())
+                try:
+                    self._perform_post_request(
+                        endpoint=f"/Items/{obj.id}/Images/{image_type}",
+                        headers=headers,
+                        body=image_data,
+                    )
+                    setattr(obj, field, True)
+                except ServiceError as err:
+                    LOGGER.error(
+                        f"[Jellyfin] Failed to upload '{image_file.parent.name}/{image_file.name}'",  # noqa: G004
+                        err,
+                    )
