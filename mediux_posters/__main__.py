@@ -1,25 +1,27 @@
-import json
 import logging
-from collections.abc import Callable, Generator
-from enum import Enum
+from collections.abc import Generator
 from pathlib import Path
 from platform import python_version
-from typing import Annotated
-from uuid import uuid4
+from typing import Annotated, Protocol, TypeVar
 
 from plexapi.exceptions import Unauthorized
-from typer import Abort, Context, Exit, Option, Typer
+from typer import Context, Exit, Option, Typer
 
 from mediux_posters import __version__, get_cache_root, setup_logging
-from mediux_posters.console import CONSOLE
-from mediux_posters.mediux import Mediux
-from mediux_posters.services import BaseService, Jellyfin, Plex
-from mediux_posters.services._base import BaseCollection, BaseMovie, BaseShow
+from mediux_posters.constants import CONSOLE
+from mediux_posters.errors import ServiceError
+from mediux_posters.mediux import CollectionSet, Mediux, MovieSet, ShowSet
+from mediux_posters.services import BaseService, Collection, Jellyfin, Plex
 from mediux_posters.settings import Settings
 from mediux_posters.utils import MediaType, delete_folder, slugify
 
 app = Typer()
 LOGGER = logging.getLogger("mediux-posters")
+T = TypeVar("T", bound="HasUsername")
+
+
+class HasUsername(Protocol):
+    username: str
 
 
 @app.callback(invoke_without_command=True)
@@ -51,128 +53,77 @@ def setup(
     if full_clean:
         LOGGER.info("Cleaning Cache")
         delete_folder(folder=get_cache_root())
-    settings = Settings.load()
-    settings.save()
+    settings = Settings.load().save()
+    if not settings.mediux.api_key:
+        LOGGER.fatal("Mediux Posters requires a Mediux ApiKey to be set.")
+        raise Exit
+    mediux = Mediux(base_url=settings.mediux.base_url, api_key=settings.mediux.api_key)
     service_list = []
-    if settings.jellyfin.token:
-        service_list.append(Jellyfin(settings=settings.jellyfin))
     try:
         if settings.plex.token:
-            service_list.append(Plex(settings=settings.plex))
+            service_list.append(Plex(base_url=settings.plex.base_url, token=settings.plex.token))
     except Unauthorized as err:
         LOGGER.warning(err)
-    return settings, Mediux(), service_list
+    if settings.jellyfin.token:
+        service_list.append(
+            Jellyfin(base_url=settings.jellyfin.base_url, token=settings.jellyfin.token)
+        )
+    return settings, mediux, service_list
 
 
 def filter_sets(
-    set_list: list[dict], settings: Settings, mediux: Mediux
-) -> Generator[dict, None, None]:
+    set_list: list[T], priority_usernames: list[str], only_priority_usernames: bool
+) -> Generator[T]:
     if not set_list:
         return
 
     # Yield priority usernames first
-    for username in settings.priority_usernames:
-        for set_data in [
-            x for x in set_list if x.get("user_created", {}).get("username") == username
-        ]:
-            yield mediux.scrape_set(set_id=set_data.get("id"))
+    for username in priority_usernames:
+        yield from [x for x in set_list if x.username == username]
 
     # If allowed, yield remaining sets
-    if not settings.only_priority_usernames:
-        for set_data in set_list:
-            username = set_data.get("user_created", {}).get("username")
-            if username in settings.exclude_usernames:
-                continue
-            if settings.priority_usernames and username in settings.priority_usernames:
-                continue
-            yield mediux.scrape_set(set_id=set_data.get("id"))
-
-
-def update_posters(
-    mediux_data: dict,
-    obj: BaseShow | BaseCollection | BaseMovie,
-    mediux: Mediux,
-    service: BaseService,
-    kometa_integration: bool,
-    abort_on_unknown: bool = False,
-    debug: bool = False,
-) -> None:
-    if mediux_data.get("show") and isinstance(obj, BaseShow):
-        mediux.download_show_posters(data=mediux_data, show=obj)
-        service.upload_posters(obj=obj, kometa_integration=kometa_integration)
-        for season in obj.seasons:
-            service.upload_posters(obj=season, kometa_integration=kometa_integration)
-            for episode in season.episodes:
-                service.upload_posters(obj=episode, kometa_integration=kometa_integration)
-    elif mediux_data.get("collection") and isinstance(obj, BaseCollection):
-        mediux.download_collection_posters(data=mediux_data, collection=obj)
-        service.upload_posters(obj=obj, kometa_integration=kometa_integration)
-        for movie_data in mediux_data.get("collection", {}).get("movies", []):
-            if movie := service.get_movie(tmdb_id=int(movie_data.get("id", -1))):
-                mediux.download_movie_posters(data=mediux_data, movie=movie)
-                service.upload_posters(obj=movie, kometa_integration=kometa_integration)
-            else:
-                LOGGER.warning(
-                    "[%s] Unable to find '%s (%s)'",
-                    type(service).__name__,
-                    movie_data.get("title"),
-                    (movie_data.get("release_date") or "0000")[:4],
-                )
-    elif mediux_data.get("movie") and isinstance(obj, BaseMovie):
-        mediux.download_movie_posters(data=mediux_data, movie=obj)
-        service.upload_posters(obj=obj, kometa_integration=kometa_integration)
-    else:
-        LOGGER.error("Unknown data set: %s", mediux_data)
-        if debug:
-            with Path(f"{uuid4()}.json").open("w") as stream:
-                json.dump(mediux_data, stream, indent=2)
-        if abort_on_unknown:
-            raise Abort
-
-
-class MediaTypeChoice(str, Enum):
-    SHOW = MediaType.SHOW.value
-    COLLECTION = MediaType.COLLECTION.value
-    MOVIE = MediaType.MOVIE.value
+    if not only_priority_usernames:
+        yield from [x for x in set_list if x.username not in priority_usernames]
 
 
 @app.command(
-    name="sync", help="Synchronize posters by fetching data from Mediux and updating your services."
+    name="manual", help="Manually set posters for specific Mediux media using a file or URLs."
 )
-def sync_posters(
-    skip_mediatypes: Annotated[
-        list[MediaTypeChoice] | None,
+def manual_posters(
+    urls: Annotated[
+        list[str],
         Option(
-            "--skip-type",
-            "-T",
-            show_default=False,
-            case_sensitive=False,
+            "--url",
+            "-u",
             default_factory=list,
-            help="List of MediaTypes to skip. "
-            "Specify this option multiple times for skipping multiple types.",
+            show_default=False,
+            help="List of URLs from Mediux to process. "
+            "Specify this option multiple times for multiple URLs.",
         ),
     ],
-    skip_libraries: Annotated[
-        list[str] | None,
+    file: Annotated[
+        Path | None,
         Option(
-            "--skip-library",
-            "-L",
+            dir_okay=False,
+            exists=True,
             show_default=False,
-            default_factory=list,
-            help="List of libraries to skip. "
-            "Specify this option multiple times for skipping multiple libraries.",
+            help="Path to a file containing URLs from Mediux, one per line. "
+            "If set, the file must exist and cannot be a directory.",
         ),
-    ],
-    start: Annotated[
-        int, Option("--start", "-s", help="The starting index for processing media.")
-    ] = 0,
-    end: Annotated[
-        int, Option("--end", "-e", help="The ending index for processing media.")
-    ] = 100_000,
+    ] = None,
     full_clean: Annotated[
         bool,
         Option(
             "--full-clean", "-C", show_default=False, help="Delete the whole cache before starting."
+        ),
+    ] = False,
+    simple_clean: Annotated[
+        bool,
+        Option(
+            "--simple-clean",
+            "-c",
+            show_default=False,
+            help="Delete the cache of each media instead of the whole cache.",
         ),
     ] = False,
     debug: Annotated[
@@ -184,7 +135,6 @@ def sync_posters(
     ] = False,
 ) -> None:
     settings, mediux, service_list = setup(full_clean=full_clean, debug=debug)
-    skip_mediatypes = [x.value for x in skip_mediatypes]
 
     for idx, service in enumerate(service_list):
         CONSOLE.rule(
@@ -192,363 +142,84 @@ def sync_posters(
             align="left",
             style="title",
         )
-        media_dict: dict[
-            MediaType,
-            Callable[[list[str] | None], list[BaseShow] | list[BaseCollection] | list[BaseMovie]],
-        ] = {
-            MediaType.SHOW: service.list_shows,
-            MediaType.COLLECTION: service.list_collections,
-            MediaType.MOVIE: service.list_movies,
-        }
-        for mediatype, func in media_dict.items():
-            if mediatype.value in skip_mediatypes:
+        url_list = [x.strip() for x in file.read_text().splitlines()] if file else urls
+        for index, entry in enumerate(url_list):
+            media_type = (
+                MediaType.SHOW
+                if entry.startswith(f"{Mediux.WEB_URL}/{MediaType.SHOW}s")
+                else MediaType.COLLECTION
+                if entry.startswith(f"{Mediux.WEB_URL}/{MediaType.COLLECTION}s")
+                else MediaType.MOVIE
+                if entry.startswith(f"{Mediux.WEB_URL}/{MediaType.MOVIE}s")
+                else None
+            )
+            if not media_type:
                 continue
-            with CONSOLE.status(f"[{type(service).__name__}] Fetching {mediatype.value} media"):
-                entries = func(skip_libraries=skip_libraries)[start:end]
-            for index, entry in enumerate(entries):
-                CONSOLE.rule(
-                    f"[{index + 1}/{len(entries)}] {entry.display_name} [tmdb-{entry.tmdb_id}]",
-                    align="left",
-                    style="subtitle",
+            tmdb_id = int(entry.split("/")[-1])
+            with CONSOLE.status(f"Searching {type(service).__name__} for TMDB id: '{tmdb_id}'"):
+                obj = (
+                    service.get_show(tmdb_id=tmdb_id)
+                    if media_type is MediaType.SHOW
+                    else service.get_collection(tmdb_id=tmdb_id)
+                    if media_type is MediaType.COLLECTION
+                    else service.get_movie(tmdb_id=tmdb_id)
+                    if media_type is MediaType.MOVIE
+                    else None
                 )
-                LOGGER.info(
-                    "[%s] Searching Mediux for '%s' sets",
-                    type(service).__name__,
-                    entry.display_name,
-                )
-                set_list = mediux.list_sets(mediatype=mediatype, tmdb_id=entry.tmdb_id)
-                for set_data in filter_sets(set_list=set_list, settings=settings, mediux=mediux):
-                    LOGGER.info(
-                        "Downloading '%s' by '%s'",
-                        set_data.get("set_name"),
-                        set_data.get("user_created", {}).get("username"),
+                if not obj:
+                    LOGGER.warning(
+                        "[%s] Unable to find a %s with a Tmdb Id of '%d'",
+                        type(service).__name__,
+                        media_type,
+                        tmdb_id,
                     )
-                    update_posters(
-                        mediux_data=set_data,
-                        obj=entry,
-                        mediux=mediux,
-                        service=service,
-                        kometa_integration=settings.kometa_integration,
-                        debug=debug,
+                    continue
+            CONSOLE.rule(
+                f"[{index + 1}/{len(url_list)}] {obj.display_name} [tmdb-{obj.tmdb_id}]",
+                align="left",
+                style="subtitle",
+            )
+            if simple_clean:
+                LOGGER.info("Cleaning %s cache", obj.display_name)
+                delete_folder(
+                    folder=get_cache_root()
+                    / "covers"
+                    / obj.mediatype.value
+                    / slugify(obj.display_name)
+                )
+                if isinstance(obj, Collection):
+                    for movie in obj.movies:
+                        delete_folder(
+                            folder=get_cache_root()
+                            / "covers"
+                            / movie.mediatype.value
+                            / slugify(movie.display_name)
+                        )
+            try:
+                set_list = (
+                    mediux.list_show_sets(
+                        tmdb_id=tmdb_id, exclude_usernames=settings.exclude_usernames
                     )
-                    if entry.all_posters_uploaded:
-                        break
-
-
-@app.command(
-    name="show", help="Manually set posters for specific Mediux shows using a file or URLs."
-)
-def show_posters(
-    file: Annotated[
-        Path | None,
-        Option(
-            dir_okay=False,
-            exists=True,
-            show_default=False,
-            help="Path to a file containing URLs of Mediux shows, one per line. "
-            "If set, the file must exist and cannot be a directory.",
-        ),
-    ] = None,
-    urls: Annotated[
-        list[str] | None,
-        Option(
-            "--url",
-            "-u",
-            show_default=False,
-            help="List of URLs of Mediux shows to process. "
-            "Specify this option multiple times for multiple URLs.",
-        ),
-    ] = None,
-    full_clean: Annotated[
-        bool,
-        Option(
-            "--full-clean", "-C", show_default=False, help="Delete the whole cache before starting."
-        ),
-    ] = False,
-    simple_clean: Annotated[
-        bool,
-        Option(
-            "--simple-clean",
-            "-c",
-            show_default=False,
-            help="Delete the cache of each media instead of the whole cache.",
-        ),
-    ] = False,
-    debug: Annotated[
-        bool,
-        Option(
-            "--debug",
-            help="Enable debug mode to show extra logging information for troubleshooting.",
-        ),
-    ] = False,
-) -> None:
-    settings, mediux, service_list = setup(full_clean=full_clean, debug=debug)
-
-    for idx, service in enumerate(service_list):
-        CONSOLE.rule(
-            f"[{idx + 1}/{len(service_list)}] {type(service).__name__} Service",
-            align="left",
-            style="title",
-        )
-        url_list = [x.strip() for x in file.read_text().splitlines()] if file else urls
-        for index, entry in enumerate(url_list):
-            if not entry.startswith(f"{Mediux.web_url}/shows"):
-                continue
-            tmdb_id = int(entry.split("/")[-1])
-            with CONSOLE.status(f"Searching {type(service).__name__} for TMDB id: '{tmdb_id}'"):
-                obj = service.get_show(tmdb_id=tmdb_id)
-                if not obj:
-                    LOGGER.warning("[%s] Unable to find '%d'", type(service).__name__, tmdb_id)
-                    continue
-            CONSOLE.rule(
-                f"[{index + 1}/{len(url_list)}] {obj.display_name} [tmdb-{obj.tmdb_id}]",
-                align="left",
-                style="subtitle",
-            )
-            if simple_clean:
-                LOGGER.info("Cleaning %s cache", obj.display_name)
-                delete_folder(
-                    folder=get_cache_root()
-                    / "covers"
-                    / obj.mediatype.value
-                    / slugify(obj.display_name)
+                    if media_type is MediaType.SHOW
+                    else mediux.list_collection_sets(
+                        tmdb_id=tmdb_id, exclude_usernames=settings.exclude_usernames
+                    )
+                    if media_type is MediaType.COLLECTION
+                    else mediux.list_movie_sets(
+                        tmdb_id=tmdb_id, exclude_usernames=settings.exclude_usernames
+                    )
+                    if media_type is MediaType.MOVIE
+                    else None
                 )
-                if isinstance(obj, BaseCollection):
-                    for movie in obj.movies:
-                        delete_folder(
-                            folder=get_cache_root()
-                            / "covers"
-                            / movie.mediatype.value
-                            / slugify(movie.display_name)
-                        )
-            set_list = mediux.list_sets(mediatype=MediaType.SHOW, tmdb_id=tmdb_id)
-            for set_data in filter_sets(set_list=set_list, settings=settings, mediux=mediux):
-                LOGGER.info(
-                    "Downloading '%s' by '%s'",
-                    set_data.get("set_name"),
-                    set_data.get("user_created", {}).get("username"),
-                )
-                update_posters(
-                    mediux_data=set_data,
-                    obj=obj,
-                    mediux=mediux,
-                    service=service,
-                    kometa_integration=settings.kometa_integration,
-                    debug=debug,
-                )
-                if obj.all_posters_uploaded:
-                    break
-
-
-@app.command(
-    name="collection",
-    help="Manually set posters for specific Mediux collections using a file or URLs.",
-)
-def collection_posters(
-    file: Annotated[
-        Path | None,
-        Option(
-            dir_okay=False,
-            exists=True,
-            show_default=False,
-            help="Path to a file containing URLs of Mediux collections, one per line. "
-            "If set, the file must exist and cannot be a directory.",
-        ),
-    ] = None,
-    urls: Annotated[
-        list[str] | None,
-        Option(
-            "--url",
-            "-u",
-            show_default=False,
-            help="List of URLs of Mediux collections to process. "
-            "Specify this option multiple times for multiple URLs.",
-        ),
-    ] = None,
-    full_clean: Annotated[
-        bool,
-        Option(
-            "--full-clean", "-C", show_default=False, help="Delete the whole cache before starting."
-        ),
-    ] = False,
-    simple_clean: Annotated[
-        bool,
-        Option(
-            "--simple-clean",
-            "-c",
-            show_default=False,
-            help="Delete the cache of each media instead of the whole cache.",
-        ),
-    ] = False,
-    debug: Annotated[
-        bool,
-        Option(
-            "--debug",
-            help="Enable debug mode to show extra logging information for troubleshooting.",
-        ),
-    ] = False,
-) -> None:
-    settings, mediux, service_list = setup(full_clean=full_clean, debug=debug)
-
-    for idx, service in enumerate(service_list):
-        CONSOLE.rule(
-            f"[{idx + 1}/{len(service_list)}] {type(service).__name__} Service",
-            align="left",
-            style="title",
-        )
-        url_list = [x.strip() for x in file.read_text().splitlines()] if file else urls
-        for index, entry in enumerate(url_list):
-            if not entry.startswith(f"{Mediux.web_url}/collections"):
-                continue
-            tmdb_id = int(entry.split("/")[-1])
-            with CONSOLE.status(f"Searching {type(service).__name__} for TMDB id: '{tmdb_id}'"):
-                obj = service.get_collection(tmdb_id=tmdb_id)
-                if not obj:
-                    LOGGER.warning("[%s] Unable to find '%d'", type(service).__name__, tmdb_id)
-                    continue
-            CONSOLE.rule(
-                f"[{index + 1}/{len(url_list)}] {obj.display_name} [tmdb-{obj.tmdb_id}]",
-                align="left",
-                style="subtitle",
-            )
-            if simple_clean:
-                LOGGER.info("Cleaning %s cache", obj.display_name)
-                delete_folder(
-                    folder=get_cache_root()
-                    / "covers"
-                    / obj.mediatype.value
-                    / slugify(obj.display_name)
-                )
-                if isinstance(obj, BaseCollection):
-                    for movie in obj.movies:
-                        delete_folder(
-                            folder=get_cache_root()
-                            / "covers"
-                            / movie.mediatype.value
-                            / slugify(movie.display_name)
-                        )
-            set_list = mediux.list_sets(mediatype=MediaType.COLLECTION, tmdb_id=tmdb_id)
-            for set_data in filter_sets(set_list=set_list, settings=settings, mediux=mediux):
-                LOGGER.info(
-                    "Downloading '%s' by '%s'",
-                    set_data.get("set_name"),
-                    set_data.get("user_created", {}).get("username"),
-                )
-                update_posters(
-                    mediux_data=set_data,
-                    obj=obj,
-                    mediux=mediux,
-                    service=service,
-                    kometa_integration=settings.kometa_integration,
-                    debug=debug,
-                )
-                if obj.all_posters_uploaded:
-                    break
-
-
-@app.command(
-    name="movie", help="Manually set posters for specific Mediux movies using a file or URLs."
-)
-def movie_posters(
-    file: Annotated[
-        Path | None,
-        Option(
-            dir_okay=False,
-            exists=True,
-            show_default=False,
-            help="Path to a file containing URLs of Mediux movies, one per line. "
-            "If set, the file must exist and cannot be a directory.",
-        ),
-    ] = None,
-    urls: Annotated[
-        list[str] | None,
-        Option(
-            "--url",
-            "-u",
-            show_default=False,
-            help="List of URLs of Mediux movies to process. "
-            "Specify this option multiple times for multiple URLs.",
-        ),
-    ] = None,
-    full_clean: Annotated[
-        bool,
-        Option(
-            "--full-clean", "-C", show_default=False, help="Delete the whole cache before starting."
-        ),
-    ] = False,
-    simple_clean: Annotated[
-        bool,
-        Option(
-            "--simple-clean",
-            "-c",
-            show_default=False,
-            help="Delete the cache of each media instead of the whole cache.",
-        ),
-    ] = False,
-    debug: Annotated[
-        bool,
-        Option(
-            "--debug",
-            help="Enable debug mode to show extra logging information for troubleshooting.",
-        ),
-    ] = False,
-) -> None:
-    settings, mediux, service_list = setup(full_clean=full_clean, debug=debug)
-
-    for idx, service in enumerate(service_list):
-        CONSOLE.rule(
-            f"[{idx + 1}/{len(service_list)}] {type(service).__name__} Service",
-            align="left",
-            style="title",
-        )
-        url_list = [x.strip() for x in file.read_text().splitlines()] if file else urls
-        for index, entry in enumerate(url_list):
-            if not entry.startswith(f"{Mediux.web_url}/movies"):
-                continue
-            tmdb_id = int(entry.split("/")[-1])
-            with CONSOLE.status(f"Searching {type(service).__name__} for TMDB id: '{tmdb_id}'"):
-                obj = service.get_movie(tmdb_id=tmdb_id)
-                if not obj:
-                    LOGGER.warning("[%s] Unable to find '%d'", type(service).__name__, tmdb_id)
-                    continue
-            CONSOLE.rule(
-                f"[{index + 1}/{len(url_list)}] {obj.display_name} [tmdb-{obj.tmdb_id}]",
-                align="left",
-                style="subtitle",
-            )
-            if simple_clean:
-                LOGGER.info("Cleaning %s cache", obj.display_name)
-                delete_folder(
-                    folder=get_cache_root()
-                    / "covers"
-                    / obj.mediatype.value
-                    / slugify(obj.display_name)
-                )
-                if isinstance(obj, BaseCollection):
-                    for movie in obj.movies:
-                        delete_folder(
-                            folder=get_cache_root()
-                            / "covers"
-                            / movie.mediatype.value
-                            / slugify(movie.display_name)
-                        )
-            set_list = mediux.list_sets(mediatype=MediaType.MOVIE, tmdb_id=tmdb_id)
-            for set_data in filter_sets(set_list=set_list, settings=settings, mediux=mediux):
-                LOGGER.info(
-                    "Downloading '%s' by '%s'",
-                    set_data.get("set_name"),
-                    set_data.get("user_created", {}).get("username"),
-                )
-                update_posters(
-                    mediux_data=set_data,
-                    obj=obj,
-                    mediux=mediux,
-                    service=service,
-                    kometa_integration=settings.kometa_integration,
-                    debug=debug,
-                )
-                if obj.all_posters_uploaded:
-                    break
+            except ServiceError as err:
+                LOGGER.error(err)
+                set_list = []
+            for set_data in filter_sets(
+                set_list=set_list,
+                priority_usernames=settings.priority_usernames,
+                only_priority_usernames=settings.only_priority_usernames,
+            ):
+                LOGGER.info("Downloading '%s' by '%s'", set_data.set_title, set_data.username)
 
 
 @app.command(name="set", help="Manually set posters for specific Mediux sets using a file or URLs.")
@@ -606,30 +277,33 @@ def set_posters(
         )
         url_list = [x.strip() for x in file.read_text().splitlines()] if file else urls
         for index, entry in enumerate(url_list):
-            if not entry.startswith(f"{Mediux.web_url}/sets"):
+            if not entry.startswith(f"{Mediux.WEB_URL}/sets"):
                 continue
             set_id = int(entry.split("/")[-1])
-            set_data = mediux.scrape_set(set_id=set_id)
-            tmdb_id = (
-                (set_data.get("show") or {}).get("id")
-                or (set_data.get("collection") or {}).get("id")
-                or (set_data.get("movie") or {}).get("id")
+            set_data = (
+                mediux.get_show_set(set_id=set_id)
+                or mediux.get_collection_set(set_id=set_id)
+                or mediux.get_movie_set(set_id=set_id)
             )
-            if tmdb_id:
-                tmdb_id = int(tmdb_id)
+            if tmdb_id := (
+                set_data.show.tmdb_id
+                if isinstance(set_data, ShowSet)
+                else set_data.collection.tmdb_id
+                if isinstance(set_data, CollectionSet)
+                else set_data.movie.tmdb_id
+                if isinstance(set_data, MovieSet)
+                else None
+            ):
+                continue
+
             with CONSOLE.status(
                 f"Searching {type(service).__name__} for '{set_data.get('set_name')} [{tmdb_id}]'"
             ):
-                obj = (
-                    service.get_show(tmdb_id=tmdb_id)
-                    or service.get_collection(tmdb_id=tmdb_id)
-                    or service.get_movie(tmdb_id=tmdb_id)
-                )
+                obj = service.find(tmdb_id=tmdb_id)
                 if not obj:
                     LOGGER.warning(
-                        "[%s] Unable to find '%s [%d]'",
+                        "[%s] Unable to find any media with a Tmdb Id of '%d'",
                         type(service).__name__,
-                        set_data.get("set_name"),
                         tmdb_id,
                     )
                     continue
@@ -646,7 +320,7 @@ def set_posters(
                     / obj.mediatype.value
                     / slugify(obj.display_name)
                 )
-                if isinstance(obj, BaseCollection):
+                if isinstance(obj, Collection):
                     for movie in obj.movies:
                         delete_folder(
                             folder=get_cache_root()
@@ -654,20 +328,7 @@ def set_posters(
                             / movie.mediatype.value
                             / slugify(movie.display_name)
                         )
-            LOGGER.info(
-                "Downloading '%s' by '%s'",
-                set_data.get("set_name"),
-                set_data.get("user_created", {}).get("username"),
-            )
-            update_posters(
-                mediux_data=set_data,
-                obj=obj,
-                mediux=mediux,
-                service=service,
-                kometa_integration=settings.kometa_integration,
-                abort_on_unknown=True,
-                debug=debug,
-            )
+            LOGGER.info("Downloading '%s' by '%s'", set_data.set_title, set_data.username)
 
 
 if __name__ == "__main__":
