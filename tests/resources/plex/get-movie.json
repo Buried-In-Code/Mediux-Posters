@@ -1,0 +1,16 @@
+{
+  "MediaContainer": {
+    "Metadata": [{
+      "ratingKey": 110049,
+      "title": "Kiki's Delivery Service",
+      "originallyAvailableAt": "1989-07-29",
+      "Guid": [{
+        "Id": "imdb://tt0097814"
+      },
+        {
+          "Id": "tmdb://16859"
+        }],
+      "year": 1989
+    }]
+  }
+}

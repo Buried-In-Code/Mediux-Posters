@@ -3,13 +3,10 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
-import pytest
-
 from mediux_posters.mediux import Mediux
 from mediux_posters.mediux.schemas import FileType
 
 
-@pytest.mark.skip
 def test_list_movie_sets(mediux_session: Mediux) -> None:
     results = mediux_session.list_movie_sets(tmdb_id=535544)
     assert len(results) != 0
@@ -33,7 +30,6 @@ def test_list_movie_sets(mediux_session: Mediux) -> None:
     assert result.username == "fwlolx"
 
 
-@pytest.mark.skip
 def test_list_movie_sets_filtered(mediux_session: Mediux) -> None:
     results = mediux_session.list_movie_sets(tmdb_id=535544, exclude_usernames=["fwlolx"])
     assert len(results) != 0
@@ -41,25 +37,21 @@ def test_list_movie_sets_filtered(mediux_session: Mediux) -> None:
     assert result is None
 
 
-@pytest.mark.skip
 def test_list_movie_sets_invalid(mediux_session: Mediux) -> None:
     results = mediux_session.list_movie_sets(tmdb_id=-1)
     assert len(results) == 0
 
 
-@pytest.mark.skip
 def test_get_movie_set(mediux_session: Mediux) -> None:
     result = mediux_session.get_movie_set(set_id=11023)
     assert result is not None
 
 
-@pytest.mark.skip
 def test_get_movie_set_invalid(mediux_session: Mediux) -> None:
     result = mediux_session.get_movie_set(set_id=-1)
     assert result is None
 
 
-@pytest.mark.skip
 def test_list_show_sets(mediux_session: Mediux) -> None:
     results = mediux_session.list_show_sets(tmdb_id=33907)
     assert len(results) != 0
@@ -91,7 +83,6 @@ def test_list_show_sets(mediux_session: Mediux) -> None:
     assert result.username == "JackTaylor803"
 
 
-@pytest.mark.skip
 def test_list_show_sets_filtered(mediux_session: Mediux) -> None:
     results = mediux_session.list_show_sets(tmdb_id=33907, exclude_usernames=["JackTaylor803"])
     assert len(results) != 0
@@ -99,25 +90,21 @@ def test_list_show_sets_filtered(mediux_session: Mediux) -> None:
     assert result is None
 
 
-@pytest.mark.skip
 def test_list_show_sets_invalid(mediux_session: Mediux) -> None:
     results = mediux_session.list_show_sets(tmdb_id=-1)
     assert len(results) == 0
 
 
-@pytest.mark.skip
 def test_get_show_set(mediux_session: Mediux) -> None:
     result = mediux_session.get_show_set(set_id=28831)
     assert result is not None
 
 
-@pytest.mark.skip
 def test_get_show_set_invalid(mediux_session: Mediux) -> None:
     result = mediux_session.get_show_set(set_id=-1)
     assert result is None
 
 
-@pytest.mark.skip
 def test_list_collection_sets(mediux_session: Mediux) -> None:
     results = mediux_session.list_collection_sets(tmdb_id=573436)
     assert len(results) != 0
@@ -144,7 +131,6 @@ def test_list_collection_sets(mediux_session: Mediux) -> None:
     assert result.username == "willtong93"
 
 
-@pytest.mark.skip
 def test_list_collection_sets_filtered(mediux_session: Mediux) -> None:
     results = mediux_session.list_collection_sets(tmdb_id=573436, exclude_usernames=["willtong93"])
     assert len(results) != 0
@@ -152,19 +138,16 @@ def test_list_collection_sets_filtered(mediux_session: Mediux) -> None:
     assert result is None
 
 
-@pytest.mark.skip
 def test_list_collection_sets_invalid(mediux_session: Mediux) -> None:
     results = mediux_session.list_collection_sets(tmdb_id=-1)
     assert len(results) == 0
 
 
-@pytest.mark.skip
 def test_get_collection_set(mediux_session: Mediux) -> None:
     result = mediux_session.get_collection_set(set_id=24404)
     assert result is not None
 
 
-@pytest.mark.skip
 def test_get_collection_set_invalid(mediux_session: Mediux) -> None:
     result = mediux_session.get_collection_set(set_id=-1)
     assert result is None
@@ -177,7 +160,6 @@ def compute_file_hash(file: Path) -> str:
     return hasher.hexdigest()
 
 
-@pytest.mark.skip
 def test_download_image(mediux_session: Mediux) -> None:
     expected_image = Path("tests/resources/img-poster.jpg")
 

@@ -85,11 +85,13 @@ skip-magic-trailing-comma = true
 
 [tool.ruff.lint]
 ignore = [
+  "C901",
   "COM812",
   "D",
   "EM",
   "FBT",
   "FIX",
+  "PLR0913",
   "TCH",
   "TD",
   "TRY003",

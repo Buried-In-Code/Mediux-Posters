@@ -10,6 +10,7 @@ from mediux_posters.services._base.schemas import (
     BaseSeason,
     BaseShow,
 )
+from mediux_posters.utils import MediaType
 
 T = TypeVar("T", bound=BaseShow)
 S = TypeVar("S", bound=BaseSeason)
@@ -37,12 +38,29 @@ class BaseService(ABC, Generic[T, S, E, C, M]):
     @abstractmethod
     def get_movie(self, tmdb_id: int) -> M | None: ...
 
-    @abstractmethod
-    def find(self, tmdb_id: int) -> T | C | M | None:
+    def list(
+        self, media_type: MediaType, skip_libraries: list[str] | None = None
+    ) -> list[T] | list[C] | list[M]:
+        skip_libraries = skip_libraries or []
+        return (
+            self.list_shows(skip_libraries=skip_libraries)
+            if media_type is MediaType.SHOW
+            else self.list_collections(skip_libraries=skip_libraries)
+            if media_type is MediaType.COLLECTION
+            else self.list_movies(skip_libraries=skip_libraries)
+            if media_type is MediaType.MOVIE
+            else []
+        )
+
+    def get(self, media_type: MediaType, tmdb_id: int) -> T | C | M | None:
         return (
             self.get_show(tmdb_id=tmdb_id)
-            or self.get_collection(tmdb_id=tmdb_id)
-            or self.get_movie(tmdb_id=tmdb_id)
+            if media_type is MediaType.SHOW
+            else self.get_collection(tmdb_id=tmdb_id)
+            if media_type is MediaType.COLLECTION
+            else self.get_movie(tmdb_id=tmdb_id)
+            if media_type is MediaType.MOVIE
+            else None
         )
 
     @abstractmethod

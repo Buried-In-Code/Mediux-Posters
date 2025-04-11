@@ -1,0 +1,19 @@
+{
+  "MediaContainer": {
+    "Metadata": [{
+      "ratingKey": 108617,
+      "title": "Downton Abbey",
+      "originallyAvailableAt": "2010-09-26",
+      "Guid": [{
+        "Id": "imdb://tt1606375"
+      },
+        {
+          "Id": "tmdb://33907"
+        },
+        {
+          "Id": "tvdb://193131"
+        }],
+      "year": 2010
+    }]
+  }
+}
