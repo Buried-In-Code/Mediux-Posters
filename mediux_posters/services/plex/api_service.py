@@ -153,7 +153,7 @@ class Plex(BaseService[Show, Season, Episode, Collection, Movie]):
             )
             for result in results:
                 tmdb = self.extract_id(entry=result)
-                if not tmdb or (tmdb_id is not None and tmdb != tmdb_id):
+                if not tmdb or (tmdb_id is not None and int(tmdb) != tmdb_id):
                     continue
                 try:
                     output.append(self._parse_show(plex_show=result))
@@ -232,7 +232,7 @@ class Plex(BaseService[Show, Season, Episode, Collection, Movie]):
             ]
             for result in results:
                 tmdb = self.extract_id(entry=result)
-                if not tmdb or (tmdb_id is not None and tmdb != tmdb_id):
+                if not tmdb or (tmdb_id is not None and int(tmdb) != tmdb_id):
                     continue
                 try:
                     output.append(self._parse_collection(plex_collection=result))
@@ -264,7 +264,7 @@ class Plex(BaseService[Show, Season, Episode, Collection, Movie]):
             )
             for result in results:
                 tmdb = self.extract_id(entry=result)
-                if not tmdb or (tmdb_id is not None and tmdb != tmdb_id):
+                if not tmdb or (tmdb_id is not None and int(tmdb) != tmdb_id):
                     continue
                 try:
                     output.append(self._parse_movie(plex_movie=result))
