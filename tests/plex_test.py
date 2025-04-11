@@ -1,4 +1,5 @@
 import json
+import re
 from datetime import date
 from pathlib import Path
 
@@ -21,8 +22,18 @@ def test_list_shows(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
         is_reusable=True,
     )
     httpx_mock.add_response(
-        url="http://localhost/library/sections/.*/all",
+        url=re.compile(r"http://localhost/library/sections/.*/all\?includeGuids=1"),
         json=json.loads(Path("tests/resources/plex/list-shows.json").read_text()),
+        is_reusable=True,
+    )
+    httpx_mock.add_response(
+        url=re.compile(r"http://localhost/library/metadata/.*/children\?includeGuids=1"),
+        json=json.loads(Path("tests/resources/plex/list-seasons.json").read_text()),
+        is_reusable=True,
+    )
+    httpx_mock.add_response(
+        url=re.compile(r"http://localhost/library/metadata/.*/children\?includeGuids=1"),
+        json=json.loads(Path("tests/resources/plex/list-episodes.json").read_text()),
         is_reusable=True,
     )
 
@@ -45,8 +56,18 @@ def test_get_show(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
         is_reusable=True,
     )
     httpx_mock.add_response(
-        url="http://localhost/library/sections/.*/all",
-        json=json.loads(Path("tests/resources/plex/list-shows.json").read_text()),
+        url=re.compile(r"http://localhost/library/sections/.*/all\?includeGuids=1"),
+        json=json.loads(Path("tests/resources/plex/get-show.json").read_text()),
+        is_reusable=True,
+    )
+    httpx_mock.add_response(
+        url=re.compile(r"http://localhost/library/metadata/.*/children\?includeGuids=1"),
+        json=json.loads(Path("tests/resources/plex/list-seasons.json").read_text()),
+        is_reusable=True,
+    )
+    httpx_mock.add_response(
+        url=re.compile(r"http://localhost/library/metadata/.*/children\?includeGuids=1"),
+        json=json.loads(Path("tests/resources/plex/list-episodes.json").read_text()),
         is_reusable=True,
     )
 
@@ -91,7 +112,7 @@ def test_list_movies(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
         is_reusable=True,
     )
     httpx_mock.add_response(
-        url="http://localhost/library/sections/.*/all",
+        url=re.compile(r"http://localhost/library/sections/.*/all\?includeGuids=1"),
         json=json.loads(Path("tests/resources/plex/list-movies.json").read_text()),
         is_reusable=True,
     )
@@ -115,8 +136,8 @@ def test_get_movie(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
         is_reusable=True,
     )
     httpx_mock.add_response(
-        url="http://localhost/library/sections/.*/all",
-        json=json.loads(Path("tests/resources/plex/list-movies.json").read_text()),
+        url=re.compile(r"http://localhost/library/sections/.*/all\?includeGuids=1"),
+        json=json.loads(Path("tests/resources/plex/get-movie.json").read_text()),
         is_reusable=True,
     )
 
@@ -145,8 +166,18 @@ def test_list_collections(plex_session: Plex | None, httpx_mock: HTTPXMock) -> N
         is_reusable=True,
     )
     httpx_mock.add_response(
-        url="http://localhost/library/sections/.*/collections",
+        url=re.compile(r"http://localhost/library/sections/.*/collections\?includeGuids=1"),
         json=json.loads(Path("tests/resources/plex/list-collections.json").read_text()),
+        is_reusable=True,
+    )
+    httpx_mock.add_response(
+        url=re.compile(r"http://localhost/library/metadata/.*\?includeGuids=1"),
+        json=json.loads(Path("tests/resources/plex/get-collection.json").read_text()),
+        is_reusable=True,
+    )
+    httpx_mock.add_response(
+        url=re.compile(r"http://localhost/library/metadata/.*/children\?includeGuids=1"),
+        json=json.loads(Path("tests/resources/plex/list-collection-movies.json").read_text()),
         is_reusable=True,
     )
 
@@ -169,8 +200,18 @@ def test_get_collection(plex_session: Plex | None, httpx_mock: HTTPXMock) -> Non
         is_reusable=True,
     )
     httpx_mock.add_response(
-        url="http://localhost/library/sections/.*/collections",
+        url=re.compile(r"http://localhost/library/sections/.*/collections\?includeGuids=1"),
         json=json.loads(Path("tests/resources/plex/list-collections.json").read_text()),
+        is_reusable=True,
+    )
+    httpx_mock.add_response(
+        url=re.compile(r"http://localhost/library/metadata/.*\?includeGuids=1"),
+        json=json.loads(Path("tests/resources/plex/get-collection.json").read_text()),
+        is_reusable=True,
+    )
+    httpx_mock.add_response(
+        url=re.compile(r"http://localhost/library/metadata/.*/children\?includeGuids=1"),
+        json=json.loads(Path("tests/resources/plex/list-collection-movies.json").read_text()),
         is_reusable=True,
     )
 
@@ -178,12 +219,12 @@ def test_get_collection(plex_session: Plex | None, httpx_mock: HTTPXMock) -> Non
     assert result is not None
 
     assert result.id == 110049
-    assert result.name == "Kiki's Delivery Service"
+    assert result.name == "Wallace & Gromit Collection"
     assert result.tmdb_id == 529
     assert len(result.movies) != 0
     assert result.movies[0].id == 110049
     assert result.movies[0].imdb_id == "tt0097814"
-    assert result.movies[0].name == "Kiki's Delivery Service"
+    assert result.movies[0].name == "A Grand Day Out"
     assert result.movies[0].premiere_date == date(1989, 7, 29)
     assert result.movies[0].tmdb_id == 16859
     assert result.movies[0].tvdb_id is None

@@ -16,6 +16,7 @@ from mediux_posters import __version__
 from mediux_posters.constants import CONSOLE
 from mediux_posters.errors import AuthenticationError, ServiceError
 from mediux_posters.mediux.schemas import CollectionSet, MovieSet, ShowSet
+from mediux_posters.utils import MediaType
 
 LOGGER = logging.getLogger(__name__)
 MINUTE = 60
@@ -59,6 +60,7 @@ class Mediux:
     def list_show_sets(
         self, tmdb_id: int, exclude_usernames: list[str] | None = None
     ) -> list[ShowSet]:
+        exclude_usernames = exclude_usernames or []
         filters = [
             Argument(
                 name="show_id",
@@ -199,6 +201,7 @@ class Mediux:
     def list_collection_sets(
         self, tmdb_id: int, exclude_usernames: list[str] | None = None
     ) -> list[CollectionSet]:
+        exclude_usernames = exclude_usernames or []
         filters = [
             Argument(
                 name="collection_id",
@@ -307,6 +310,7 @@ class Mediux:
     def list_movie_sets(
         self, tmdb_id: int, exclude_usernames: list[str] | None = None
     ) -> list[MovieSet]:
+        exclude_usernames = exclude_usernames or []
         filters = [
             Argument(
                 name="movie_id",
@@ -381,6 +385,33 @@ class Mediux:
         except ValidationError as err:
             raise ServiceError(err) from err
         return None
+
+    def list_sets(
+        self, media_type: MediaType, tmdb_id: int, exclude_usernames: list[str] | None = None
+    ) -> list[ShowSet] | list[CollectionSet] | list[MovieSet]:
+        exclude_usernames = exclude_usernames or []
+        return (
+            self.list_show_sets(tmdb_id=tmdb_id, exclude_usernames=exclude_usernames)
+            if media_type is MediaType.SHOW
+            else self.list_collection_sets(tmdb_id=tmdb_id, exclude_usernames=exclude_usernames)
+            if media_type is MediaType.COLLECTION
+            else self.list_movie_sets(tmdb_id=tmdb_id, exclude_usernames=exclude_usernames)
+            if media_type is MediaType.MOVIE
+            else []
+        )
+
+    def get_set(
+        self, media_type: MediaType, set_id: int
+    ) -> ShowSet | CollectionSet | MovieSet | None:
+        return (
+            self.get_show_set(set_id=set_id)
+            if media_type is MediaType.SHOW
+            else self.get_collection_set(set_id=set_id)
+            if media_type is MediaType.COLLECTION
+            else self.get_movie_set(set_id=set_id)
+            if media_type is MediaType.MOVIE
+            else None
+        )
 
     def download_image(self, image_id: str, output: Path) -> None:
         with self.client.stream("GET", f"/assets/{image_id}") as response:

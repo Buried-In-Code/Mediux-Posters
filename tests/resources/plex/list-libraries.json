@@ -1,1 +1,24 @@
-{}
+{
+  "MediaContainer": {
+    "Directory": [{
+      "type": "artist",
+      "id": 1,
+      "title": "Music"
+    },
+      {
+        "type": "movie",
+        "id": 2,
+        "title": "Movies"
+      },
+      {
+        "type": "photo",
+        "id": 3,
+        "title": "Photos"
+      },
+      {
+        "type": "show",
+        "id": 4,
+        "title": "Tv Shows"
+      }]
+  }
+}

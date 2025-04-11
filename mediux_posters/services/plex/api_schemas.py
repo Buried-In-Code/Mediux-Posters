@@ -22,8 +22,8 @@ class PlexModel(BaseModel, alias_generator=to_camel, extra="ignore"): ...
 class MediaType(str, Enum):
     ARTIST = "artist"
     MOVIE = "movie"
-    SHOW = "show"
     PHOTO = "photo"
+    SHOW = "show"
 
 
 class Library(PlexModel):
@@ -42,9 +42,9 @@ class Episode(BaseEpisode, PlexModel):
     def extract_guids(cls, data: object) -> object:
         if isinstance(data, dict) and "Guid" in data:
             services = {
-                f"{x['id'].split('://')[0]}_id": x["id"].split("://")[1]
+                f"{x['Id'].split('://')[0]}_id": x["Id"].split("://")[1]
                 for x in data["Guid"]
-                if "id" in x
+                if "Id" in x
             }
             data.update(services)
             del data["Guid"]
@@ -60,9 +60,9 @@ class Season(BaseSeason, PlexModel):
     def extract_guids(cls, data: object) -> object:
         if isinstance(data, dict) and "Guid" in data:
             services = {
-                f"{x['id'].split('://')[0]}_id": x["id"].split("://")[1]
+                f"{x['Id'].split('://')[0]}_id": x["Id"].split("://")[1]
                 for x in data["Guid"]
-                if "id" in x
+                if "Id" in x
             }
             data.update(services)
             del data["Guid"]
@@ -78,9 +78,9 @@ class Show(BaseShow, PlexModel):
     def extract_guids(cls, data: object) -> object:
         if isinstance(data, dict) and "Guid" in data:
             services = {
-                f"{x['id'].split('://')[0]}_id": x["id"].split("://")[1]
+                f"{x['Id'].split('://')[0]}_id": x["Id"].split("://")[1]
                 for x in data["Guid"]
-                if "id" in x
+                if "Id" in x
             }
             data.update(services)
             del data["Guid"]
@@ -96,9 +96,9 @@ class Movie(BaseMovie, PlexModel):
     def extract_guids(cls, data: object) -> object:
         if isinstance(data, dict) and "Guid" in data:
             services = {
-                f"{x['id'].split('://')[0]}_id": x["id"].split("://")[1]
+                f"{x['Id'].split('://')[0]}_id": x["Id"].split("://")[1]
                 for x in data["Guid"]
-                if "id" in x
+                if "Id" in x
             }
             data.update(services)
             del data["Guid"]
@@ -112,10 +112,9 @@ class Collection(BaseCollection, PlexModel):
     @model_validator(mode="before")
     def extract_guids(cls, data: object) -> object:
         if isinstance(data, dict) and "Label" in data:
-            tag = next(iter(x for x in data["Label"] if x["tag"].startswith("Tmdb-")), {}).get(
-                "tag"
-            )
-            if tag:
-                data["tmdb_id"] = tag[5:]
+            if tag := next(iter(x for x in data["Label"] if x["Tag"].startswith("Tmdb-")), {}).get(
+                "Tag"
+            ):
+                data["tmdb_id"] = int(tag.removeprefix("Tmdb-"))
             del data["Label"]
         return data

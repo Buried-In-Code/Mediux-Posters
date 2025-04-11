@@ -1,0 +1,26 @@
+{
+  "MediaContainer": {
+    "Metadata": [{
+      "ratingKey": 108654,
+      "title": "Specials",
+      "index": 0,
+      "Guid": [{
+        "Id": "tmdb://44728"
+      },
+        {
+          "Id": "tvdb://324521"
+        }]
+    },
+      {
+        "ratingKey": 108654,
+        "title": "Series 1",
+        "index": 1,
+        "Guid": [{
+          "Id": "tmdb://44728"
+        },
+          {
+            "Id": "tvdb://324521"
+          }]
+      }]
+  }
+}

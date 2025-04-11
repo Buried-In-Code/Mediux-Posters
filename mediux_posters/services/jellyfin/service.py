@@ -173,8 +173,8 @@ class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
     def _list_collections(
         self,
         skip_libraries: list[str] | None = None,
-        tmdb_id: int | None = None,
-        collection_id: str | None = None,
+        tmdb_id: int | None = None,  # noqa: ARG002
+        collection_id: str | None = None,  # noqa: ARG002
     ) -> list[Collection]:
         libraries = self._list_libraries(media_type="unknown", skip_libraries=skip_libraries)
         output = []

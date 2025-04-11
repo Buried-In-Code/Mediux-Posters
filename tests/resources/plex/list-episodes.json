@@ -1,0 +1,19 @@
+{
+  "MediaContainer": {
+    "Metadata": [{
+      "ratingKey": 108655,
+      "title": "Episode #1.1",
+      "index": 1,
+      "originallyAvailableAt": "2010-09-26",
+      "Guid": [{
+        "Id": "imdb://tt1608844"
+      },
+        {
+          "Id": "tmdb://779837"
+        },
+        {
+          "Id": "tvdb://2887371"
+        }]
+    }]
+  }
+}
