@@ -2,6 +2,7 @@ __all__ = ["Plex"]
 
 import logging
 from json import JSONDecodeError
+from pathlib import Path
 from platform import release, system
 
 from httpx import Client, HTTPStatusError, RequestError, TimeoutException
@@ -9,7 +10,7 @@ from pydantic import TypeAdapter, ValidationError
 from ratelimit import limits, sleep_and_retry
 
 from mediux_posters import __version__
-from mediux_posters.constants import CONSOLE
+from mediux_posters.console import CONSOLE
 from mediux_posters.errors import AuthenticationError, ServiceError
 from mediux_posters.services._base import BaseService
 from mediux_posters.services.plex.api_schemas import (
@@ -42,17 +43,17 @@ class Plex(BaseService[Show, Season, Episode, Collection, Movie]):
         if "Label" in entry:
             return next(
                 iter(
-                    x.get("Tag", "").casefold().removeprefix(f"{prefix}-")
+                    x.get("tag", "").casefold().removeprefix(f"{prefix}-")
                     for x in entry.get("Label", [])
-                    if x.get("Tag", "").casefold().startswith(f"{prefix}-")
+                    if x.get("tag", "").casefold().startswith(f"{prefix}-")
                 ),
                 None,
             )
         return next(
             iter(
-                x.get("Id", "").removeprefix(f"{prefix}://")
+                x.get("id", "").removeprefix(f"{prefix}://")
                 for x in entry.get("Guid", [])
-                if x.get("Id", "").startswith(f"{prefix}://")
+                if x.get("id", "").startswith(f"{prefix}://")
             ),
             None,
         )
@@ -278,7 +279,10 @@ class Plex(BaseService[Show, Season, Episode, Collection, Movie]):
     def get_movie(self, tmdb_id: int) -> Movie | None:
         return next(iter(self._list_movies(tmdb_id=tmdb_id)), None)
 
-    def upload_posters(
-        self, obj: Show | Season | Episode | Movie | Collection, kometa_integration: bool
-    ) -> None:
+    def upload_image(
+        self,
+        obj: Show | Season | Episode | Movie | Collection,
+        image_file: Path,
+        kometa_integration: bool,
+    ) -> bool:
         pass
