@@ -8,7 +8,7 @@ from pydantic import BeforeValidator, Field
 from rich.panel import Panel
 
 from mediux_posters import get_config_root
-from mediux_posters.constants import CONSOLE
+from mediux_posters.console import CONSOLE
 from mediux_posters.utils import BaseModel, blank_is_none, flatten_dict
 
 try:
