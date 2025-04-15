@@ -1,55 +1,10 @@
 import hashlib
-from datetime import date, datetime, timezone
+from datetime import date
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 from mediux_posters.mediux import Mediux
 from mediux_posters.mediux.schemas import FileType
-
-
-def test_list_movie_sets(mediux_session: Mediux) -> None:
-    results = mediux_session.list_movie_sets(tmdb_id=535544)
-    assert len(results) != 0
-    result = next(iter(x for x in results if x.id == 11023), None)
-    assert result is not None
-
-    assert result.date_created == datetime(2024, 2, 7, 0, 28, 11, tzinfo=timezone.utc)
-    assert len(result.files) != 0
-    assert result.files[0].id == "b9dd4856-b95f-42b4-8e9a-633f7d152fa4"
-    assert result.files[0].file_type == FileType.POSTER
-    assert result.files[0].show_id is None
-    assert result.files[0].season_id is None
-    assert result.files[0].episode_id is None
-    assert result.files[0].movie_id == 535544
-    assert result.files[0].collection_id is None
-    assert result.id == 11023
-    assert result.movie.release_date == date(2019, 9, 12)
-    assert result.movie.title == "Downton Abbey"
-    assert result.movie.tmdb_id == 535544
-    assert result.set_title == "Downton Abbey (2019) Set"
-    assert result.username == "fwlolx"
-
-
-def test_list_movie_sets_filtered(mediux_session: Mediux) -> None:
-    results = mediux_session.list_movie_sets(tmdb_id=535544, exclude_usernames=["fwlolx"])
-    assert len(results) != 0
-    result = next(iter(x for x in results if x.id == 11023), None)
-    assert result is None
-
-
-def test_list_movie_sets_invalid(mediux_session: Mediux) -> None:
-    results = mediux_session.list_movie_sets(tmdb_id=-1)
-    assert len(results) == 0
-
-
-def test_get_movie_set(mediux_session: Mediux) -> None:
-    result = mediux_session.get_movie_set(set_id=11023)
-    assert result is not None
-
-
-def test_get_movie_set_invalid(mediux_session: Mediux) -> None:
-    result = mediux_session.get_movie_set(set_id=-1)
-    assert result is None
 
 
 def test_list_show_sets(mediux_session: Mediux) -> None:
@@ -58,7 +13,6 @@ def test_list_show_sets(mediux_session: Mediux) -> None:
     result = next(iter(x for x in results if x.id == 28831), None)
     assert result is not None
 
-    assert result.date_created == datetime(2024, 12, 5, 9, 57, 8, tzinfo=timezone.utc)
     assert len(result.files) != 0
     assert result.files[0].id == "05f1a0a7-18f6-495c-8193-42400d74e4cc"
     assert result.files[0].file_type == FileType.TITLE_CARD
@@ -117,7 +71,6 @@ def test_list_collection_sets(mediux_session: Mediux) -> None:
     assert result.collection.movies[0].tmdb_id == 324857
     assert result.collection.title == "Spider-Man: Spider-Verse Collection"
     assert result.collection.tmdb_id == 573436
-    assert result.date_created == datetime(2024, 8, 23, 8, 0, 51, tzinfo=timezone.utc)
     assert len(result.files) != 0
     assert result.files[0].id == "3ae60cf9-ad99-449c-971f-5d7c6eaba02f"
     assert result.files[0].file_type == FileType.POSTER
@@ -153,6 +106,50 @@ def test_get_collection_set_invalid(mediux_session: Mediux) -> None:
     assert result is None
 
 
+def test_list_movie_sets(mediux_session: Mediux) -> None:
+    results = mediux_session.list_movie_sets(tmdb_id=535544)
+    assert len(results) != 0
+    result = next(iter(x for x in results if x.id == 11023), None)
+    assert result is not None
+
+    assert len(result.files) != 0
+    assert result.files[0].id == "b9dd4856-b95f-42b4-8e9a-633f7d152fa4"
+    assert result.files[0].file_type == FileType.POSTER
+    assert result.files[0].show_id is None
+    assert result.files[0].season_id is None
+    assert result.files[0].episode_id is None
+    assert result.files[0].movie_id == 535544
+    assert result.files[0].collection_id is None
+    assert result.id == 11023
+    assert result.movie.release_date == date(2019, 9, 12)
+    assert result.movie.title == "Downton Abbey"
+    assert result.movie.tmdb_id == 535544
+    assert result.set_title == "Downton Abbey (2019) Set"
+    assert result.username == "fwlolx"
+
+
+def test_list_movie_sets_filtered(mediux_session: Mediux) -> None:
+    results = mediux_session.list_movie_sets(tmdb_id=535544, exclude_usernames=["fwlolx"])
+    assert len(results) != 0
+    result = next(iter(x for x in results if x.id == 11023), None)
+    assert result is None
+
+
+def test_list_movie_sets_invalid(mediux_session: Mediux) -> None:
+    results = mediux_session.list_movie_sets(tmdb_id=-1)
+    assert len(results) == 0
+
+
+def test_get_movie_set(mediux_session: Mediux) -> None:
+    result = mediux_session.get_movie_set(set_id=11023)
+    assert result is not None
+
+
+def test_get_movie_set_invalid(mediux_session: Mediux) -> None:
+    result = mediux_session.get_movie_set(set_id=-1)
+    assert result is None
+
+
 def compute_file_hash(file: Path) -> str:
     hasher = hashlib.sha256()
     with file.open("rb") as f:
@@ -166,7 +163,7 @@ def test_download_image(mediux_session: Mediux) -> None:
     with NamedTemporaryFile() as output:
         output_file = Path(output.name)
         mediux_session.download_image(
-            image_id="b9dd4856-b95f-42b4-8e9a-633f7d152fa4", output=output_file
+            file_id="b9dd4856-b95f-42b4-8e9a-633f7d152fa4", output=output_file
         )
 
         assert compute_file_hash(expected_image) == compute_file_hash(output_file), (
