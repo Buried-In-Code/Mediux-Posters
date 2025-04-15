@@ -29,10 +29,14 @@ class FileType(str, Enum):
     POSTER = "poster"
     TITLE_CARD = "titlecard"
 
+    def __str__(self) -> str:
+        return self.value
+
 
 class File(MediuxModel):
     id: str
     file_type: FileType
+    last_updated: datetime = Field(alias="modified_on")
     show_id: int | None = Field(validation_alias=AliasPath("show", "id"), default=None)
     season_id: int | None = Field(validation_alias=AliasPath("season", "id"), default=None)
     episode_id: int | None = Field(validation_alias=AliasPath("episode", "id"), default=None)
@@ -41,14 +45,12 @@ class File(MediuxModel):
 
 
 class Episode(MediuxModel):
-    date_updated: datetime | None
     id: int
     number: int = Field(alias="episode_number")
     title: str = Field(alias="episode_title")
 
 
 class Season(MediuxModel):
-    date_updated: datetime | None
     episodes: list[Episode]
     id: int
     number: int = Field(alias="season_number")
@@ -56,7 +58,6 @@ class Season(MediuxModel):
 
 
 class Show(MediuxModel):
-    date_updated: datetime | None
     release_date: date | None = Field(alias="first_air_date")
     seasons: list[Season]
     title: str
@@ -64,8 +65,7 @@ class Show(MediuxModel):
 
 
 class ShowSet(MediuxModel):
-    date_created: datetime
-    date_updated: datetime | None
+    last_updated: datetime | None = Field(alias="date_updated")
     files: list[File]
     id: int
     set_title: str
@@ -74,15 +74,13 @@ class ShowSet(MediuxModel):
 
 
 class Movie(MediuxModel):
-    date_updated: datetime | None
     release_date: date | None
     title: str
     tmdb_id: int = Field(alias="id")
 
 
 class MovieSet(MediuxModel):
-    date_created: datetime
-    date_updated: datetime | None
+    last_updated: datetime | None = Field(alias="date_updated")
     files: list[File]
     id: int
     movie: Movie = Field(alias="movie_id")
@@ -91,7 +89,6 @@ class MovieSet(MediuxModel):
 
 
 class Collection(MediuxModel):
-    date_updated: datetime | None
     movies: list[Movie]
     title: str = Field(alias="collection_name")
     tmdb_id: int = Field(alias="id")
@@ -99,8 +96,7 @@ class Collection(MediuxModel):
 
 class CollectionSet(MediuxModel):
     collection: Collection = Field(alias="collection_id")
-    date_created: datetime
-    date_updated: datetime | None
+    last_updated: datetime | None = Field(alias="date_updated")
     files: list[File]
     id: int
     set_title: str

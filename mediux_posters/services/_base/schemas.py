@@ -1,17 +1,13 @@
 __all__ = ["BaseCollection", "BaseEpisode", "BaseMovie", "BaseSeason", "BaseShow"]
 
 from datetime import date
-from pathlib import Path
-from typing import ClassVar
 
 from pydantic import Field
 
-from mediux_posters.utils import BaseModel, MediaType
+from mediux_posters.utils import BaseModel
 
 
 class BaseEpisode(BaseModel):
-    mediatype: ClassVar[MediaType] = MediaType.EPISODE
-
     id: int | str
     imdb_id: str | None = None
     name: str
@@ -20,7 +16,6 @@ class BaseEpisode(BaseModel):
     tmdb_id: int | None = None
     tvdb_id: int | None = None
 
-    title_card: Path | None = None
     title_card_uploaded: bool = False
 
     @property
@@ -29,8 +24,6 @@ class BaseEpisode(BaseModel):
 
 
 class BaseSeason(BaseModel):
-    mediatype: ClassVar[MediaType] = MediaType.SEASON
-
     id: int | str
     imdb_id: str | None = None
     name: str
@@ -40,7 +33,6 @@ class BaseSeason(BaseModel):
     tvdb_id: int | None = None
 
     episodes: list[BaseEpisode] = Field(default_factory=list)
-    poster: Path | None = None
     poster_uploaded: bool = False
 
     @property
@@ -49,8 +41,6 @@ class BaseSeason(BaseModel):
 
 
 class BaseShow(BaseModel):
-    mediatype: ClassVar[MediaType] = MediaType.SHOW
-
     id: int | str
     imdb_id: str | None = None
     name: str
@@ -60,9 +50,7 @@ class BaseShow(BaseModel):
     year: int
 
     seasons: list[BaseSeason] = Field(default_factory=list)
-    poster: Path | None = None
     poster_uploaded: bool = False
-    backdrop: Path | None = None
     backdrop_uploaded: bool = False
 
     @property
@@ -83,8 +71,6 @@ class BaseShow(BaseModel):
 
 
 class BaseMovie(BaseModel):
-    mediatype: ClassVar[MediaType] = MediaType.MOVIE
-
     id: str | int
     imdb_id: str | None = None
     name: str
@@ -93,9 +79,7 @@ class BaseMovie(BaseModel):
     tvdb_id: int | None = None
     year: int
 
-    poster: Path | None = None
     poster_uploaded: bool = False
-    backdrop: Path | None = None
     backdrop_uploaded: bool = False
 
     @property
@@ -112,16 +96,12 @@ class BaseMovie(BaseModel):
 
 
 class BaseCollection(BaseModel):
-    mediatype: ClassVar[MediaType] = MediaType.COLLECTION
-
     id: str | int
     name: str
     tmdb_id: int
 
     movies: list[BaseMovie] = Field(default_factory=list)
-    poster: Path | None = None
     poster_uploaded: bool = False
-    backdrop: Path | None = None
     backdrop_uploaded: bool = False
 
     @property

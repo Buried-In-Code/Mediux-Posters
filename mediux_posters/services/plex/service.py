@@ -1,6 +1,7 @@
 __all__ = ["Plex"]
 
 import logging
+from pathlib import Path
 
 from plexapi.collection import Collection as PlexCollection
 from plexapi.exceptions import BadRequest, NotFound
@@ -9,7 +10,7 @@ from plexapi.video import Movie as PlexMovie, Show as PlexShow
 from requests.exceptions import ConnectionError, HTTPError, ReadTimeout  # noqa: A004
 
 from mediux_posters import get_cache_root
-from mediux_posters.constants import CONSOLE
+from mediux_posters.console import CONSOLE
 from mediux_posters.services._base import BaseService
 from mediux_posters.services.plex.schemas import Collection, Episode, Movie, Season, Show
 
@@ -163,33 +164,25 @@ class Plex(BaseService[Show, Season, Episode, Collection, Movie]):
     def get_movie(self, tmdb_id: int) -> Movie | None:
         return next(iter(self._list_movies(tmdb_id=tmdb_id)), None)
 
-    def upload_posters(
-        self, obj: Show | Season | Episode | Movie | Collection, kometa_integration: bool
-    ) -> None:
-        if isinstance(obj, Show | Movie | Collection):
-            options = [
-                (obj.poster, "poster_uploaded", obj.plex.uploadPoster),
-                (obj.backdrop, "backdrop_uploaded", obj.plex.uploadArt),
-            ]
-        elif isinstance(obj, Season):
-            options = [(obj.poster, "poster_uploaded", obj.plex.uploadPoster)]
-        elif isinstance(obj, Episode):
-            options = [(obj.title_card, "title_card_uploaded", obj.plex.uploadPoster)]
-        else:
-            LOGGER.warning("Updating %s posters aren't supported", type(obj).__name__)
-            return
-        for image_file, field, func in options:
-            if not image_file or not image_file.exists() or getattr(obj, field):
-                continue
-            with CONSOLE.status(rf"\[Plex] Uploading {image_file.parent.title}/{image_file.title}"):
-                try:
-                    func(filepath=str(image_file))
-                    setattr(obj, field, True)
-                    if kometa_integration:
-                        obj.plex.removeLabel("Overlay").reload()
-                except (ConnectionError, HTTPError, ReadTimeout, BadRequest, NotFound) as err:
-                    LOGGER.error(
-                        "[Plex] Failed to upload %s: %s",
-                        image_file.relative_to(get_cache_root() / "covers"),
-                        err,
-                    )
+    def upload_image(
+        self,
+        obj: Show | Season | Episode | Movie | Collection,
+        image_file: Path,
+        kometa_integration: bool,
+    ) -> bool:
+        with CONSOLE.status(rf"\[Plex] Uploading {image_file.parent.name}/{image_file.name}"):
+            try:
+                if image_file.stem == "backdrop":
+                    obj.plex.uploadArt(filepath=str(image_file))
+                else:
+                    obj.plex.uploadPoster(filepath=str(image_file))
+                if kometa_integration:
+                    obj.plex.removeLabel("Overlay").reload()
+                return True
+            except (ConnectionError, HTTPError, ReadTimeout, BadRequest, NotFound) as err:
+                LOGGER.error(
+                    "[Plex] Failed to upload %s: %s",
+                    image_file.relative_to(get_cache_root() / "covers"),
+                    err,
+                )
+        return False

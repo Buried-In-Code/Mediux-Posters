@@ -35,22 +35,10 @@ _Jellyfin Collections are not yet supported._
   ![`uv run Mediux-Posters sync --help`](docs/img/mediux-posters_sync.svg)
 
 </details>
-<details><summary>Mediux-Posters show</summary>
+<details><summary>Mediux-Posters media</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters show --help`](docs/img/mediux-posters_show.svg)
-
-</details>
-<details><summary>Mediux-Posters collection</summary>
-
-  <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters collection --help`](docs/img/mediux-posters_collection.svg)
-
-</details>
-<details><summary>Mediux-Posters movie</summary>
-
-  <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters movie --help`](docs/img/mediux-posters_movie.svg)
+  ![`uv run Mediux-Posters media --help`](docs/img/mediux-posters_media.svg)
 
 </details>
 <details><summary>Mediux-Posters set</summary>
@@ -93,6 +81,10 @@ priority_usernames = []
 [jellyfin]
 base_url = "http://127.0.0.1:8096"
 token = "<Token>"
+
+[mediux]
+base_url = "https://api.mediux.pro"
+api_key = "<API Key>"
 
 [plex]
 base_url = "http://127.0.0.1:32400"

@@ -4,6 +4,7 @@ import logging
 import mimetypes
 from base64 import b64encode
 from json import JSONDecodeError
+from pathlib import Path
 from platform import release, system
 from typing import Literal
 
@@ -12,7 +13,7 @@ from pydantic import TypeAdapter, ValidationError
 from ratelimit import limits, sleep_and_retry
 
 from mediux_posters import __version__
-from mediux_posters.constants import CONSOLE
+from mediux_posters.console import CONSOLE
 from mediux_posters.errors import AuthenticationError, ServiceError
 from mediux_posters.services._base import BaseService
 from mediux_posters.services.jellyfin.schemas import (
@@ -227,44 +228,32 @@ class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
     def get_movie(self, tmdb_id: int) -> Movie | None:
         return next(iter(self._list_movies(tmdb_id=tmdb_id)), None)
 
-    def upload_posters(
+    def upload_image(
         self,
         obj: Show | Season | Episode | Movie | Collection,
+        image_file: Path,
         kometa_integration: bool,  # noqa: ARG002
-    ) -> None:
-        if isinstance(obj, Show | Movie):
-            options = [
-                (obj.poster, "poster_uploaded", "Primary"),
-                (obj.backdrop, "backdrop_uploaded", "Backdrop"),
-            ]
-        elif isinstance(obj, Season):
-            options = [(obj.poster, "poster_uploaded", "Primary")]
-        elif isinstance(obj, Episode):
-            options = [(obj.title_card, "title_card_uploaded", "Primary")]
-        else:
-            LOGGER.warning("Updating %s posters aren't supported", type(obj).__name__)
-            return
-        for image_file, field, image_type in options:
-            if not image_file or not image_file.exists() or getattr(obj, field):
-                continue
-            with CONSOLE.status(
-                rf"\[Jellyfin] Uploading {image_file.parent.name}/{image_file.name}"
-            ):
-                mime_type, _ = mimetypes.guess_type(image_file)
-                if not mime_type:
-                    mime_type = "image/jpeg"
-                headers = {"Content-Type": mime_type}
-                with image_file.open("rb") as stream:
-                    image_data = b64encode(stream.read())
-                try:
-                    self._perform_post_request(
-                        endpoint=f"/Items/{obj.id}/Images/{image_type}",
-                        headers=headers,
-                        body=image_data,
-                    )
-                    setattr(obj, field, True)
-                except ServiceError as err:
-                    LOGGER.error(
-                        f"[Jellyfin] Failed to upload '{image_file.parent.name}/{image_file.name}'",  # noqa: G004
-                        err,
-                    )
+    ) -> bool:
+        with CONSOLE.status(rf"\[Jellyfin] Uploading {image_file.parent.name}/{image_file.name}"):
+            image_type = "Backdrop" if image_file.stem == "backdrop" else "Primary"
+            mime_type, _ = mimetypes.guess_type(image_file)
+            if not mime_type:
+                mime_type = "image/jpeg"
+            headers = {"Content-Type": mime_type}
+            with image_file.open("rb") as stream:
+                image_data = b64encode(stream.read())
+            try:
+                self._perform_post_request(
+                    endpoint=f"/Items/{obj.id}/Images/{image_type}",
+                    headers=headers,
+                    body=image_data,
+                )
+                return True
+            except ServiceError as err:
+                LOGGER.error(
+                    "[Jellyfin] Failed to upload '%s/%s': %s",
+                    image_file.parent.name,
+                    image_file.name,
+                    err,
+                )
+        return False

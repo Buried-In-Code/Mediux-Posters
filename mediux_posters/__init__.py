@@ -16,7 +16,7 @@ from pathlib import Path
 from rich.logging import RichHandler
 from rich.traceback import install
 
-from mediux_posters.constants import CONSOLE
+from mediux_posters.console import CONSOLE
 
 
 @cache

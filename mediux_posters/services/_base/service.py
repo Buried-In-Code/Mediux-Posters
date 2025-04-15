@@ -1,6 +1,7 @@
 __all__ = ["BaseService"]
 
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Generic, TypeVar
 
 from mediux_posters.services._base.schemas import (
@@ -64,4 +65,6 @@ class BaseService(ABC, Generic[T, S, E, C, M]):
         )
 
     @abstractmethod
-    def upload_posters(self, obj: T | S | E | M | C, kometa_integration: bool) -> None: ...
+    def upload_image(
+        self, obj: T | S | E | M | C, image_file: Path, kometa_integration: bool
+    ) -> bool: ...

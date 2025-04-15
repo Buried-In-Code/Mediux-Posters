@@ -1,4 +1,12 @@
-__all__ = ["BaseModel", "MediaType", "blank_is_none", "delete_folder", "flatten_dict", "slugify"]
+__all__ = [
+    "CONSOLE",
+    "BaseModel",
+    "MediaType",
+    "blank_is_none",
+    "delete_folder",
+    "flatten_dict",
+    "slugify",
+]
 
 import logging
 import re
@@ -10,7 +18,8 @@ from typing import Any
 from pydantic import BaseModel as PydanticModel
 from rich.panel import Panel
 
-from mediux_posters.constants import CONSOLE
+from mediux_posters import get_cache_root
+from mediux_posters.console import CONSOLE
 
 LOGGER = logging.getLogger(__name__)
 
@@ -33,10 +42,11 @@ class BaseModel(
 
 class MediaType(str, Enum):
     SHOW = "show"
-    SEASON = "season"
-    EPISODE = "episode"
-    MOVIE = "movie"
     COLLECTION = "collection"
+    MOVIE = "movie"
+
+    def __str__(self) -> str:
+        return self.value
 
 
 def blank_is_none(value: str) -> str | None:
@@ -73,3 +83,7 @@ def slugify(value: str) -> str:
     value = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
     value = re.sub(r"[^\w\s-]", "", value.lower())
     return re.sub(r"[-\s]+", "-", value).strip("-_")
+
+
+def get_cached_image(*paths: str) -> Path:
+    return get_cache_root().joinpath("covers", *paths)
