@@ -1,40 +1,41 @@
 {
-  "Items": [{
-    "Name": "Big Fat Quiz",
-    "ServerId": "dc3a12fa42114b4b9e119db7af393829",
-    "Id": "7e211800601353873a968de4ef3f75b1",
-    "PremiereDate": "2004-12-28T00:00:00.0000000Z",
-    "ChannelId": null,
-    "CommunityRating": 7.6,
-    "RunTimeTicks": 78000000000,
-    "ProductionYear": 2004,
-    "ProviderIds": {
-      "Tvdb": "81068",
-      "Tmdb": "3811",
-      "TvMaze": "2956",
-      "Imdb": "tt9503284"
-    },
-    "IsFolder": true,
-    "Type": "Series",
-    "Status": "Continuing",
-    "AirDays": [],
-    "ImageTags": {
-      "Primary": "c5ebc626d7e552a839bce2a2257b4a19",
-      "Thumb": "3b2a4447143bdb94ae0438d698123d63"
-    },
-    "BackdropImageTags": [],
-    "ImageBlurHashes": {
-      "Primary": {
-        "c5ebc626d7e552a839bce2a2257b4a19": "dF9+NpyF7jt-l2X4m,xWVCnhxXskO]oztRNfNOe:ngNK"
+  "Items": [
+    {
+      "Name": "Big Fat Quiz",
+      "ServerId": "dc3a12fa42114b4b9e119db7af393829",
+      "Id": "7e211800601353873a968de4ef3f75b1",
+      "PremiereDate": "2004-12-28T00:00:00.0000000Z",
+      "ChannelId": null,
+      "CommunityRating": 7.6,
+      "RunTimeTicks": 78000000000,
+      "ProductionYear": 2004,
+      "ProviderIds": {
+        "Tvdb": "81068",
+        "Tmdb": "3811",
+        "TvMaze": "2956",
+        "Imdb": "tt9503284"
       },
-      "Thumb": {
-        "3b2a4447143bdb94ae0438d698123d63": "WJFpCKTaAQJz+j+kF;w4v$W+a^WY1WNa#@,KSvOk:tw$KKR*kDw~"
-      }
+      "IsFolder": true,
+      "Type": "Series",
+      "Status": "Continuing",
+      "AirDays": [],
+      "ImageTags": {
+        "Primary": "c5ebc626d7e552a839bce2a2257b4a19",
+        "Thumb": "3b2a4447143bdb94ae0438d698123d63"
+      },
+      "BackdropImageTags": [],
+      "ImageBlurHashes": {
+        "Primary": {
+          "c5ebc626d7e552a839bce2a2257b4a19": "dF9+NpyF7jt-l2X4m,xWVCnhxXskO]oztRNfNOe:ngNK"
+        },
+        "Thumb": {
+          "3b2a4447143bdb94ae0438d698123d63": "WJFpCKTaAQJz+j+kF;w4v$W+a^WY1WNa#@,KSvOk:tw$KKR*kDw~"
+        }
+      },
+      "LocationType": "FileSystem",
+      "MediaType": "Unknown",
+      "EndDate": "2024-12-27T00:00:00.0000000Z"
     },
-    "LocationType": "FileSystem",
-    "MediaType": "Unknown",
-    "EndDate": "2024-12-27T00:00:00.0000000Z"
-  },
     {
       "Name": "The Green Planet",
       "ServerId": "dc3a12fa42114b4b9e119db7af393829",

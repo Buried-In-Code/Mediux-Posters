@@ -1,16 +1,483 @@
 {
-  "MediaContainer": {
-    "Metadata": [{
-      "ratingKey": 110049,
-      "title": "Kiki's Delivery Service",
-      "originallyAvailableAt": "1989-07-29",
-      "Guid": [{
-        "Id": "imdb://tt0097814"
-      },
-        {
-          "Id": "tmdb://16859"
-        }],
-      "year": 1989
-    }]
-  }
+    "MediaContainer": {
+        "size": 1,
+        "allowSync": true,
+        "identifier": "com.plexapp.plugins.library",
+        "librarySectionID": 1,
+        "librarySectionTitle": "Movies",
+        "librarySectionUUID": "09dd5d64-2d11-476f-9064-d2b4f776a3bb",
+        "mediaTagPrefix": "/system/bundle/media/flags/",
+        "mediaTagVersion": 1744189307,
+        "Metadata": [
+            {
+                "ratingKey": "102210",
+                "key": "/library/metadata/102210",
+                "guid": "plex://movie/5d776c9b47dd6e001f6ed31c",
+                "slug": "abominable-2019",
+                "studio": "DreamWorks Animation",
+                "type": "movie",
+                "title": "Abominable",
+                "librarySectionTitle": "Movies",
+                "librarySectionID": 1,
+                "librarySectionKey": "/library/sections/1",
+                "contentRating": "nz/G",
+                "summary": "Three teenagers must help a Yeti return to his family while avoiding a wealthy man and a zoologist who want him for their own needs.",
+                "audienceRating": 7.5,
+                "year": 2019,
+                "tagline": "Find your way home.",
+                "thumb": "/library/metadata/102210/thumb/1744674505",
+                "art": "/library/metadata/102210/art/1744674505",
+                "duration": 5832910,
+                "originallyAvailableAt": "2019-09-19",
+                "addedAt": 1709549891,
+                "updatedAt": 1744674505,
+                "audienceRatingImage": "themoviedb://image.rating",
+                "chapterSource": "media",
+                "Media": [
+                    {
+                        "id": 254622,
+                        "duration": 5832910,
+                        "bitrate": 17328,
+                        "width": 1920,
+                        "height": 1040,
+                        "aspectRatio": 1.85,
+                        "audioChannels": 8,
+                        "audioCodec": "truehd",
+                        "videoCodec": "h264",
+                        "videoResolution": "1080",
+                        "container": "mkv",
+                        "videoFrameRate": "24p",
+                        "videoProfile": "high",
+                        "hasVoiceActivity": true,
+                        "Part": [
+                            {
+                                "id": 272883,
+                                "key": "/library/parts/272883/1576540800/file.mkv",
+                                "duration": 5832910,
+                                "file": "/data/movies/Abominable_(2019)_[tmdb-431580]/Abominable_(2019).mkv",
+                                "size": 12633929309,
+                                "container": "mkv",
+                                "indexes": "sd",
+                                "videoProfile": "high",
+                                "Stream": [
+                                    {
+                                        "id": 635494,
+                                        "streamType": 1,
+                                        "default": true,
+                                        "codec": "h264",
+                                        "index": 1,
+                                        "bitrate": 16688,
+                                        "bitDepth": 8,
+                                        "chromaLocation": "left",
+                                        "chromaSubsampling": "4:2:0",
+                                        "codedHeight": 1040,
+                                        "codedWidth": 1920,
+                                        "colorPrimaries": "bt709",
+                                        "colorRange": "tv",
+                                        "colorSpace": "bt709",
+                                        "colorTrc": "bt709",
+                                        "frameRate": 23.976,
+                                        "hasScalingMatrix": false,
+                                        "height": 1040,
+                                        "level": 41,
+                                        "profile": "high",
+                                        "refFrames": 4,
+                                        "scanType": "progressive",
+                                        "width": 1920,
+                                        "displayTitle": "1080p",
+                                        "extendedDisplayTitle": "1080p (H.264)"
+                                    },
+                                    {
+                                        "id": 635493,
+                                        "streamType": 2,
+                                        "codec": "truehd",
+                                        "index": 0,
+                                        "channels": 8,
+                                        "audioChannelLayout": "7.1",
+                                        "bitDepth": 24,
+                                        "samplingRate": 48000,
+                                        "displayTitle": "Unknown (TRUEHD 7.1)",
+                                        "extendedDisplayTitle": "Unknown (TRUEHD 7.1)"
+                                    },
+                                    {
+                                        "id": 635495,
+                                        "streamType": 2,
+                                        "selected": true,
+                                        "default": true,
+                                        "codec": "ac3",
+                                        "index": 2,
+                                        "channels": 6,
+                                        "bitrate": 640,
+                                        "language": "English",
+                                        "languageTag": "en",
+                                        "languageCode": "eng",
+                                        "audioChannelLayout": "5.1(side)",
+                                        "samplingRate": 48000,
+                                        "title": "Surround",
+                                        "displayTitle": "English (AC3 5.1)",
+                                        "extendedDisplayTitle": "Surround (English AC3 5.1)"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "Image": [
+                    {
+                        "alt": "Abominable",
+                        "type": "coverPoster",
+                        "url": "/library/metadata/102210/thumb/1744674505"
+                    },
+                    {
+                        "alt": "Abominable",
+                        "type": "background",
+                        "url": "/library/metadata/102210/art/1744674505"
+                    },
+                    {
+                        "alt": "Abominable",
+                        "type": "clearLogo",
+                        "url": "/library/metadata/102210/clearLogo/1744674505"
+                    }
+                ],
+                "UltraBlurColors": {
+                    "topLeft": "212857",
+                    "topRight": "2c3a73",
+                    "bottomRight": "275297",
+                    "bottomLeft": "0e0313"
+                },
+                "Genre": [
+                    {
+                        "id": 7,
+                        "filter": "genre=7",
+                        "tag": "Animation"
+                    },
+                    {
+                        "id": 174,
+                        "filter": "genre=174",
+                        "tag": "Comedy"
+                    },
+                    {
+                        "id": 9,
+                        "filter": "genre=9",
+                        "tag": "Family"
+                    },
+                    {
+                        "id": 8,
+                        "filter": "genre=8",
+                        "tag": "Fantasy"
+                    },
+                    {
+                        "id": 6,
+                        "filter": "genre=6",
+                        "tag": "Adventure"
+                    }
+                ],
+                "Country": [
+                    {
+                        "id": 1487,
+                        "filter": "country=1487",
+                        "tag": "China"
+                    },
+                    {
+                        "id": 34,
+                        "filter": "country=34",
+                        "tag": "Japan"
+                    },
+                    {
+                        "id": 505,
+                        "filter": "country=505",
+                        "tag": "United States of America"
+                    }
+                ],
+                "Guid": [
+                    {
+                        "id": "imdb://tt6324278"
+                    },
+                    {
+                        "id": "tmdb://431580"
+                    },
+                    {
+                        "id": "tvdb://12176"
+                    }
+                ],
+                "Rating": [
+                    {
+                        "image": "imdb://image.rating",
+                        "value": 7.0,
+                        "type": "audience"
+                    },
+                    {
+                        "image": "rottentomatoes://image.rating.ripe",
+                        "value": 8.3,
+                        "type": "critic"
+                    },
+                    {
+                        "image": "rottentomatoes://image.rating.upright",
+                        "value": 9.5,
+                        "type": "audience"
+                    },
+                    {
+                        "image": "themoviedb://image.rating",
+                        "value": 7.5,
+                        "type": "audience"
+                    }
+                ],
+                "Director": [
+                    {
+                        "id": 61040,
+                        "filter": "director=61040",
+                        "tag": "Jill Culton",
+                        "tagKey": "5d7768315af944001f1f90c4",
+                        "thumb": "https://metadata-static.plex.tv/d/people/d12694b7ac45ae95bc8793e7f5fb2f48.jpg"
+                    }
+                ],
+                "Writer": [
+                    {
+                        "id": 61042,
+                        "filter": "writer=61042",
+                        "tag": "Jill Culton",
+                        "tagKey": "5d7768315af944001f1f90c4",
+                        "thumb": "https://metadata-static.plex.tv/d/people/d12694b7ac45ae95bc8793e7f5fb2f48.jpg"
+                    }
+                ],
+                "Role": [
+                    {
+                        "id": 62082,
+                        "filter": "actor=62082",
+                        "tag": "Chloe Bennet",
+                        "tagKey": "5d776a2b51dd69001fe20490",
+                        "role": "Yi (voice)",
+                        "thumb": "https://metadata-static.plex.tv/8/people/8f9e199c01b0beb23142bcdc4dd6f9bf.jpg"
+                    },
+                    {
+                        "id": 62083,
+                        "filter": "actor=62083",
+                        "tag": "Albert Tsai",
+                        "tagKey": "5d776c19ad5437001f7b3945",
+                        "role": "Peng (voice)",
+                        "thumb": "https://metadata-static.plex.tv/6/people/6e348964a23931114a8e0566d552bb2c.jpg"
+                    },
+                    {
+                        "id": 463,
+                        "filter": "actor=463",
+                        "tag": "Eddie Izzard",
+                        "tagKey": "5d7768254de0ee001fcc8327",
+                        "role": "Burnish (voice)",
+                        "thumb": "https://metadata-static.plex.tv/a/people/a63f1d009e1863923924a3afcd557e81.jpg"
+                    },
+                    {
+                        "id": 62084,
+                        "filter": "actor=62084",
+                        "tag": "Tenzing Norgay Trainor",
+                        "tagKey": "5d7769bf23d5a3001f4fbd44",
+                        "role": "Jin (voice)",
+                        "thumb": "https://metadata-static.plex.tv/people/5d7769bf23d5a3001f4fbd44.jpg"
+                    },
+                    {
+                        "id": 3936,
+                        "filter": "actor=3936",
+                        "tag": "Joseph Izzo",
+                        "tagKey": "5d776889431c830024c0ea77",
+                        "role": "Everest (voice)",
+                        "thumb": "https://metadata-static.plex.tv/people/5d776889431c830024c0ea77.jpg"
+                    },
+                    {
+                        "id": 9812,
+                        "filter": "actor=9812",
+                        "tag": "Sarah Paulson",
+                        "tagKey": "5d77682e880197001ec92343",
+                        "role": "Dr. Zara (voice)",
+                        "thumb": "https://metadata-static.plex.tv/5/people/56e023bb055733d23b6d4570429a03e5.jpg"
+                    },
+                    {
+                        "id": 6624,
+                        "filter": "actor=6624",
+                        "tag": "Tsai Chin",
+                        "tagKey": "5d7768276f4521001ea99092",
+                        "role": "Nai Nai (voice)",
+                        "thumb": "https://metadata-static.plex.tv/6/people/6a3dc2d44693fcf6c0fe6b5d699087b7.jpg"
+                    },
+                    {
+                        "id": 62085,
+                        "filter": "actor=62085",
+                        "tag": "Michelle Wong",
+                        "tagKey": "5d776c9b47dd6e001f6ed34c",
+                        "role": "Yi’s Mom (voice)",
+                        "thumb": "https://metadata-static.plex.tv/b/people/b90dd4e670b6d633a20bf63ba8ebd0a1.jpg"
+                    },
+                    {
+                        "id": 3361,
+                        "filter": "actor=3361",
+                        "tag": "Rich Dietl",
+                        "tagKey": "5d77683ef59e580021899ba0",
+                        "role": "Goon Leader (voice)"
+                    },
+                    {
+                        "id": 12793,
+                        "filter": "actor=12793",
+                        "tag": "James Hong",
+                        "tagKey": "5d7768245af944001f1f635e",
+                        "role": "Yak Leader (voice)",
+                        "thumb": "https://metadata-static.plex.tv/8/people/8fe5cc1942a0836184be91251c6de0a9.jpg"
+                    },
+                    {
+                        "id": 65291,
+                        "filter": "actor=65291",
+                        "tag": "Christine Lin",
+                        "tagKey": "5d776e3596b655001fe5fed2",
+                        "role": "Teenage Girl #1 / Boy's Mom / Female Customer (voice)",
+                        "thumb": "https://metadata-static.plex.tv/3/people/3c40c17636dac9471fc9a82e49427bbd.jpg"
+                    },
+                    {
+                        "id": 62087,
+                        "filter": "actor=62087",
+                        "tag": "Kym Miller",
+                        "tagKey": "632097c3580698f2075f1b02",
+                        "role": "Teenage Girl #2 (voice)",
+                        "thumb": "https://metadata-static.plex.tv/e/people/e413be6dcde25ff55df31b504f66781e.jpg"
+                    },
+                    {
+                        "id": 66444,
+                        "filter": "actor=66444",
+                        "tag": "Jason Ko",
+                        "tagKey": "5ddd78d6f89f54001ec693e0",
+                        "role": "Teenage Boy (voice)",
+                        "thumb": "https://metadata-static.plex.tv/4/people/47ce8ef31fdec3557ef4536aa3fbb3d0.jpg"
+                    },
+                    {
+                        "id": 5462,
+                        "filter": "actor=5462",
+                        "tag": "Trevor Devall",
+                        "tagKey": "5d776842880197001ec95eaf",
+                        "role": "Van Driver / Goon (voice)",
+                        "thumb": "https://metadata-static.plex.tv/people/5d776842880197001ec95eaf.jpg"
+                    },
+                    {
+                        "id": 33949,
+                        "filter": "actor=33949",
+                        "tag": "Karen Huie",
+                        "tagKey": "5d7768335af944001f1f9827",
+                        "role": "Dog Lady / Dock Worker / Goon (voice)",
+                        "thumb": "https://metadata-static.plex.tv/people/5d7768335af944001f1f9827.jpg"
+                    },
+                    {
+                        "id": 30646,
+                        "filter": "actor=30646",
+                        "tag": "Vic Chao",
+                        "tagKey": "5d77682785719b001f3a0ef0",
+                        "role": "Jin Impersonator / Goon (voice)",
+                        "thumb": "https://metadata-static.plex.tv/people/5d77682785719b001f3a0ef0.jpg"
+                    },
+                    {
+                        "id": 7611,
+                        "filter": "actor=7611",
+                        "tag": "Fernando Chien",
+                        "tagKey": "5d776840103a2d001f56a80a",
+                        "role": "Merchant (voice)",
+                        "thumb": "https://metadata-static.plex.tv/8/people/85a049f888fb659fa4c495eecae51eaf.jpg"
+                    },
+                    {
+                        "id": 62089,
+                        "filter": "actor=62089",
+                        "tag": "Reuben Uy",
+                        "tagKey": "5d776aa751dd69001fe267c9",
+                        "role": "Goon (voice)",
+                        "thumb": "https://metadata-static.plex.tv/people/5d776aa751dd69001fe267c9.jpg"
+                    },
+                    {
+                        "id": 2498,
+                        "filter": "actor=2498",
+                        "tag": "David P. Smith",
+                        "tagKey": "5d7768283c3c2a001fbcb647",
+                        "role": "Goon (voice)",
+                        "thumb": "https://metadata-static.plex.tv/a/people/a5ec967f11b18e7c629a3bc650372a5f.jpg"
+                    },
+                    {
+                        "id": 2497,
+                        "filter": "actor=2497",
+                        "tag": "Walt Dohrn",
+                        "tagKey": "5d7768283c3c2a001fbcb655",
+                        "role": "Goon (voice)",
+                        "thumb": "https://metadata-static.plex.tv/0/people/06ad62e973968cc8871a6d2648d3ca49.jpg"
+                    },
+                    {
+                        "id": 61274,
+                        "filter": "actor=61274",
+                        "tag": "Elizabeth Pan",
+                        "tagKey": "5d776adc7a53e9001e711eef",
+                        "role": "Goon (voice)",
+                        "thumb": "https://metadata-static.plex.tv/people/5d776adc7a53e9001e711eef.jpg"
+                    },
+                    {
+                        "id": 62090,
+                        "filter": "actor=62090",
+                        "tag": "Rupert Gregson-Williams",
+                        "tagKey": "5dcd37a8d9a112001eaf27c2",
+                        "role": "Everest Humming (voice)",
+                        "thumb": "https://metadata-static.plex.tv/1/people/1326844c30566418b088f8473c0b91e7.jpg"
+                    },
+                    {
+                        "id": 25476,
+                        "filter": "actor=25476",
+                        "tag": "Ewan Chung",
+                        "tagKey": "5d7768416f4521001ea9e5a3",
+                        "role": "Policeman / Goon / Additional voices (voice)",
+                        "thumb": "https://metadata-static.plex.tv/c/people/cd7f946c0138c572ff30fa78d270eccd.jpg"
+                    },
+                    {
+                        "id": 62091,
+                        "filter": "actor=62091",
+                        "tag": "J'Dvonte",
+                        "tagKey": "632097c44c83bc661d5e2166",
+                        "role": "Goon (voice)",
+                        "thumb": "https://metadata-static.plex.tv/2/people/228e290991c4e2ea04987628b5c44a44.jpg"
+                    },
+                    {
+                        "id": 62092,
+                        "filter": "actor=62092",
+                        "tag": "Jessika Van",
+                        "tagKey": "5d776844880197001ec96412",
+                        "role": "Additional Voices (voice)",
+                        "thumb": "https://metadata-static.plex.tv/7/people/7c833b81a6ba4ec320461345a08d8281.jpg"
+                    }
+                ],
+                "Producer": [
+                    {
+                        "id": 44707,
+                        "filter": "producer=44707",
+                        "tag": "Suzanne Buirgy",
+                        "tagKey": "5d776a63594b2b001e6bb6cb",
+                        "thumb": "https://metadata-static.plex.tv/a/people/a9c573002c0f83e08ab8db29c89ae55c.jpg"
+                    },
+                    {
+                        "id": 62093,
+                        "filter": "producer=62093",
+                        "tag": "Dave Polsky",
+                        "tagKey": "5d77682d3c3c2a001fbcc810",
+                        "thumb": "https://metadata-static.plex.tv/2/people/299c8cbb51175f825d5db96fffc73e55.jpg"
+                    },
+                    {
+                        "id": 62094,
+                        "filter": "producer=62094",
+                        "tag": "Peilin Chou",
+                        "tagKey": "5eacf262f82b97003f98bdf6"
+                    }
+                ],
+                "Field": [
+                    {
+                        "locked": true,
+                        "name": "thumb"
+                    },
+                    {
+                        "locked": true,
+                        "name": "art"
+                    },
+                    {
+                        "locked": true,
+                        "name": "label"
+                    }
+                ]
+            }
+        ]
+    }
 }

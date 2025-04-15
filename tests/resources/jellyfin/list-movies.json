@@ -1,46 +1,50 @@
 {
-  "Items": [{
-    "Name": "Despicable Me",
-    "ServerId": "dc3a12fa42114b4b9e119db7af393829",
-    "Id": "f6890000cdb1434c4ab3208fdf02da30",
-    "Container": "mov,mp4,m4a,3gp,3g2,mj2",
-    "PremiereDate": "2010-07-08T00:00:00.0000000Z",
-    "CriticRating": 80,
-    "OfficialRating": "PG",
-    "ChannelId": null,
-    "CommunityRating": 7.246,
-    "RunTimeTicks": 56816213330,
-    "ProductionYear": 2010,
-    "ProviderIds": {
-      "TmdbCollection": "86066",
-      "Imdb": "tt1323594",
-      "Tmdb": "20352"
+  "Items": [
+    {
+      "Name": "Despicable Me",
+      "ServerId": "dc3a12fa42114b4b9e119db7af393829",
+      "Id": "f6890000cdb1434c4ab3208fdf02da30",
+      "Container": "mov,mp4,m4a,3gp,3g2,mj2",
+      "PremiereDate": "2010-07-08T00:00:00.0000000Z",
+      "CriticRating": 80,
+      "OfficialRating": "PG",
+      "ChannelId": null,
+      "CommunityRating": 7.246,
+      "RunTimeTicks": 56816213330,
+      "ProductionYear": 2010,
+      "ProviderIds": {
+        "TmdbCollection": "86066",
+        "Imdb": "tt1323594",
+        "Tmdb": "20352"
+      },
+      "IsFolder": false,
+      "Type": "Movie",
+      "VideoType": "VideoFile",
+      "ImageTags": {
+        "Primary": "61926754abfed70dc5e75964fb5a1db9",
+        "Logo": "bc0bf6d4e11acb8d417cb2125f758a51",
+        "Thumb": "9d2a2ea09519b8924646db9e4a3a9b1a"
+      },
+      "BackdropImageTags": [
+        "450e10a451e859d8036ab514271e4554"
+      ],
+      "ImageBlurHashes": {
+        "Backdrop": {
+          "450e10a451e859d8036ab514271e4554": "WlHL*xt8Klx]E2Oa?cxuWTRjV=oy_NkDo#n~Rlo#%$ozs;n+t7t7"
+        },
+        "Primary": {
+          "61926754abfed70dc5e75964fb5a1db9": "dhQ9s4-:_N_3%gs:xuoz-;oMMyR*_3xaM{Rj%MxuM{M{"
+        },
+        "Logo": {
+          "bc0bf6d4e11acb8d417cb2125f758a51": "HFM4WJ}p$hI?^3R,Nc}pAE^w$#xEJ9NvsUWWxEWW"
+        },
+        "Thumb": {
+          "9d2a2ea09519b8924646db9e4a3a9b1a": "WfDc??M{MxZ~WBtS_NROM{RPaekX.TNGRiV@V@j[.9NdNGoIWAae"
+        }
+      },
+      "LocationType": "FileSystem",
+      "MediaType": "Video"
     },
-    "IsFolder": false,
-    "Type": "Movie",
-    "VideoType": "VideoFile",
-    "ImageTags": {
-      "Primary": "61926754abfed70dc5e75964fb5a1db9",
-      "Logo": "bc0bf6d4e11acb8d417cb2125f758a51",
-      "Thumb": "9d2a2ea09519b8924646db9e4a3a9b1a"
-    },
-    "BackdropImageTags": ["450e10a451e859d8036ab514271e4554"],
-    "ImageBlurHashes": {
-      "Backdrop": {
-        "450e10a451e859d8036ab514271e4554": "WlHL*xt8Klx]E2Oa?cxuWTRjV=oy_NkDo#n~Rlo#%$ozs;n+t7t7"
-      },
-      "Primary": {
-        "61926754abfed70dc5e75964fb5a1db9": "dhQ9s4-:_N_3%gs:xuoz-;oMMyR*_3xaM{Rj%MxuM{M{"
-      },
-      "Logo": {
-        "bc0bf6d4e11acb8d417cb2125f758a51": "HFM4WJ}p$hI?^3R,Nc}pAE^w$#xEJ9NvsUWWxEWW"
-      },
-      "Thumb": {
-        "9d2a2ea09519b8924646db9e4a3a9b1a": "WfDc??M{MxZ~WBtS_NROM{RPaekX.TNGRiV@V@j[.9NdNGoIWAae"
-      }},
-    "LocationType": "FileSystem",
-    "MediaType": "Video"
-  },
     {
       "Name": "Porco Rosso",
       "ServerId": "dc3a12fa42114b4b9e119db7af393829",
@@ -66,7 +70,9 @@
         "Logo": "46162b5ce98e9fc3a111f240079e01b7",
         "Thumb": "0b9cc53bd6eb8eefef9a6d111fd5fe7f"
       },
-      "BackdropImageTags": ["58bc3661c44dece0bfd52d810b9bf607"],
+      "BackdropImageTags": [
+        "58bc3661c44dece0bfd52d810b9bf607"
+      ],
       "ImageBlurHashes": {
         "Backdrop": {
           "58bc3661c44dece0bfd52d810b9bf607": "WeH-$Gv1V@%gahxvPXNaofR-bcgO9xtlbbNeofjI-rr=RktSofRk"
@@ -79,7 +85,8 @@
         },
         "Thumb": {
           "0b9cc53bd6eb8eefef9a6d111fd5fe7f": "WdI}C,b_IvRWtTxuPERQS$kqxWoz8|jZS3i_MwWBxvx[RQIoofof"
-        }},
+        }
+      },
       "LocationType": "FileSystem",
       "MediaType": "Video"
     },
@@ -107,7 +114,9 @@
         "Logo": "de1002590d65277240ee5ccf59272c47",
         "Thumb": "0016d6f941fbe2d52d77b4f7a44bc9c7"
       },
-      "BackdropImageTags": ["a49c502b3b18219ef9337dd4bc1d4f1d"],
+      "BackdropImageTags": [
+        "a49c502b3b18219ef9337dd4bc1d4f1d"
+      ],
       "ImageBlurHashes": {
         "Backdrop": {
           "a49c502b3b18219ef9337dd4bc1d4f1d": "WLD0fiXAES-=IVtl?wWoI;bXM{t6Nh%MWbNKxaRkgOxYt8bcslNG"
@@ -120,7 +129,8 @@
         },
         "Thumb": {
           "0016d6f941fbe2d52d77b4f7a44bc9c7": "WFBg_CSQ9*~pIYNsK+%3-WImbHe.0gxur]I@%KRRtKE9IqxtWFxo"
-        }},
+        }
+      },
       "LocationType": "FileSystem",
       "MediaType": "Video"
     }

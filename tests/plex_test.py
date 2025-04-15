@@ -39,7 +39,7 @@ def test_list_shows(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
 
     results = plex_session.list_shows()
     assert results is not None
-    result = next(iter(x for x in results if x.tmdb_id == 33907), None)
+    result = next(iter(x for x in results if x.tmdb_id == 131378), None)
     assert result is not None
 
 
@@ -56,7 +56,7 @@ def test_get_show(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
         is_reusable=True,
     )
     httpx_mock.add_response(
-        url=re.compile(r"http://localhost/library/sections/.*/all\?includeGuids=1"),
+        url=re.compile(r"http://localhost/library/sections/.*\?includeGuids=1"),
         json=json.loads(Path("tests/resources/plex/get-show.json").read_text()),
         is_reusable=True,
     )
@@ -71,86 +71,32 @@ def test_get_show(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
         is_reusable=True,
     )
 
-    result = plex_session.get_show(tmdb_id=33907)
+    result = plex_session.get_show(tmdb_id=131378)
     assert result is not None
 
-    assert result.id == 108617
-    assert result.imdb_id == "tt1606375"
-    assert result.name == "Downton Abbey"
-    assert result.premiere_date == date(2010, 9, 26)
-    assert result.tmdb_id == 33907
-    assert result.tvdb_id == 193131
-    assert result.year == 2010
+    assert result.id == 109436
+    assert result.imdb_id == "tt15248880"
+    assert result.name == "Adventure Time: Fionna & Cake"
+    assert result.premiere_date == date(2023, 8, 31)
+    assert result.tmdb_id == 131378
+    assert result.tvdb_id == 408850
+    assert result.year == 2023
     assert len(result.seasons) != 0
-    assert result.seasons[1].id == 108654
-    assert result.seasons[1].imdb_id is None
-    assert result.seasons[1].name == "Series 1"
-    assert result.seasons[1].number == 1
-    assert result.seasons[1].premiere_date is None
-    assert result.seasons[1].tmdb_id == 44728
-    assert result.seasons[1].tvdb_id == 324521
-    assert len(result.seasons[1].episodes) != 0
-    assert result.seasons[1].episodes[0].id == 108655
-    assert result.seasons[1].episodes[0].imdb_id == "tt1608844"
-    assert result.seasons[1].episodes[0].name == "Episode #1.1"
-    assert result.seasons[1].episodes[0].number == 1
-    assert result.seasons[1].episodes[0].premiere_date == date(2010, 9, 26)
-    assert result.seasons[1].episodes[0].tmdb_id == 779837
-    assert result.seasons[1].episodes[0].tvdb_id == 2887371
-
-
-@pytest.mark.httpx_mock(
-    should_mock=lambda request: request.url.host == "localhost",
-    assert_all_responses_were_requested=False,
-)
-def test_list_movies(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
-    if plex_session is None:
-        plex_session = Plex(base_url="http://localhost", token="INVALID")  # noqa: S106
-    httpx_mock.add_response(
-        url="http://localhost/library/sections",
-        json=json.loads(Path("tests/resources/plex/list-libraries.json").read_text()),
-        is_reusable=True,
-    )
-    httpx_mock.add_response(
-        url=re.compile(r"http://localhost/library/sections/.*/all\?includeGuids=1"),
-        json=json.loads(Path("tests/resources/plex/list-movies.json").read_text()),
-        is_reusable=True,
-    )
-
-    results = plex_session.list_movies()
-    assert len(results) != 0
-    result = next(iter(x for x in results if x.tmdb_id == 16859), None)
-    assert result is not None
-
-
-@pytest.mark.httpx_mock(
-    should_mock=lambda request: request.url.host == "localhost",
-    assert_all_responses_were_requested=False,
-)
-def test_get_movie(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
-    if plex_session is None:
-        plex_session = Plex(base_url="http://localhost", token="INVALID")  # noqa: S106
-    httpx_mock.add_response(
-        url="http://localhost/library/sections",
-        json=json.loads(Path("tests/resources/plex/list-libraries.json").read_text()),
-        is_reusable=True,
-    )
-    httpx_mock.add_response(
-        url=re.compile(r"http://localhost/library/sections/.*/all\?includeGuids=1"),
-        json=json.loads(Path("tests/resources/plex/get-movie.json").read_text()),
-        is_reusable=True,
-    )
-
-    result = plex_session.get_movie(tmdb_id=16859)
-    assert result is not None
-
-    assert result.id == 110049
-    assert result.imdb_id == "tt0097814"
-    assert result.name == "Kiki's Delivery Service"
-    assert result.premiere_date == date(1989, 7, 29)
-    assert result.tmdb_id == 16859
-    assert result.tvdb_id is None
-    assert result.year == 1989
+    assert result.seasons[0].id == 109437
+    assert result.seasons[0].imdb_id is None
+    assert result.seasons[0].name == "Season 1"
+    assert result.seasons[0].number == 1
+    assert result.seasons[0].premiere_date is None
+    assert result.seasons[0].tmdb_id == 206322
+    assert result.seasons[0].tvdb_id == 1950683
+    assert len(result.seasons[0].episodes) != 0
+    assert result.seasons[0].episodes[0].id == 109438
+    assert result.seasons[0].episodes[0].imdb_id == "tt15251002"
+    assert result.seasons[0].episodes[0].name == "Fionna Campbell"
+    assert result.seasons[0].episodes[0].number == 1
+    assert result.seasons[0].episodes[0].premiere_date == date(2023, 8, 31)
+    assert result.seasons[0].episodes[0].tmdb_id == 4582728
+    assert result.seasons[0].episodes[0].tvdb_id == 8619274
 
 
 @pytest.mark.httpx_mock(
@@ -183,7 +129,7 @@ def test_list_collections(plex_session: Plex | None, httpx_mock: HTTPXMock) -> N
 
     results = plex_session.list_collections()
     assert len(results) != 0
-    result = next(iter(x for x in results if x.tmdb_id == 529), None)
+    result = next(iter(x for x in results if x.tmdb_id == 125574), None)
     assert result is not None
 
 
@@ -215,17 +161,71 @@ def test_get_collection(plex_session: Plex | None, httpx_mock: HTTPXMock) -> Non
         is_reusable=True,
     )
 
-    result = plex_session.get_collection(tmdb_id=529)
+    result = plex_session.get_collection(tmdb_id=125574)
     assert result is not None
 
-    assert result.id == 110049
-    assert result.name == "Wallace & Gromit Collection"
-    assert result.tmdb_id == 529
+    assert result.id == 120713
+    assert result.name == "The Amazing Spider-Man Collection"
+    assert result.tmdb_id == 125574
     assert len(result.movies) != 0
-    assert result.movies[0].id == 110049
-    assert result.movies[0].imdb_id == "tt0097814"
-    assert result.movies[0].name == "A Grand Day Out"
-    assert result.movies[0].premiere_date == date(1989, 7, 29)
-    assert result.movies[0].tmdb_id == 16859
-    assert result.movies[0].tvdb_id is None
-    assert result.movies[0].year == 1989
+    assert result.movies[0].id == 120717
+    assert result.movies[0].imdb_id == "tt0948470"
+    assert result.movies[0].name == "The Amazing Spider-Man"
+    assert result.movies[0].premiere_date == date(2012, 6, 28)
+    assert result.movies[0].tmdb_id == 1930
+    assert result.movies[0].tvdb_id == 473
+    assert result.movies[0].year == 2012
+
+
+@pytest.mark.httpx_mock(
+    should_mock=lambda request: request.url.host == "localhost",
+    assert_all_responses_were_requested=False,
+)
+def test_list_movies(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
+    if plex_session is None:
+        plex_session = Plex(base_url="http://localhost", token="INVALID")  # noqa: S106
+    httpx_mock.add_response(
+        url="http://localhost/library/sections",
+        json=json.loads(Path("tests/resources/plex/list-libraries.json").read_text()),
+        is_reusable=True,
+    )
+    httpx_mock.add_response(
+        url=re.compile(r"http://localhost/library/sections/.*/all\?includeGuids=1"),
+        json=json.loads(Path("tests/resources/plex/list-movies.json").read_text()),
+        is_reusable=True,
+    )
+
+    results = plex_session.list_movies()
+    assert len(results) != 0
+    result = next(iter(x for x in results if x.tmdb_id == 431580), None)
+    assert result is not None
+
+
+@pytest.mark.httpx_mock(
+    should_mock=lambda request: request.url.host == "localhost",
+    assert_all_responses_were_requested=False,
+)
+def test_get_movie(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
+    if plex_session is None:
+        plex_session = Plex(base_url="http://localhost", token="INVALID")  # noqa: S106
+    httpx_mock.add_response(
+        url="http://localhost/library/sections",
+        json=json.loads(Path("tests/resources/plex/list-libraries.json").read_text()),
+        is_reusable=True,
+    )
+    httpx_mock.add_response(
+        url=re.compile(r"http://localhost/library/sections/.*\?includeGuids=1"),
+        json=json.loads(Path("tests/resources/plex/get-movie.json").read_text()),
+        is_reusable=True,
+    )
+
+    result = plex_session.get_movie(tmdb_id=431580)
+    assert result is not None
+
+    assert result.id == 102210
+    assert result.imdb_id == "tt6324278"
+    assert result.name == "Abominable"
+    assert result.premiere_date == date(2019, 9, 19)
+    assert result.tmdb_id == 431580
+    assert result.tvdb_id == 12176
+    assert result.year == 2019

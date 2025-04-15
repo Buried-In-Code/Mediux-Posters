@@ -1,47 +1,48 @@
 {
-  "Items": [{
-    "Name": "Collections",
-    "ServerId": "dc3a12fa42114b4b9e119db7af393829",
-    "Id": "9d7ad6afe9afa2dab1a2f6e00ad28fa6",
-    "Etag": "33107672bce552b019f13be86e31cb5e",
-    "DateCreated": "2024-10-13T13:48:01.9046379Z",
-    "CanDelete": false,
-    "CanDownload": false,
-    "SortName": "collections",
-    "ExternalUrls": [],
-    "Path": "/config/root/default/Collections",
-    "EnableMediaSourceDisplay": true,
-    "ChannelId": null,
-    "Taglines": [],
-    "Genres": [],
-    "RemoteTrailers": [],
-    "ProviderIds": {},
-    "IsFolder": true,
-    "ParentId": "e9d5075a555c1cbc394eec4cef295274",
-    "Type": "CollectionFolder",
-    "People": [],
-    "Studios": [],
-    "GenreItems": [],
-    "LocalTrailerCount": 0,
-    "SpecialFeatureCount": 0,
-    "DisplayPreferencesId": "9d7ad6afe9afa2dab1a2f6e00ad28fa6",
-    "Tags": [],
-    "PrimaryImageAspectRatio": 1.7777777777777777,
-    "CollectionType": "boxsets",
-    "ImageTags": {
-      "Primary": "2a0c681ecf025eb42557ab61fb150e0c"
+  "Items": [
+    {
+      "Name": "Collections",
+      "ServerId": "dc3a12fa42114b4b9e119db7af393829",
+      "Id": "9d7ad6afe9afa2dab1a2f6e00ad28fa6",
+      "Etag": "33107672bce552b019f13be86e31cb5e",
+      "DateCreated": "2024-10-13T13:48:01.9046379Z",
+      "CanDelete": false,
+      "CanDownload": false,
+      "SortName": "collections",
+      "ExternalUrls": [],
+      "Path": "/config/root/default/Collections",
+      "EnableMediaSourceDisplay": true,
+      "ChannelId": null,
+      "Taglines": [],
+      "Genres": [],
+      "RemoteTrailers": [],
+      "ProviderIds": {},
+      "IsFolder": true,
+      "ParentId": "e9d5075a555c1cbc394eec4cef295274",
+      "Type": "CollectionFolder",
+      "People": [],
+      "Studios": [],
+      "GenreItems": [],
+      "LocalTrailerCount": 0,
+      "SpecialFeatureCount": 0,
+      "DisplayPreferencesId": "9d7ad6afe9afa2dab1a2f6e00ad28fa6",
+      "Tags": [],
+      "PrimaryImageAspectRatio": 1.7777777777777777,
+      "CollectionType": "boxsets",
+      "ImageTags": {
+        "Primary": "2a0c681ecf025eb42557ab61fb150e0c"
+      },
+      "BackdropImageTags": [],
+      "ImageBlurHashes": {
+        "Primary": {
+          "2a0c681ecf025eb42557ab61fb150e0c": "WEATyK%LD%kBM{ofD%Rkayfkj[j[00Rj%Mf6xuWBM{j[t7j[ofj["
+        }
+      },
+      "LocationType": "FileSystem",
+      "MediaType": "Unknown",
+      "LockedFields": [],
+      "LockData": false
     },
-    "BackdropImageTags": [],
-    "ImageBlurHashes": {
-      "Primary": {
-        "2a0c681ecf025eb42557ab61fb150e0c": "WEATyK%LD%kBM{ofD%Rkayfkj[j[00Rj%Mf6xuWBM{j[t7j[ofj["
-      }
-    },
-    "LocationType": "FileSystem",
-    "MediaType": "Unknown",
-    "LockedFields": [],
-    "LockData": false
-  },
     {
       "Name": "Comics",
       "ServerId": "dc3a12fa42114b4b9e119db7af393829",
@@ -242,7 +243,8 @@
       "MediaType": "Unknown",
       "LockedFields": [],
       "LockData": false
-    }],
+    }
+  ],
   "TotalRecordCount": 6,
   "StartIndex": 0
 }

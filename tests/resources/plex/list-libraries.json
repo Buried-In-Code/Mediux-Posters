@@ -1,24 +1,93 @@
 {
-  "MediaContainer": {
-    "Directory": [{
-      "type": "artist",
-      "id": 1,
-      "title": "Music"
-    },
-      {
-        "type": "movie",
-        "id": 2,
-        "title": "Movies"
-      },
-      {
-        "type": "photo",
-        "id": 3,
-        "title": "Photos"
-      },
-      {
-        "type": "show",
-        "id": 4,
-        "title": "Tv Shows"
-      }]
-  }
+    "MediaContainer": {
+        "size": 3,
+        "allowSync": false,
+        "title1": "Plex Library",
+        "Directory": [
+            {
+                "allowSync": true,
+                "art": "/:/resources/movie-fanart.jpg",
+                "composite": "/library/sections/1/composite/1744680373",
+                "filters": true,
+                "refreshing": false,
+                "thumb": "/:/resources/movie.png",
+                "key": "1",
+                "type": "movie",
+                "title": "Movies",
+                "agent": "tv.plex.agents.movie",
+                "scanner": "Plex Movie",
+                "language": "en-US",
+                "uuid": "09dd5d64-2d11-476f-9064-d2b4f776a3bb",
+                "updatedAt": 1744680428,
+                "createdAt": 1703059703,
+                "scannedAt": 1744680373,
+                "content": true,
+                "directory": true,
+                "contentChangedAt": 8457612157631014061,
+                "hidden": 0,
+                "Location": [
+                    {
+                        "id": 1,
+                        "path": "/data/movies"
+                    }
+                ]
+            },
+            {
+                "allowSync": true,
+                "art": "/:/resources/show-fanart.jpg",
+                "composite": "/library/sections/2/composite/1744677973",
+                "filters": true,
+                "refreshing": false,
+                "thumb": "/:/resources/show.png",
+                "key": "2",
+                "type": "show",
+                "title": "TV shows",
+                "agent": "tv.plex.agents.series",
+                "scanner": "Plex TV Series",
+                "language": "en-US",
+                "uuid": "ba066eda-f6c7-4410-8dc6-c12e8585acce",
+                "updatedAt": 1744679841,
+                "createdAt": 1703063500,
+                "scannedAt": 1744677973,
+                "content": true,
+                "directory": true,
+                "contentChangedAt": 8457612157631009720,
+                "hidden": 0,
+                "Location": [
+                    {
+                        "id": 2,
+                        "path": "/data/tv-shows"
+                    }
+                ]
+            },
+            {
+                "allowSync": true,
+                "art": "/:/resources/photo-fanart.jpg",
+                "composite": "/library/sections/3/composite/1744680373",
+                "filters": true,
+                "refreshing": false,
+                "thumb": "/:/resources/photo.png",
+                "key": "3",
+                "type": "photo",
+                "title": "Photos",
+                "agent": "tv.plex.agents.none",
+                "scanner": "Plex Photo Scanner",
+                "language": "en-GB",
+                "uuid": "30a97766-1d7b-4d3a-8b57-feb5477d844e",
+                "updatedAt": 1744680428,
+                "createdAt": 1735896361,
+                "scannedAt": 1744680373,
+                "content": true,
+                "directory": true,
+                "contentChangedAt": 8457612157630977866,
+                "hidden": 2,
+                "Location": [
+                    {
+                        "id": 4,
+                        "path": "/data/photos"
+                    }
+                ]
+            }
+        ]
+    }
 }

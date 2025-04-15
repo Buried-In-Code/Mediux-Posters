@@ -1,19 +1,419 @@
 {
-  "MediaContainer": {
-    "Metadata": [{
-      "ratingKey": 108655,
-      "title": "Episode #1.1",
-      "index": 1,
-      "originallyAvailableAt": "2010-09-26",
-      "Guid": [{
-        "Id": "imdb://tt1608844"
-      },
-        {
-          "Id": "tmdb://779837"
-        },
-        {
-          "Id": "tvdb://2887371"
-        }]
-    }]
-  }
+    "MediaContainer": {
+        "size": 3,
+        "allowSync": true,
+        "art": "/library/metadata/109436/art/1744674399",
+        "grandparentContentRating": "TV-14",
+        "grandparentRatingKey": 109436,
+        "grandparentStudio": "Cartoon Network Studios",
+        "grandparentTheme": "/library/metadata/109436/theme/1744674399",
+        "grandparentThumb": "/library/metadata/109436/thumb/1744674399",
+        "grandparentTitle": "Adventure Time: Fionna & Cake",
+        "identifier": "com.plexapp.plugins.library",
+        "key": "109437",
+        "librarySectionID": 2,
+        "librarySectionTitle": "TV shows",
+        "librarySectionUUID": "ba066eda-f6c7-4410-8dc6-c12e8585acce",
+        "mediaTagPrefix": "/system/bundle/media/flags/",
+        "mediaTagVersion": 1744189307,
+        "nocache": true,
+        "parentIndex": 1,
+        "parentTitle": "Season 1",
+        "parentYear": 2023,
+        "summary": "Alongside former Ice King Simon Petrikov, Fionna and Cake embark on a multiverse-hopping journey of self-discovery while avoiding a powerful new foe.",
+        "theme": "/library/metadata/109436/theme/1744674399",
+        "thumb": "/library/metadata/109437/thumb/1744674399",
+        "title1": "Adventure Time: Fionna & Cake",
+        "title2": "Season 1",
+        "viewGroup": "episode",
+        "Metadata": [
+            {
+                "ratingKey": "109438",
+                "key": "/library/metadata/109438",
+                "parentRatingKey": "109437",
+                "grandparentRatingKey": "109436",
+                "guid": "plex://episode/64b2963480a859154247d496",
+                "parentGuid": "plex://season/6120ccb1898ddd002ca9ed52",
+                "grandparentGuid": "plex://show/611cdc357032b6002cb92e97",
+                "grandparentSlug": "adventure-time-fionna-and-cake",
+                "type": "episode",
+                "title": "Fionna Campbell",
+                "grandparentKey": "/library/metadata/109436",
+                "parentKey": "/library/metadata/109437",
+                "grandparentTitle": "Adventure Time: Fionna & Cake",
+                "parentTitle": "Season 1",
+                "contentRating": "TV-14",
+                "summary": "After a disastrous morning, a down-on-her luck Fionna seeks treatment for an out-of-sorts Cake.",
+                "index": 1,
+                "parentIndex": 1,
+                "audienceRating": 8.5,
+                "viewCount": 4,
+                "lastViewedAt": 1732420038,
+                "year": 2023,
+                "thumb": "/library/metadata/109438/thumb/1744674400",
+                "art": "/library/metadata/109436/art/1744674399",
+                "parentThumb": "/library/metadata/109437/thumb/1744674399",
+                "grandparentThumb": "/library/metadata/109436/thumb/1744674399",
+                "grandparentArt": "/library/metadata/109436/art/1744674399",
+                "grandparentTheme": "/library/metadata/109436/theme/1744674399",
+                "duration": 1506171,
+                "originallyAvailableAt": "2023-08-31",
+                "addedAt": 1732362269,
+                "updatedAt": 1744674400,
+                "audienceRatingImage": "themoviedb://image.rating",
+                "chapterSource": "media",
+                "Media": [
+                    {
+                        "id": 263316,
+                        "duration": 1506171,
+                        "bitrate": 2234,
+                        "width": 1920,
+                        "height": 1080,
+                        "aspectRatio": 1.78,
+                        "audioChannels": 6,
+                        "audioCodec": "eac3",
+                        "videoCodec": "h264",
+                        "videoResolution": "1080",
+                        "container": "mkv",
+                        "videoFrameRate": "24p",
+                        "videoProfile": "high",
+                        "hasVoiceActivity": true,
+                        "Part": [
+                            {
+                                "id": 271700,
+                                "key": "/library/parts/271700/1704848549/file.mkv",
+                                "duration": 1506171,
+                                "file": "/data/tv-shows/Adventure-Time-Fionna-and-Cake-2023_[tmdb-131378]/Season-01/Adventure-Time-Fionna-and-Cake-2023_S01E01.mkv",
+                                "size": 420997099,
+                                "container": "mkv",
+                                "indexes": "sd",
+                                "videoProfile": "high"
+                            }
+                        ]
+                    }
+                ],
+                "Image": [
+                    {
+                        "alt": "Fionna Campbell",
+                        "type": "coverPoster",
+                        "url": "/library/metadata/109436/thumb/1744674399"
+                    },
+                    {
+                        "alt": "Fionna Campbell",
+                        "type": "snapshot",
+                        "url": "/library/metadata/109438/thumb/1744674400"
+                    },
+                    {
+                        "alt": "Fionna Campbell",
+                        "type": "background",
+                        "url": "/library/metadata/109436/art/1744674399"
+                    },
+                    {
+                        "alt": "Fionna Campbell",
+                        "type": "clearLogo",
+                        "url": "/library/metadata/109436/clearLogo/1744674399"
+                    }
+                ],
+                "UltraBlurColors": {
+                    "topLeft": "113240",
+                    "topRight": "953953",
+                    "bottomRight": "913b60",
+                    "bottomLeft": "943c4c"
+                },
+                "Guid": [
+                    {
+                        "id": "imdb://tt15251002"
+                    },
+                    {
+                        "id": "tmdb://4582728"
+                    },
+                    {
+                        "id": "tvdb://8619274"
+                    }
+                ],
+                "Director": [
+                    {
+                        "tag": "Ryann Shannon"
+                    }
+                ],
+                "Writer": [
+                    {
+                        "tag": "Anna Syvertsson"
+                    },
+                    {
+                        "tag": "Jacob Winkler"
+                    }
+                ],
+                "Role": [
+                    {
+                        "tag": "Madeleine Martin"
+                    },
+                    {
+                        "tag": "Roz Ryan"
+                    },
+                    {
+                        "tag": "Tom Kenny"
+                    }
+                ]
+            },
+            {
+                "ratingKey": "109439",
+                "key": "/library/metadata/109439",
+                "parentRatingKey": "109437",
+                "grandparentRatingKey": "109436",
+                "guid": "plex://episode/64bb2131b17ba9080ad20ac7",
+                "parentGuid": "plex://season/6120ccb1898ddd002ca9ed52",
+                "grandparentGuid": "plex://show/611cdc357032b6002cb92e97",
+                "grandparentSlug": "adventure-time-fionna-and-cake",
+                "type": "episode",
+                "title": "Simon Petrikov",
+                "grandparentKey": "/library/metadata/109436",
+                "parentKey": "/library/metadata/109437",
+                "grandparentTitle": "Adventure Time: Fionna & Cake",
+                "parentTitle": "Season 1",
+                "contentRating": "TV-14",
+                "summary": "Struggling to find his place as a human in a magical world, Simon considers taking desperate measures before embarking on a quest with an old friend.",
+                "index": 2,
+                "parentIndex": 1,
+                "audienceRating": 9.2,
+                "viewCount": 4,
+                "lastViewedAt": 1732420038,
+                "year": 2023,
+                "thumb": "/library/metadata/109439/thumb/1744674400",
+                "art": "/library/metadata/109436/art/1744674399",
+                "parentThumb": "/library/metadata/109437/thumb/1744674399",
+                "grandparentThumb": "/library/metadata/109436/thumb/1744674399",
+                "grandparentArt": "/library/metadata/109436/art/1744674399",
+                "grandparentTheme": "/library/metadata/109436/theme/1744674399",
+                "duration": 1567649,
+                "originallyAvailableAt": "2023-08-31",
+                "addedAt": 1732362270,
+                "updatedAt": 1744674400,
+                "audienceRatingImage": "themoviedb://image.rating",
+                "chapterSource": "media",
+                "Media": [
+                    {
+                        "id": 263317,
+                        "duration": 1567649,
+                        "bitrate": 2057,
+                        "width": 1920,
+                        "height": 1080,
+                        "aspectRatio": 1.78,
+                        "audioChannels": 6,
+                        "audioCodec": "eac3",
+                        "videoCodec": "h264",
+                        "videoResolution": "1080",
+                        "container": "mkv",
+                        "videoFrameRate": "24p",
+                        "videoProfile": "high",
+                        "hasVoiceActivity": true,
+                        "Part": [
+                            {
+                                "id": 271701,
+                                "key": "/library/parts/271701/1704848552/file.mkv",
+                                "duration": 1567649,
+                                "file": "/data/tv-shows/Adventure-Time-Fionna-and-Cake-2023_[tmdb-131378]/Season-01/Adventure-Time-Fionna-and-Cake-2023_S01E02.mkv",
+                                "size": 403542637,
+                                "container": "mkv",
+                                "indexes": "sd",
+                                "videoProfile": "high"
+                            }
+                        ]
+                    }
+                ],
+                "Image": [
+                    {
+                        "alt": "Simon Petrikov",
+                        "type": "coverPoster",
+                        "url": "/library/metadata/109436/thumb/1744674399"
+                    },
+                    {
+                        "alt": "Simon Petrikov",
+                        "type": "snapshot",
+                        "url": "/library/metadata/109439/thumb/1744674400"
+                    },
+                    {
+                        "alt": "Simon Petrikov",
+                        "type": "background",
+                        "url": "/library/metadata/109436/art/1744674399"
+                    },
+                    {
+                        "alt": "Simon Petrikov",
+                        "type": "clearLogo",
+                        "url": "/library/metadata/109436/clearLogo/1744674399"
+                    }
+                ],
+                "UltraBlurColors": {
+                    "topLeft": "04211e",
+                    "topRight": "154d42",
+                    "bottomRight": "204c41",
+                    "bottomLeft": "0d2926"
+                },
+                "Guid": [
+                    {
+                        "id": "imdb://tt28811491"
+                    },
+                    {
+                        "id": "tmdb://4591683"
+                    },
+                    {
+                        "id": "tvdb://8619275"
+                    }
+                ],
+                "Director": [
+                    {
+                        "tag": "Steve Wolfhard"
+                    }
+                ],
+                "Writer": [
+                    {
+                        "tag": "Iggy Craig"
+                    },
+                    {
+                        "tag": "Graham Falk"
+                    }
+                ],
+                "Role": [
+                    {
+                        "tag": "Madeleine Martin"
+                    },
+                    {
+                        "tag": "Roz Ryan"
+                    },
+                    {
+                        "tag": "Tom Kenny"
+                    }
+                ]
+            },
+            {
+                "ratingKey": "109440",
+                "key": "/library/metadata/109440",
+                "parentRatingKey": "109437",
+                "grandparentRatingKey": "109436",
+                "guid": "plex://episode/64bb2130b17ba9080ad20ac6",
+                "parentGuid": "plex://season/6120ccb1898ddd002ca9ed52",
+                "grandparentGuid": "plex://show/611cdc357032b6002cb92e97",
+                "grandparentSlug": "adventure-time-fionna-and-cake",
+                "type": "episode",
+                "title": "Cake the Cat",
+                "grandparentKey": "/library/metadata/109436",
+                "parentKey": "/library/metadata/109437",
+                "grandparentTitle": "Adventure Time: Fionna & Cake",
+                "parentTitle": "Season 1",
+                "contentRating": "TV-14",
+                "summary": "While Cake crash-lands in a fantastic new world, Fionna continues her search after witnessing something impossible.",
+                "index": 3,
+                "parentIndex": 1,
+                "audienceRating": 8.0,
+                "viewCount": 4,
+                "lastViewedAt": 1732420038,
+                "year": 2023,
+                "thumb": "/library/metadata/109440/thumb/1744674401",
+                "art": "/library/metadata/109436/art/1744674399",
+                "parentThumb": "/library/metadata/109437/thumb/1744674399",
+                "grandparentThumb": "/library/metadata/109436/thumb/1744674399",
+                "grandparentArt": "/library/metadata/109436/art/1744674399",
+                "grandparentTheme": "/library/metadata/109436/theme/1744674399",
+                "duration": 1409616,
+                "originallyAvailableAt": "2023-09-07",
+                "addedAt": 1732362270,
+                "updatedAt": 1744674401,
+                "audienceRatingImage": "themoviedb://image.rating",
+                "chapterSource": "media",
+                "Media": [
+                    {
+                        "id": 263318,
+                        "duration": 1409616,
+                        "bitrate": 2267,
+                        "width": 1920,
+                        "height": 1080,
+                        "aspectRatio": 1.78,
+                        "audioChannels": 6,
+                        "audioCodec": "eac3",
+                        "videoCodec": "h264",
+                        "videoResolution": "1080",
+                        "container": "mkv",
+                        "videoFrameRate": "24p",
+                        "videoProfile": "high",
+                        "hasVoiceActivity": true,
+                        "Part": [
+                            {
+                                "id": 271702,
+                                "key": "/library/parts/271702/1704848555/file.mkv",
+                                "duration": 1409616,
+                                "file": "/data/tv-shows/Adventure-Time-Fionna-and-Cake-2023_[tmdb-131378]/Season-01/Adventure-Time-Fionna-and-Cake-2023_S01E03.mkv",
+                                "size": 399790912,
+                                "container": "mkv",
+                                "indexes": "sd",
+                                "videoProfile": "high"
+                            }
+                        ]
+                    }
+                ],
+                "Image": [
+                    {
+                        "alt": "Cake the Cat",
+                        "type": "coverPoster",
+                        "url": "/library/metadata/109436/thumb/1744674399"
+                    },
+                    {
+                        "alt": "Cake the Cat",
+                        "type": "snapshot",
+                        "url": "/library/metadata/109440/thumb/1744674401"
+                    },
+                    {
+                        "alt": "Cake the Cat",
+                        "type": "background",
+                        "url": "/library/metadata/109436/art/1744674399"
+                    },
+                    {
+                        "alt": "Cake the Cat",
+                        "type": "clearLogo",
+                        "url": "/library/metadata/109436/clearLogo/1744674399"
+                    }
+                ],
+                "UltraBlurColors": {
+                    "topLeft": "342153",
+                    "topRight": "493f89",
+                    "bottomRight": "4e4b4e",
+                    "bottomLeft": "211234"
+                },
+                "Guid": [
+                    {
+                        "id": "imdb://tt28819058"
+                    },
+                    {
+                        "id": "tmdb://4591684"
+                    },
+                    {
+                        "id": "tvdb://8619276"
+                    }
+                ],
+                "Director": [
+                    {
+                        "tag": "Ryann Shannon"
+                    }
+                ],
+                "Writer": [
+                    {
+                        "tag": "Nicole Rodriguez"
+                    },
+                    {
+                        "tag": "Anna Syvertsson"
+                    }
+                ],
+                "Role": [
+                    {
+                        "tag": "Madeleine Martin"
+                    },
+                    {
+                        "tag": "Roz Ryan"
+                    },
+                    {
+                        "tag": "Tom Kenny"
+                    }
+                ]
+            }
+        ]
+    }
 }
