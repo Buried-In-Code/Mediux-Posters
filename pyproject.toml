@@ -4,18 +4,18 @@ requires = ["hatchling"]
 
 [dependency-groups]
 dev = [
-  "pre-commit >= 4.2.0",
+  "pre-commit >= 4.2.0"
 ]
 tests = [
   "pytest >= 8.3.5",
   "pytest-cov >= 6.1.1",
   "pytest-httpx >= 0.35.0",
   "tox >= 4.25.0",
-  "tox-uv >= 1.25.0",
+  "tox-uv >= 1.25.0"
 ]
 
 [project]
-authors = [{ email = "BuriedInCode@tuta.io", name = "BuriedInCode" }]
+authors = [{email = "BuriedInCode@tuta.io", name = "BuriedInCode"}]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Environment :: Console",
@@ -27,23 +27,23 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-  "Typing :: Typed",
+  "Typing :: Typed"
 ]
 dependencies = [
+  "PlexAPI >= 4.17.0",
   "graphql-query >= 1.4.0",
   "httpx[http2] >= 0.28.1",
-  "PlexAPI >= 4.17.0",
   "pydantic >= 2.11.4",
   "ratelimit >= 2.2.1",
   "rich >= 14.0.0",
   "tomli >= 2.2.1 ; python_version < '3.11'",
   "tomli-w >= 1.2.0",
-  "typer >= 0.15.3",
+  "typer >= 0.15.3"
 ]
 description = "Fetches Show, Movie, and Collection cover art from Mediux and updates Plex/Jellyfin using TMDB IDs."
 dynamic = ["version"]
 keywords = []
-license = { text = "MIT" }
+license = {text = "MIT"}
 name = "mediux-posters"
 readme = "README.md"
 requires-python = ">= 3.10"
@@ -97,7 +97,7 @@ ignore = [
   "TD",
   "TRY003",
   "TRY300",
-  "TRY400",
+  "TRY400"
 ]
 select = ["ALL"]
 
@@ -119,11 +119,11 @@ split-on-trailing-comma = false
 classmethod-decorators = [
   "classmethod",
   "pydantic.field_validator",
-  "pydantic.model_validator",
+  "pydantic.model_validator"
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101", "PLR2004"]
+"tests/*" = ["PLR2004", "S101"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
