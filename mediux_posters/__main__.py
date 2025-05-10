@@ -463,16 +463,20 @@ def media_posters(
                 continue
 
             tmdb_id = int(url.split("/")[-1])
-            with CONSOLE.status(f"Searching {type(service).__name__} for TMDB id: '{tmdb_id}'"):
-                entry = service.get(media_type=media_type, tmdb_id=tmdb_id)
-                if not entry:
-                    LOGGER.warning(
-                        "[%s] Unable to find a %s with a Tmdb Id of '%d'",
-                        type(service).__name__,
-                        media_type.value.capitalize(),
-                        tmdb_id,
-                    )
-                    continue
+            try:
+                with CONSOLE.status(f"Searching {type(service).__name__} for TMDB id: '{tmdb_id}'"):
+                    entry = service.get(media_type=media_type, tmdb_id=tmdb_id)
+                    if not entry:
+                        LOGGER.warning(
+                            "[%s] Unable to find a %s with a Tmdb Id of '%d'",
+                            type(service).__name__,
+                            media_type.value.capitalize(),
+                            tmdb_id,
+                        )
+                        continue
+            except ServiceError as err:
+                LOGGER.warning("[%s] %s", type(service).__name__, err)
+                break
             CONSOLE.rule(
                 f"[{index + 1}/{len(url_list)}] {entry.display_name} [tmdb-{entry.tmdb_id}]",
                 align="left",
@@ -615,18 +619,21 @@ def set_posters(
                 align="left",
                 style="subtitle",
             )
-
-            with CONSOLE.status(
-                f"Searching {type(service).__name__} for '{set_data.set_title} [{tmdb_id}]'"
-            ):
-                entry = service.find(tmdb_id=tmdb_id)
-                if not entry:
-                    LOGGER.warning(
-                        "[%s] Unable to find any media with a Tmdb Id of '%d'",
-                        type(service).__name__,
-                        tmdb_id,
-                    )
-                    continue
+            try:
+                with CONSOLE.status(
+                    f"Searching {type(service).__name__} for '{set_data.set_title} [{tmdb_id}]'"
+                ):
+                    entry = service.get(media_type=media_type, tmdb_id=tmdb_id)
+                    if not entry:
+                        LOGGER.warning(
+                            "[%s] Unable to find any media with a Tmdb Id of '%d'",
+                            type(service).__name__,
+                            tmdb_id,
+                        )
+                        continue
+            except ServiceError as err:
+                LOGGER.warning("[%s] %s", type(service).__name__, err)
+                break
             if simple_clean:
                 LOGGER.info("Cleaning %s cache", entry.display_name)
                 delete_folder(folder=get_cached_image(slugify(value=entry.display_name)))
