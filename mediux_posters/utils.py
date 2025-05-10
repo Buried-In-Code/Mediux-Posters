@@ -1,10 +1,10 @@
 __all__ = [
-    "CONSOLE",
     "BaseModel",
     "MediaType",
     "blank_is_none",
     "delete_folder",
     "flatten_dict",
+    "get_cached_image",
     "slugify",
 ]
 
