@@ -10,7 +10,6 @@ from typing import Literal
 
 from httpx import Client, HTTPStatusError, RequestError, TimeoutException
 from pydantic import TypeAdapter, ValidationError
-from ratelimit import limits, sleep_and_retry
 
 from mediux_posters import __version__
 from mediux_posters.console import CONSOLE
@@ -26,7 +25,6 @@ from mediux_posters.services.jellyfin.schemas import (
 )
 
 LOGGER = logging.getLogger(__name__)
-MINUTE = 60
 
 
 class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
@@ -44,8 +42,6 @@ class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
     def extract_id(cls, entry: dict, prefix: str = "Tmdb") -> str | None:
         return entry.get("ProviderIds", {}).get(prefix)
 
-    @sleep_and_retry
-    @limits(calls=30, period=MINUTE)
     def _perform_get_request(
         self, endpoint: str, params: dict[str, str | list[str]] | None = None
     ) -> dict:
@@ -71,8 +67,6 @@ class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
         except TimeoutException as err:
             raise ServiceError("Service took too long to respond") from err
 
-    @sleep_and_retry
-    @limits(calls=30, period=MINUTE)
     def _perform_post_request(
         self, endpoint: str, body: bytes, headers: dict[str, str] | None = None
     ) -> None:
@@ -114,15 +108,18 @@ class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def _parse_show(self, jellyfin_show: dict) -> Show:
-        show = TypeAdapter(Show).validate_python(jellyfin_show)
-        for jellyfin_season in self._list_seasons(show_id=show.id):
-            season = TypeAdapter(Season).validate_python(jellyfin_season)
-            for jellyfin_episode in self._list_episodes(show_id=show.id, season_id=season.id):
-                episode = TypeAdapter(Episode).validate_python(jellyfin_episode)
-                season.episodes.append(episode)
-            show.seasons.append(season)
-        return show
+    def list_episodes(self, show_id: str, season_id: str) -> list[Episode]:
+        results = self._perform_get_request(
+            endpoint=f"/Shows/{show_id}/Episodes",
+            params={"seasonId": season_id, "fields": ["ProviderIds"]},
+        ).get("Items", [])
+        return TypeAdapter(list[Episode]).validate_python(results)
+
+    def list_seasons(self, show_id: str) -> list[Season]:
+        results = self._perform_get_request(
+            endpoint=f"/Shows/{show_id}/Seasons", params={"fields": ["ProviderIds"]}
+        ).get("Items", [])
+        return TypeAdapter(list[Season]).validate_python(results)
 
     def _list_shows(
         self,
@@ -149,21 +146,11 @@ class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
                 if not tmdb or (tmdb_id is not None and int(tmdb) != tmdb_id):
                     continue
                 try:
-                    output.append(self._parse_show(jellyfin_show=result))
+                    result = TypeAdapter(Show).validate_python(result)
+                    output.append(result)
                 except ValidationError as err:
                     raise ServiceError(err) from err
         return output
-
-    def _list_seasons(self, show_id: str) -> list[dict]:
-        return self._perform_get_request(
-            endpoint=f"/Shows/{show_id}/Seasons", params={"fields": ["ProviderIds"]}
-        ).get("Items", [])
-
-    def _list_episodes(self, show_id: str, season_id: str) -> list[dict]:
-        return self._perform_get_request(
-            endpoint=f"/Shows/{show_id}/Episodes",
-            params={"seasonId": season_id, "fields": ["ProviderIds"]},
-        ).get("Items", [])
 
     def list_shows(self, skip_libraries: list[str] | None = None) -> list[Show]:
         return self._list_shows(skip_libraries=skip_libraries)
@@ -171,26 +158,14 @@ class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
     def get_show(self, tmdb_id: int) -> Show | None:
         return next(iter(self._list_shows(tmdb_id=tmdb_id)), None)
 
-    def _list_collections(
-        self,
-        skip_libraries: list[str] | None = None,
-        tmdb_id: int | None = None,  # noqa: ARG002
-        collection_id: str | None = None,  # noqa: ARG002
-    ) -> list[Collection]:
-        libraries = self._list_libraries(media_type="unknown", skip_libraries=skip_libraries)
-        output = []
-        for _library in libraries:
-            pass
-        return output
+    def list_collections(self, skip_libraries: list[str] | None = None) -> list[Collection]:  # noqa: ARG002
+        return []
 
-    def list_collections(self, skip_libraries: list[str] | None = None) -> list[Collection]:
-        return self._list_collections(skip_libraries=skip_libraries)
+    def get_collection(self, tmdb_id: int) -> Collection | None:  # noqa: ARG002
+        return None
 
-    def get_collection(self, tmdb_id: int) -> Collection | None:
-        return next(iter(self._list_collections(tmdb_id=tmdb_id)), None)
-
-    def _parse_movie(self, jellyfin_movie: dict) -> Movie:
-        return TypeAdapter(Movie).validate_python(jellyfin_movie)
+    def list_collection_movies(self, collection_id: int | str) -> list[Movie]:  # noqa: ARG002
+        return []
 
     def _list_movies(
         self,
@@ -217,7 +192,8 @@ class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
                 if not tmdb or (tmdb_id is not None and int(tmdb) != tmdb_id):
                     continue
                 try:
-                    output.append(self._parse_movie(jellyfin_movie=result))
+                    result = TypeAdapter(Movie).validate_python(result)
+                    output.append(result)
                 except ValidationError as err:
                     raise ServiceError(err) from err
         return output
@@ -230,7 +206,7 @@ class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
 
     def upload_image(
         self,
-        obj: Show | Season | Episode | Movie | Collection,
+        object_id: int | str,
         image_file: Path,
         kometa_integration: bool,  # noqa: ARG002
     ) -> bool:
@@ -244,7 +220,7 @@ class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
                 image_data = b64encode(stream.read())
             try:
                 self._perform_post_request(
-                    endpoint=f"/Items/{obj.id}/Images/{image_type}",
+                    endpoint=f"/Items/{object_id}/Images/{image_type}",
                     headers=headers,
                     body=image_data,
                 )

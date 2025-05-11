@@ -44,15 +44,15 @@ def _stringify_values(content: dict[str, Any]) -> dict[str, Any]:
     output = {}
     for key, value in content.items():
         if isinstance(value, bool):
-            value = str(value)  # noqa: PLW2901
+            value = str(value)
         if not value:
             continue
         if isinstance(value, dict):
-            value = _stringify_values(content=value)  # noqa: PLW2901
+            value = _stringify_values(content=value)
         elif isinstance(value, list):
-            value = [_stringify_values(content=x) if isinstance(x, dict) else str(x) for x in value]  # noqa: PLW2901
+            value = [_stringify_values(content=x) if isinstance(x, dict) else str(x) for x in value]
         else:
-            value = str(value)  # noqa: PLW2901
+            value = str(value)
         output[key] = value
     return output
 

@@ -30,7 +30,6 @@ classifiers = [
   "Typing :: Typed"
 ]
 dependencies = [
-  "PlexAPI >= 4.17.0",
   "graphql-query >= 1.4.0",
   "httpx[http2] >= 0.28.1",
   "pydantic >= 2.11.4",
@@ -93,6 +92,7 @@ ignore = [
   "FIX",
   "PLR0912",
   "PLR0913",
+  "PLW2901",
   "TCH",
   "TD",
   "TRY003",

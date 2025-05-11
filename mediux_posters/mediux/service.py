@@ -19,7 +19,9 @@ from mediux_posters.mediux.schemas import CollectionSet, MovieSet, ShowSet
 from mediux_posters.utils import MediaType
 
 LOGGER = logging.getLogger(__name__)
-MINUTE = 60
+# 60 Calls per Minute
+CALLS = 60
+PERIOD = 60
 
 
 class Mediux:
@@ -105,7 +107,7 @@ class Mediux:
         )
 
     @sleep_and_retry
-    @limits(calls=30, period=MINUTE)
+    @limits(calls=CALLS, period=PERIOD)
     def _perform_graphql_request(self, query: str) -> dict[str, Any]:
         try:
             response = self.client.post("/graphql", json={"query": query})
@@ -318,6 +320,8 @@ class Mediux:
             else None
         )
 
+    @sleep_and_retry
+    @limits(calls=CALLS, period=PERIOD)
     def download_image(self, file_id: str, output: Path) -> None:
         output.parent.mkdir(parents=True, exist_ok=True)
         output.unlink(missing_ok=True)
