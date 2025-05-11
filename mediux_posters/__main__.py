@@ -5,7 +5,6 @@ from pathlib import Path
 from platform import python_version
 from typing import Annotated, Protocol, TypeVar
 
-from plexapi.exceptions import Unauthorized
 from typer import Abort, Context, Exit, Option, Typer
 
 from mediux_posters import __version__, get_cache_root, setup_logging
@@ -63,11 +62,8 @@ def setup(
         raise Abort
     mediux = Mediux(base_url=settings.mediux.base_url, api_key=settings.mediux.api_key)
     service_list = []
-    try:
-        if settings.plex.token:
-            service_list.append(Plex(base_url=settings.plex.base_url, token=settings.plex.token))
-    except Unauthorized as err:
-        LOGGER.warning(err)
+    if settings.plex.token:
+        service_list.append(Plex(base_url=settings.plex.base_url, token=settings.plex.token))
     if settings.jellyfin.token:
         service_list.append(
             Jellyfin(base_url=settings.jellyfin.base_url, token=settings.jellyfin.token)
@@ -129,14 +125,16 @@ def process_image(
             setattr(entry, attribute, True)
         else:
             if should_log:
-                LOGGER.info("Downloading '%s' by '%s'", set_data.set_title, set_data.username)
+                LOGGER.info(
+                    "[Mediux] Downloading '%s' by '%s'", set_data.set_title, set_data.username
+                )
                 should_log = False
             mediux.download_image(file_id=file_info.id, output=image_file)
             setattr(
                 entry,
                 attribute,
                 service.upload_image(
-                    obj=entry, image_file=image_file, kometa_integration=kometa_integration
+                    object_id=entry.id, image_file=image_file, kometa_integration=kometa_integration
                 ),
             )
     return should_log
@@ -152,7 +150,9 @@ def process_set_data(
 ) -> bool:
     should_log = True
     if entry.all_posters_uploaded:
-        LOGGER.info("All posters have been uploaded, skipping remaining sets")
+        LOGGER.info(
+            "[%s] All posters have been uploaded, skipping remaining sets", type(service).__name__
+        )
         return False
 
     should_log = process_image(
@@ -180,7 +180,8 @@ def process_set_data(
         kometa_integration=kometa_integration,
     )
     if media_type is MediaType.SHOW:
-        for season in entry.seasons:
+        for season in service.list_seasons(show_id=entry.id):
+            entry.seasons.append(season)
             mediux_season = next(
                 (x for x in set_data.show.seasons if x.number == season.number), None
             )
@@ -198,7 +199,8 @@ def process_set_data(
                 service=service,
                 kometa_integration=kometa_integration,
             )
-            for episode in season.episodes:
+            for episode in service.list_episodes(show_id=entry.id, season_id=season.id):
+                season.episodes.append(episode)
                 mediux_episode = next(
                     (x for x in mediux_season.episodes if x.number == episode.number), None
                 )
@@ -217,7 +219,8 @@ def process_set_data(
                     kometa_integration=kometa_integration,
                 )
     elif media_type is MediaType.COLLECTION:
-        for movie in entry.movies:
+        for movie in service.list_collection_movies(collection_id=entry.id):
+            entry.movies.append(movie)
             mediux_movie = next(
                 (x for x in set_data.collection.movies if x.tmdb_id == movie.tmdb_id), None
             )
@@ -483,7 +486,7 @@ def media_posters(
                 style="subtitle",
             )
             if simple_clean:
-                LOGGER.info("Cleaning %s cache", entry.display_name)
+                LOGGER.info("Cleaning %s from cache", entry.display_name)
                 delete_folder(folder=get_cached_image(slugify(value=entry.display_name)))
                 if media_type is MediaType.COLLECTION:
                     for movie in entry.movies:
@@ -635,7 +638,7 @@ def set_posters(
                 LOGGER.warning("[%s] %s", type(service).__name__, err)
                 break
             if simple_clean:
-                LOGGER.info("Cleaning %s cache", entry.display_name)
+                LOGGER.info("Cleaning %s from cache", entry.display_name)
                 delete_folder(folder=get_cached_image(slugify(value=entry.display_name)))
                 if media_type is MediaType.COLLECTION:
                     for movie in entry.movies:

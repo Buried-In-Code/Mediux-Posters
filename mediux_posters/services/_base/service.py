@@ -22,6 +22,12 @@ M = TypeVar("M", bound=BaseMovie)
 
 class BaseService(ABC, Generic[T, S, E, C, M]):
     @abstractmethod
+    def list_episodes(self, show_id: int | str, season_id: int | str) -> list[E]: ...
+
+    @abstractmethod
+    def list_seasons(self, show_id: int | str) -> list[S]: ...
+
+    @abstractmethod
     def list_shows(self, skip_libraries: list[str] | None = None) -> list[T]: ...
 
     @abstractmethod
@@ -32,6 +38,9 @@ class BaseService(ABC, Generic[T, S, E, C, M]):
 
     @abstractmethod
     def get_collection(self, tmdb_id: int) -> C | None: ...
+
+    @abstractmethod
+    def list_collection_movies(self, collection_id: int | str) -> list[M]: ...
 
     @abstractmethod
     def list_movies(self, skip_libraries: list[str] | None = None) -> list[M]: ...
@@ -66,5 +75,5 @@ class BaseService(ABC, Generic[T, S, E, C, M]):
 
     @abstractmethod
     def upload_image(
-        self, obj: T | S | E | M | C, image_file: Path, kometa_integration: bool
+        self, object_id: int | str, image_file: Path, kometa_integration: bool
     ) -> bool: ...
