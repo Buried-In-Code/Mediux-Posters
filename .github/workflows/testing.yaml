@@ -43,6 +43,9 @@ jobs:
       - name: Install project
         run: uv sync --group tests
       - name: Run tests
+        env:
+          MEDIUX__BASE_URL: ${{ secrets.MEDIUX__BASE_URL }}
+          MEDIUX__API_KEY: ${{ secrets.MEDIUX__API_KEY }}
         run: uv run pytest
   
   collector:
