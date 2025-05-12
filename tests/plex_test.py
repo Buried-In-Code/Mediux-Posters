@@ -18,12 +18,12 @@ def test_list_shows(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
         plex_session = Plex(base_url="http://localhost", token="INVALID")  # noqa: S106
     httpx_mock.add_response(
         url="http://localhost/library/sections",
-        json=json.loads(Path("tests/resources/plex/list-libraries.json").read_text()),
+        json=json.loads(Path("tests/resources/plex/list-libraries.json").read_text(encoding="UTF-8")),
         is_reusable=True,
     )
     httpx_mock.add_response(
         url=re.compile(r"http://localhost/library/sections/.*/all\?includeGuids=1"),
-        json=json.loads(Path("tests/resources/plex/list-shows.json").read_text()),
+        json=json.loads(Path("tests/resources/plex/list-shows.json").read_text(encoding="UTF-8")),
         is_reusable=True,
     )
 
@@ -43,12 +43,12 @@ def test_get_show(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
         plex_session = Plex(base_url="http://localhost", token="INVALID")  # noqa: S106
     httpx_mock.add_response(
         url="http://localhost/library/sections",
-        json=json.loads(Path("tests/resources/plex/list-libraries.json").read_text()),
+        json=json.loads(Path("tests/resources/plex/list-libraries.json").read_text(encoding="UTF-8")),
         is_reusable=True,
     )
     httpx_mock.add_response(
         url=re.compile(r"http://localhost/library/sections/.*\?includeGuids=1"),
-        json=json.loads(Path("tests/resources/plex/get-show.json").read_text()),
+        json=json.loads(Path("tests/resources/plex/get-show.json").read_text(encoding="UTF-8")),
         is_reusable=True,
     )
 
@@ -73,7 +73,7 @@ def test_list_seasons(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
         plex_session = Plex(base_url="http://localhost", token="INVALID")  # noqa: S106
     httpx_mock.add_response(
         url=re.compile(r"http://localhost/library/metadata/.*/children\?includeGuids=1"),
-        json=json.loads(Path("tests/resources/plex/list-seasons.json").read_text()),
+        json=json.loads(Path("tests/resources/plex/list-seasons.json").read_text(encoding="UTF-8")),
         is_reusable=True,
     )
 
@@ -98,7 +98,7 @@ def test_list_episodes(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None
         plex_session = Plex(base_url="http://localhost", token="INVALID")  # noqa: S106
     httpx_mock.add_response(
         url=re.compile(r"http://localhost/library/metadata/.*/children\?includeGuids=1"),
-        json=json.loads(Path("tests/resources/plex/list-episodes.json").read_text()),
+        json=json.loads(Path("tests/resources/plex/list-episodes.json").read_text(encoding="UTF-8")),
         is_reusable=True,
     )
 
@@ -123,17 +123,17 @@ def test_list_collections(plex_session: Plex | None, httpx_mock: HTTPXMock) -> N
         plex_session = Plex(base_url="http://localhost", token="INVALID")  # noqa: S106
     httpx_mock.add_response(
         url="http://localhost/library/sections",
-        json=json.loads(Path("tests/resources/plex/list-libraries.json").read_text()),
+        json=json.loads(Path("tests/resources/plex/list-libraries.json").read_text(encoding="UTF-8")),
         is_reusable=True,
     )
     httpx_mock.add_response(
         url=re.compile(r"http://localhost/library/sections/.*/collections\?includeGuids=1"),
-        json=json.loads(Path("tests/resources/plex/list-collections.json").read_text()),
+        json=json.loads(Path("tests/resources/plex/list-collections.json").read_text(encoding="UTF-8")),
         is_reusable=True,
     )
     httpx_mock.add_response(
         url=re.compile(r"http://localhost/library/metadata/.*\?includeGuids=1"),
-        json=json.loads(Path("tests/resources/plex/get-collection.json").read_text()),
+        json=json.loads(Path("tests/resources/plex/get-collection.json").read_text(encoding="UTF-8")),
         is_reusable=True,
     )
 
@@ -153,17 +153,17 @@ def test_get_collection(plex_session: Plex | None, httpx_mock: HTTPXMock) -> Non
         plex_session = Plex(base_url="http://localhost", token="INVALID")  # noqa: S106
     httpx_mock.add_response(
         url="http://localhost/library/sections",
-        json=json.loads(Path("tests/resources/plex/list-libraries.json").read_text()),
+        json=json.loads(Path("tests/resources/plex/list-libraries.json").read_text(encoding="UTF-8")),
         is_reusable=True,
     )
     httpx_mock.add_response(
         url=re.compile(r"http://localhost/library/sections/.*/collections\?includeGuids=1"),
-        json=json.loads(Path("tests/resources/plex/list-collections.json").read_text()),
+        json=json.loads(Path("tests/resources/plex/list-collections.json").read_text(encoding="UTF-8")),
         is_reusable=True,
     )
     httpx_mock.add_response(
         url=re.compile(r"http://localhost/library/metadata/.*\?includeGuids=1"),
-        json=json.loads(Path("tests/resources/plex/get-collection.json").read_text()),
+        json=json.loads(Path("tests/resources/plex/get-collection.json").read_text(encoding="UTF-8")),
         is_reusable=True,
     )
 
@@ -184,7 +184,7 @@ def test_list_collection_movies(plex_session: Plex | None, httpx_mock: HTTPXMock
         plex_session = Plex(base_url="http://localhost", token="INVALID")  # noqa: S106
     httpx_mock.add_response(
         url=re.compile(r"http://localhost/library/metadata/.*/children\?includeGuids=1"),
-        json=json.loads(Path("tests/resources/plex/list-collection-movies.json").read_text()),
+        json=json.loads(Path("tests/resources/plex/list-collection-movies.json").read_text(encoding="UTF-8")),
         is_reusable=True,
     )
 
@@ -209,12 +209,12 @@ def test_list_movies(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
         plex_session = Plex(base_url="http://localhost", token="INVALID")  # noqa: S106
     httpx_mock.add_response(
         url="http://localhost/library/sections",
-        json=json.loads(Path("tests/resources/plex/list-libraries.json").read_text()),
+        json=json.loads(Path("tests/resources/plex/list-libraries.json").read_text(encoding="UTF-8")),
         is_reusable=True,
     )
     httpx_mock.add_response(
         url=re.compile(r"http://localhost/library/sections/.*/all\?includeGuids=1"),
-        json=json.loads(Path("tests/resources/plex/list-movies.json").read_text()),
+        json=json.loads(Path("tests/resources/plex/list-movies.json").read_text(encoding="UTF-8")),
         is_reusable=True,
     )
 
@@ -234,12 +234,12 @@ def test_get_movie(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
         plex_session = Plex(base_url="http://localhost", token="INVALID")  # noqa: S106
     httpx_mock.add_response(
         url="http://localhost/library/sections",
-        json=json.loads(Path("tests/resources/plex/list-libraries.json").read_text()),
+        json=json.loads(Path("tests/resources/plex/list-libraries.json").read_text(encoding="UTF-8")),
         is_reusable=True,
     )
     httpx_mock.add_response(
         url=re.compile(r"http://localhost/library/sections/.*\?includeGuids=1"),
-        json=json.loads(Path("tests/resources/plex/get-movie.json").read_text()),
+        json=json.loads(Path("tests/resources/plex/get-movie.json").read_text(encoding="UTF-8")),
         is_reusable=True,
     )
 
