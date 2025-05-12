@@ -4,7 +4,7 @@ import pytest
 
 from mediux_posters.mediux import Mediux
 from mediux_posters.services.jellyfin import Jellyfin
-from mediux_posters.services.plex.api_service import Plex
+from mediux_posters.services.plex import Plex
 
 
 @pytest.fixture(scope="session")
