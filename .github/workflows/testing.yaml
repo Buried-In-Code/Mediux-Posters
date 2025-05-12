@@ -50,6 +50,7 @@ jobs:
     needs:
       - pytest
     
+    permissions: {}
     runs-on: ubuntu-latest
     
     steps:
