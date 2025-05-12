@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 from pytest_httpx import HTTPXMock
 
-from mediux_posters.services.plex.api_service import Plex
+from mediux_posters.services.plex import Plex
 
 
 @pytest.mark.httpx_mock(
