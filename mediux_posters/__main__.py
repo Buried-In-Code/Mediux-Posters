@@ -653,5 +653,6 @@ def set_posters(
                 kometa_integration=settings.kometa_integration,
             )
 
+
 if __name__ == "__main__":
     app(prog_name="Mediux-Posters")
