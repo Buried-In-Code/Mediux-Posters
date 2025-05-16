@@ -96,12 +96,12 @@ class Mediux:
         Field(name="user_created", fields=["username"]),
     ]
 
-    def __init__(self, base_url: str, api_key: str):
+    def __init__(self, base_url: str, token: str):
         self.client = Client(
             base_url=base_url,
             headers={
                 "Accept": "application/json",
-                "Authorization": f"Bearer {api_key}",
+                "Authorization": f"Bearer {token}",
                 "User-Agent": f"Mediux-Posters/{__version__}/{system()}: {release()}",
             },
         )
