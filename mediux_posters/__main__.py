@@ -57,10 +57,10 @@ def setup(
         LOGGER.info("Cleaning Cache: %s", get_cache_root())
         delete_folder(folder=get_cache_root())
     settings = Settings.load().save()
-    if not settings.mediux.api_key:
+    if not settings.mediux.token:
         LOGGER.fatal("Mediux Posters requires a Mediux ApiKey to be set.")
         raise Abort
-    mediux = Mediux(base_url=settings.mediux.base_url, api_key=settings.mediux.api_key)
+    mediux = Mediux(base_url=settings.mediux.base_url, api_key=settings.mediux.token)
     service_list = []
     if settings.plex.token:
         service_list.append(Plex(base_url=settings.plex.base_url, token=settings.plex.token))

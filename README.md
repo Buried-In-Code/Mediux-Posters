@@ -85,7 +85,7 @@ token = "<Token>"
 
 [mediux]
 base_url = "https://api.mediux.pro"
-api_key = "<API Key>"
+token = "<Token>"
 
 [plex]
 base_url = "http://127.0.0.1:32400"
