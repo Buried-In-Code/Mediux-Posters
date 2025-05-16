@@ -13,13 +13,13 @@ def mediux_base_url() -> str:
 
 
 @pytest.fixture(scope="session")
-def mediux_api_key() -> str:
-    return os.getenv("MEDIUX__API_KEY", default="IGNORED")
+def mediux_token() -> str:
+    return os.getenv("MEDIUX__TOKEN", default="IGNORED")
 
 
 @pytest.fixture(scope="session")
-def mediux_session(mediux_base_url: str, mediux_api_key: str) -> Mediux:
-    return Mediux(base_url=mediux_base_url, api_key=mediux_api_key)
+def mediux_session(mediux_base_url: str, mediux_token: str) -> Mediux:
+    return Mediux(base_url=mediux_base_url, token=mediux_token)
 
 
 @pytest.fixture(scope="session")

@@ -32,7 +32,7 @@ class Jellyfin(SettingsModel):
 
 class Mediux(SettingsModel):
     base_url: str = "https://api.mediux.pro"
-    api_key: Annotated[str | None, BeforeValidator(blank_is_none)] = None
+    token: Annotated[str | None, BeforeValidator(blank_is_none)] = None
 
 
 class Plex(SettingsModel):

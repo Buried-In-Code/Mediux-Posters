@@ -48,7 +48,7 @@ class Episode(BaseEpisode, JellyfinModel):
 
 class Season(BaseSeason, JellyfinModel):
     imdb_id: str | None = Field(validation_alias=AliasPath("ProviderIds", "Imdb"), default=None)
-    number: int = Field(alias="IndexNumber")
+    number: int = Field(alias="IndexNumber", default=1)
     tmdb_id: int | None = Field(validation_alias=AliasPath("ProviderIds", "Tmdb"), default=None)
     tv_maze_id: int | None = Field(
         validation_alias=AliasPath("ProviderIds", "TvMaze"), default=None
