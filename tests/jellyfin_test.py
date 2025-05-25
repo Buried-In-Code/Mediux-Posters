@@ -18,12 +18,16 @@ def test_list_shows(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock) ->
         jellyfin_session = Jellyfin(base_url="http://localhost", token="INVALID")  # noqa: S106
     httpx_mock.add_response(
         url="http://localhost/Library/MediaFolders",
-        json=json.loads(Path("tests/resources/jellyfin/list-libraries.json").read_text(encoding="UTF-8")),
+        json=json.loads(
+            Path("tests/resources/jellyfin/list-libraries.json").read_text(encoding="UTF-8")
+        ),
         is_reusable=True,
     )
     httpx_mock.add_response(
         url=re.compile("http://localhost/Items.*IncludeItemTypes=Series"),
-        json=json.loads(Path("tests/resources/jellyfin/list-shows.json").read_text(encoding="UTF-8")),
+        json=json.loads(
+            Path("tests/resources/jellyfin/list-shows.json").read_text(encoding="UTF-8")
+        ),
         is_reusable=True,
     )
 
@@ -43,7 +47,9 @@ def test_get_series(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock) ->
         jellyfin_session = Jellyfin(base_url="http://localhost", token="INVALID")  # noqa: S106
     httpx_mock.add_response(
         url="http://localhost/Library/MediaFolders",
-        json=json.loads(Path("tests/resources/jellyfin/list-libraries.json").read_text(encoding="UTF-8")),
+        json=json.loads(
+            Path("tests/resources/jellyfin/list-libraries.json").read_text(encoding="UTF-8")
+        ),
         is_reusable=True,
     )
     httpx_mock.add_response(
@@ -75,7 +81,9 @@ def test_list_seasons(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock) 
         jellyfin_session = Jellyfin(base_url="http://localhost", token="INVALID")  # noqa: S106
     httpx_mock.add_response(
         url=re.compile("http://localhost/Shows/.*/Seasons.*"),
-        json=json.loads(Path("tests/resources/jellyfin/list-seasons.json").read_text(encoding="UTF-8")),
+        json=json.loads(
+            Path("tests/resources/jellyfin/list-seasons.json").read_text(encoding="UTF-8")
+        ),
         is_reusable=True,
     )
 
@@ -102,7 +110,9 @@ def test_list_episodes(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock)
         jellyfin_session = Jellyfin(base_url="http://localhost", token="INVALID")  # noqa: S106
     httpx_mock.add_response(
         url=re.compile("http://localhost/Shows/.*/Episodes.*"),
-        json=json.loads(Path("tests/resources/jellyfin/list-episodes.json").read_text(encoding="UTF-8")),
+        json=json.loads(
+            Path("tests/resources/jellyfin/list-episodes.json").read_text(encoding="UTF-8")
+        ),
         is_reusable=True,
     )
 
@@ -131,12 +141,16 @@ def test_list_movies(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock) -
         jellyfin_session = Jellyfin(base_url="http://localhost", token="INVALID")  # noqa: S106
     httpx_mock.add_response(
         url="http://localhost/Library/MediaFolders",
-        json=json.loads(Path("tests/resources/jellyfin/list-libraries.json").read_text(encoding="UTF-8")),
+        json=json.loads(
+            Path("tests/resources/jellyfin/list-libraries.json").read_text(encoding="UTF-8")
+        ),
         is_reusable=True,
     )
     httpx_mock.add_response(
         url=re.compile("http://localhost/Items.*IncludeItemTypes=Movie"),
-        json=json.loads(Path("tests/resources/jellyfin/list-movies.json").read_text(encoding="UTF-8")),
+        json=json.loads(
+            Path("tests/resources/jellyfin/list-movies.json").read_text(encoding="UTF-8")
+        ),
         is_reusable=True,
     )
 
@@ -155,12 +169,16 @@ def test_get_movie(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock) -> 
         jellyfin_session = Jellyfin(base_url="http://localhost", token="INVALID")  # noqa: S106
     httpx_mock.add_response(
         url="http://localhost/Library/MediaFolders",
-        json=json.loads(Path("tests/resources/jellyfin/list-libraries.json").read_text(encoding="UTF-8")),
+        json=json.loads(
+            Path("tests/resources/jellyfin/list-libraries.json").read_text(encoding="UTF-8")
+        ),
         is_reusable=True,
     )
     httpx_mock.add_response(
         url=re.compile("http://localhost/Items.*IncludeItemTypes=Movie"),
-        json=json.loads(Path("tests/resources/jellyfin/get-movie.json").read_text(encoding="UTF-8")),
+        json=json.loads(
+            Path("tests/resources/jellyfin/get-movie.json").read_text(encoding="UTF-8")
+        ),
         is_reusable=True,
     )
 

@@ -1,9 +1,9 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.9
+    rev: v0.11.11
     hooks:
       - id: ruff-format
-      - id: ruff
+      - id: ruff-check
   - repo: https://github.com/executablebooks/mdformat
     rev: 0.7.22
     hooks:
@@ -38,7 +38,7 @@ repos:
       - id: mixed-line-ending
         args:
           - --fix=auto
-#      - id: name-tests-test
+      - id: name-tests-test
       - id: trailing-whitespace
         args:
           - --markdown-linebreak-ext=md
