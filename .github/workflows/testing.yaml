@@ -45,7 +45,7 @@ jobs:
       - name: Run tests
         env:
           MEDIUX__BASE_URL: ${{ secrets.MEDIUX__BASE_URL }}
-          MEDIUX__API_KEY: ${{ secrets.MEDIUX__API_KEY }}
+          MEDIUX__TOKEN: ${{ secrets.MEDIUX__TOKEN }}
         run: uv run pytest
 
   collector:
