@@ -54,7 +54,7 @@ class Season(MediuxModel):
     episodes: list[Episode]
     id: int
     number: int = Field(alias="season_number")
-    title: str = Field(alias="season_name")
+    title: str | None = Field(alias="season_name", default=None)
 
 
 class Show(MediuxModel):
