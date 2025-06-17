@@ -3,9 +3,9 @@ from datetime import date
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
-from visage.mediux import Mediux
-from visage.mediux.schemas import FileType
-from visage.utils import MediaType
+from mediux_posters.mediux import Mediux
+from mediux_posters.mediux.schemas import FileType
+from mediux_posters.utils import MediaType
 
 
 def test_list_show_sets(mediux_session: Mediux) -> None:

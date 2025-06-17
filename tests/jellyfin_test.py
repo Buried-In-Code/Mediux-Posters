@@ -5,7 +5,8 @@ from pathlib import Path
 
 import pytest
 from pytest_httpx import HTTPXMock
-from visage.services.jellyfin import Jellyfin
+
+from mediux_posters.services.jellyfin import Jellyfin
 
 
 @pytest.mark.httpx_mock(
