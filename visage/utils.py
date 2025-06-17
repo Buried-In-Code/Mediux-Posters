@@ -18,8 +18,8 @@ from typing import Any
 from pydantic import BaseModel as PydanticModel
 from rich.panel import Panel
 
-from mediux_posters import get_cache_root
-from mediux_posters.console import CONSOLE
+from visage import get_cache_root
+from visage.console import CONSOLE
 
 LOGGER = logging.getLogger(__name__)
 

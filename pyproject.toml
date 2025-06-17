@@ -8,7 +8,7 @@ dev = [
 ]
 tests = [
   "pytest >= 8.4.0",
-  "pytest-cov >= 6.1.1",
+  "pytest-cov >= 6.2.1",
   "pytest-httpx >= 0.35.0",
   "tox >= 4.26.0",
   "tox-uv >= 1.26.0"
@@ -32,7 +32,7 @@ classifiers = [
 dependencies = [
   "graphql-query >= 1.4.0",
   "httpx[http2] >= 0.28.1",
-  "pydantic >= 2.11.5",
+  "pydantic >= 2.11.7",
   "ratelimit >= 2.2.1",
   "rich >= 14.0.0",
   "tomli >= 2.2.1 ; python_version < '3.11'",
@@ -43,29 +43,30 @@ description = "Fetches Show, Movie, and Collection cover art from Mediux and upd
 dynamic = ["version"]
 keywords = []
 license = {text = "MIT"}
-name = "mediux-posters"
+name = "visage"
 readme = "README.md"
 requires-python = ">= 3.10"
 
 [project.scripts]
-Mediux-Posters = "mediux_posters.__main__:app"
+Mediux-Posters = "visage.__main__:app"
+visage = "visage.__main__:app"
 
 [project.urls]
-Homepage = "https://pypi.org/project/Mediux-Posters"
-Issues = "https://github.com/Buried-In-Code/Mediux-Posters/issues"
-Source = "https://github.com/Buried-In-Code/Mediux-Posters"
+Homepage = "https://pypi.org/project/Visage"
+Issues = "https://github.com/Buried-In-Code/Visage/issues"
+Source = "https://github.com/Buried-In-Code/Visage"
 
 [tool.coverage.report]
 show_missing = true
 
 [tool.coverage.run]
-source = ["mediux_posters"]
+source = ["visage"]
 
 [tool.hatch.build.targets.sdist]
 exclude = [".github/"]
 
 [tool.hatch.version]
-path = "mediux_posters/__init__.py"
+path = "visage/__init__.py"
 
 [tool.pytest.ini_options]
 addopts = ["--cov"]
@@ -92,6 +93,7 @@ ignore = [
   "FIX",
   "PLR0912",
   "PLR0913",
+  "PLR0915",
   "PLW2901",
   "TCH",
   "TD",

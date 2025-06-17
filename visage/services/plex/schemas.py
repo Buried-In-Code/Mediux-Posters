@@ -6,14 +6,8 @@ from enum import Enum
 from pydantic import Field, model_validator
 from pydantic.alias_generators import to_camel
 
-from mediux_posters.services._base import (
-    BaseCollection,
-    BaseEpisode,
-    BaseMovie,
-    BaseSeason,
-    BaseShow,
-)
-from mediux_posters.utils import BaseModel
+from visage.services._base import BaseCollection, BaseEpisode, BaseMovie, BaseSeason, BaseShow
+from visage.utils import BaseModel
 
 
 class PlexModel(BaseModel, alias_generator=to_camel, extra="ignore"): ...

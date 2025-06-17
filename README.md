@@ -1,15 +1,15 @@
-# Mediux Posters
+# Visage
 
-[![PyPI - Python](https://img.shields.io/pypi/pyversions/Mediux-Posters.svg?logo=PyPI&label=Python&style=flat-square)](https://pypi.python.org/pypi/Mediux-Posters/)
-[![PyPI - Status](https://img.shields.io/pypi/status/Mediux-Posters.svg?logo=PyPI&label=Status&style=flat-square)](https://pypi.python.org/pypi/Mediux-Posters/)
-[![PyPI - Version](https://img.shields.io/pypi/v/Mediux-Posters.svg?logo=PyPI&label=Version&style=flat-square)](https://pypi.python.org/pypi/Mediux-Posters/)
-[![PyPI - License](https://img.shields.io/pypi/l/Mediux-Posters.svg?logo=PyPI&label=License&style=flat-square)](https://opensource.org/licenses/MIT)
+[![PyPI - Python](https://img.shields.io/pypi/pyversions/Visage.svg?logo=PyPI&label=Python&style=flat-square)](https://pypi.python.org/pypi/Visage/)
+[![PyPI - Status](https://img.shields.io/pypi/status/Visage.svg?logo=PyPI&label=Status&style=flat-square)](https://pypi.python.org/pypi/Visage/)
+[![PyPI - Version](https://img.shields.io/pypi/v/Visage.svg?logo=PyPI&label=Version&style=flat-square)](https://pypi.python.org/pypi/Visage/)
+[![PyPI - License](https://img.shields.io/pypi/l/Visage.svg?logo=PyPI&label=License&style=flat-square)](https://opensource.org/licenses/MIT)
 
 [![Pre-Commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&style=flat-square)](https://github.com/pre-commit/pre-commit)
 [![Ruff](https://img.shields.io/badge/ruff-enabled-brightgreen?logo=ruff&style=flat-square)](https://github.com/astral-sh/ruff)
 
-[![Github - Contributors](https://img.shields.io/github/contributors/Buried-In-Code/Mediux-Posters.svg?logo=Github&label=Contributors&style=flat-square)](https://github.com/Buried-In-Code/Mediux-Posters/graphs/contributors)
-[![Github Action - Testing](https://img.shields.io/github/actions/workflow/status/Buried-In-Code/Mediux-Posters/testing.yaml?branch=main&logo=Github&label=Testing&style=flat-square)](https://github.com/Buried-In-Code/Mediux-Posters/actions/workflows/testing.yaml)
+[![Github - Contributors](https://img.shields.io/github/contributors/Buried-In-Code/Visage.svg?logo=Github&label=Contributors&style=flat-square)](https://github.com/Buried-In-Code/Visage/graphs/contributors)
+[![Github Action - Testing](https://img.shields.io/github/actions/workflow/status/Buried-In-Code/Visage/testing.yaml?branch=main&logo=Github&label=Testing&style=flat-square)](https://github.com/Buried-In-Code/Visage/actions/workflows/testing.yaml)
 
 Fetches Show, Movie, and Collection cover art from Mediux and updates Plex/Jellyfin using TMDB IDs.
 
@@ -20,38 +20,45 @@ _Jellyfin Collections are not yet supported._
 ### Pipx
 
 1. Ensure you have [Pipx](https://pipx.pypa.io/stable/) installed: `pipx --version`
-2. Install the project: `pipx install Mediux-Posters`
+2. Install the project: `pipx install visage`
 
 ## Usage
 
-<details><summary>Mediux-Posters Commands</summary>
+<details><summary>visage Commands</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters --help`](docs/img/mediux-posters_commands.svg)
+  ![`uv run visage --help`](docs/img/visage_commands.svg)
 
 </details>
-<details><summary>Mediux-Posters sync</summary>
+<details><summary>visage sync</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters sync --help`](docs/img/mediux-posters_sync.svg)
+  ![`uv run visage sync --help`](docs/img/visage_sync.svg)
 
 </details>
-<details><summary>Mediux-Posters media</summary>
+<details><summary>visage media</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters media --help`](docs/img/mediux-posters_media.svg)
+  ![`uv run visage media --help`](docs/img/visage_media.svg)
 
 </details>
-<details><summary>Mediux-Posters set</summary>
+<details><summary>visage set</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters set --help`](docs/img/mediux-posters_set.svg)
+  ![`uv run visage set --help`](docs/img/visage_set.svg)
 
 </details>
-<details><summary>Mediux-Posters settings</summary>
+### Visage settings Commands
+<details><summary>visage settings view</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters settings --help`](docs/img/mediux-posters_settings.svg)
+  ![`uv run visage settings view --help`](docs/img/visage_settings_view.svg)
+
+</details>
+<details><summary>visage settings locate</summary>
+
+  <!-- RICH-CODEX hide_command: true -->
+  ![`uv run visage settings locate --help`](docs/img/visage_settings_locate.svg)
 
 </details>
 
@@ -64,11 +71,11 @@ _Jellyfin Collections are not yet supported._
   - **Collection:** Poster and Backdrop
   - **Movie:** Poster and Backdrop
 - To enable support for Collections in Plex, each Collection needs to have a label with its tmdb-id, in the format of `tmdb-<number>`\
-  If using Kometa, refer to [this comment](https://github.com/Buried-In-Code/Mediux-Posters/issues/12#issuecomment-2622002859) to have Kometa add these labels.
+  If using Kometa, refer to [this comment](https://github.com/Buried-In-Code/Visage/issues/12#issuecomment-2622002859) to have Kometa add these labels.
 
 ## Settings
 
-To set Plex and/or Jellyfin details, update the file: `~/.config/mediux-posters/settings.toml`.
+To set Plex and/or Jellyfin details, update the file: `~/.config/visage/settings.toml`.
 File will be created on first run.
 
 ### Example File
@@ -100,7 +107,7 @@ token = "<Token>"
 
 - `kometa_integration`
 
-  If enabled, will remove the `Overlay` label from any media Mediux-Posters uploads a poster/backdrop/title-card to.
+  If enabled, will remove the `Overlay` label from any media Visage uploads a poster/backdrop/title-card to.
 
 - `only_priority_usernames`
 

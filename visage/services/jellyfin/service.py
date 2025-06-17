@@ -11,30 +11,25 @@ from typing import Literal
 from httpx import Client, HTTPStatusError, RequestError, TimeoutException
 from pydantic import TypeAdapter, ValidationError
 
-from mediux_posters import __version__
-from mediux_posters.console import CONSOLE
-from mediux_posters.errors import AuthenticationError, ServiceError
-from mediux_posters.services._base import BaseService
-from mediux_posters.services.jellyfin.schemas import (
-    Collection,
-    Episode,
-    Library,
-    Movie,
-    Season,
-    Show,
-)
+from visage import __project__, __version__
+from visage.console import CONSOLE
+from visage.errors import AuthenticationError, ServiceError
+from visage.services._base import BaseService
+from visage.services.jellyfin.schemas import Collection, Episode, Library, Movie, Season, Show
+from visage.services.service_cache import ServiceCache
 
 LOGGER = logging.getLogger(__name__)
 
 
 class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
     def __init__(self, base_url: str, token: str):
+        super().__init__(cache=ServiceCache(service="jellyfin"))
         self.client = Client(
             base_url=base_url,
             headers={
                 "Accept": "application/json",
                 "X-Emby-Token": token,
-                "User-Agent": f"Mediux-Posters/{__version__}/{system()}: {release()}",
+                "User-Agent": f"{__project__}/{__version__}/{system()}: {release()}",
             },
         )
 
@@ -107,6 +102,14 @@ class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
             return TypeAdapter(list[Library]).validate_python(results)
         except ValidationError as err:
             raise ServiceError(err) from err
+
+    def validate(self) -> bool:
+        try:
+            self._list_libraries(media_type="movies")
+            return True
+        except ServiceError as err:
+            LOGGER.warning("[Jellyfin] %s", err)
+        return False
 
     def list_episodes(self, show_id: str, season_id: str) -> list[Episode]:
         results = self._perform_get_request(

@@ -15,7 +15,7 @@ from enum import Enum
 
 from pydantic import AliasPath, Field
 
-from mediux_posters.utils import BaseModel
+from visage.utils import BaseModel
 
 
 class MediuxModel(BaseModel, extra="ignore"): ...
@@ -58,10 +58,10 @@ class Season(MediuxModel):
 
 
 class Show(MediuxModel):
+    id: int
     release_date: date | None = Field(alias="first_air_date")
     seasons: list[Season]
     title: str
-    tmdb_id: int = Field(alias="id")
 
 
 class ShowSet(MediuxModel):
@@ -74,9 +74,9 @@ class ShowSet(MediuxModel):
 
 
 class Movie(MediuxModel):
+    id: int
     release_date: date | None
     title: str
-    tmdb_id: int = Field(alias="id")
 
 
 class MovieSet(MediuxModel):
@@ -89,9 +89,9 @@ class MovieSet(MediuxModel):
 
 
 class Collection(MediuxModel):
+    id: int
     movies: list[Movie]
     title: str = Field(alias="collection_name")
-    tmdb_id: int = Field(alias="id")
 
 
 class CollectionSet(MediuxModel):

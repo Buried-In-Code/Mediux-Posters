@@ -6,14 +6,8 @@ from typing import Literal
 from pydantic import AliasPath, Field, field_validator
 from pydantic.alias_generators import to_pascal
 
-from mediux_posters.services._base import (
-    BaseCollection,
-    BaseEpisode,
-    BaseMovie,
-    BaseSeason,
-    BaseShow,
-)
-from mediux_posters.utils import BaseModel
+from visage.services._base import BaseCollection, BaseEpisode, BaseMovie, BaseSeason, BaseShow
+from visage.utils import BaseModel
 
 
 class JellyfinModel(BaseModel, alias_generator=to_pascal, extra="ignore"): ...

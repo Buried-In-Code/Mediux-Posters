@@ -2,9 +2,9 @@ import os
 
 import pytest
 
-from mediux_posters.mediux import Mediux
-from mediux_posters.services.jellyfin import Jellyfin
-from mediux_posters.services.plex import Plex
+from visage.mediux import Mediux
+from visage.services.jellyfin import Jellyfin
+from visage.services.plex import Plex
 
 
 @pytest.fixture(scope="session")

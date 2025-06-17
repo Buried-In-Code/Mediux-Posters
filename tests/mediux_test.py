@@ -3,9 +3,9 @@ from datetime import date
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
-from mediux_posters.mediux import Mediux
-from mediux_posters.mediux.schemas import FileType
-from mediux_posters.utils import MediaType
+from visage.mediux import Mediux
+from visage.mediux.schemas import FileType
+from visage.utils import MediaType
 
 
 def test_list_show_sets(mediux_session: Mediux) -> None:
@@ -170,6 +170,7 @@ def test_download_image(mediux_session: Mediux) -> None:
         assert compute_file_hash(expected_image) == compute_file_hash(output_file), (
             "Downloaded image does not match expected image"
         )
+
 
 def test_season_name_none(mediux_session: Mediux) -> None:
     results = mediux_session.list_sets(media_type=MediaType.SHOW, tmdb_id=95479)

@@ -12,11 +12,11 @@ from pydantic import TypeAdapter, ValidationError
 from ratelimit import limits, sleep_and_retry
 from rich.progress import Progress
 
-from mediux_posters import __version__
-from mediux_posters.console import CONSOLE
-from mediux_posters.errors import AuthenticationError, ServiceError
-from mediux_posters.mediux.schemas import CollectionSet, MovieSet, ShowSet
-from mediux_posters.utils import MediaType
+from visage import __project__, __version__
+from visage.console import CONSOLE
+from visage.errors import AuthenticationError, ServiceError
+from visage.mediux.schemas import CollectionSet, MovieSet, ShowSet
+from visage.utils import MediaType
 
 LOGGER = logging.getLogger(__name__)
 # 60 Calls per Minute
@@ -102,7 +102,7 @@ class Mediux:
             headers={
                 "Accept": "application/json",
                 "Authorization": f"Bearer {token}",
-                "User-Agent": f"Mediux-Posters/{__version__}/{system()}: {release()}",
+                "User-Agent": f"{__project__}/{__version__}/{system()}: {release()}",
             },
         )
 
@@ -117,16 +117,24 @@ class Mediux:
             raise ServiceError(f"Unable to connect to '{err.request.url.path}'") from err
         except HTTPStatusError as err:
             try:
-                error_msg = next((x["message"] for x in err.response.json()["errors"]), None)
+                errors = err.response.json()["errors"]
                 if err.response.status_code in (401, 403):
-                    raise AuthenticationError(f"{err.response.status_code}: {error_msg}")
-                raise ServiceError(f"{err.response.status_code}: {error_msg}")
+                    raise AuthenticationError(f"{err.response.status_code}: {errors}")
+                raise ServiceError(f"{err.response.status_code}: {errors}")
             except JSONDecodeError as err:
                 raise ServiceError("Unable to parse response as Json") from err
         except JSONDecodeError as err:
             raise ServiceError("Unable to parse response as Json") from err
         except TimeoutException as err:
             raise ServiceError("Service took too long to respond") from err
+
+    def validate(self) -> bool:
+        try:
+            # TODO: Do single set call to validate credentials
+            return True
+        except ServiceError as err:
+            LOGGER.error("[Mediux] %s", err)
+        return False
 
     def list_show_sets(
         self, tmdb_id: int, exclude_usernames: list[str] | None = None
@@ -296,7 +304,6 @@ class Mediux:
     def list_sets(
         self, media_type: MediaType, tmdb_id: int, exclude_usernames: list[str] | None = None
     ) -> list[ShowSet] | list[CollectionSet] | list[MovieSet]:
-        exclude_usernames = exclude_usernames or []
         return (
             self.list_show_sets(tmdb_id=tmdb_id, exclude_usernames=exclude_usernames)
             if media_type is MediaType.SHOW
@@ -328,7 +335,7 @@ class Mediux:
         with self.client.stream("GET", f"/assets/{file_id}") as response:
             total = int(response.headers["Content-Length"])
 
-            with Progress(console=CONSOLE) as progress:
+            with Progress(console=CONSOLE, expand=True) as progress:
                 download_task = progress.add_task(
                     f"Downloading {output.parent.name}/{output.name}", total=total
                 )
