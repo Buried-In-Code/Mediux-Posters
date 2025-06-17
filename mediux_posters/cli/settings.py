@@ -2,8 +2,8 @@ __all__ = ["app"]
 
 from typer import Typer
 
-from visage.console import CONSOLE
-from visage.settings import Settings
+from mediux_posters.console import CONSOLE
+from mediux_posters.settings import Settings
 
 app = Typer(help="Commands for application settings.")
 

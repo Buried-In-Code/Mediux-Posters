@@ -7,7 +7,7 @@ __all__ = [
     "get_state_root",
     "setup_logging",
 ]
-__project__ = "visage"
+__project__ = "mediux-posters"
 __version__ = "0.5.0"
 
 import logging
@@ -17,7 +17,7 @@ from pathlib import Path
 from rich.logging import RichHandler
 from rich.traceback import install
 
-from visage.console import CONSOLE
+from mediux_posters.console import CONSOLE
 
 
 def get_cache_root() -> Path:

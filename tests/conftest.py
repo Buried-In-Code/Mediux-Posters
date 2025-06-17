@@ -1,7 +1,6 @@
 import os
 
 import pytest
-
 from visage.mediux import Mediux
 from visage.services.jellyfin import Jellyfin
 from visage.services.plex import Plex

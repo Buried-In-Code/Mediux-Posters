@@ -4,7 +4,7 @@ from datetime import date
 
 from pydantic import Field
 
-from visage.utils import BaseModel
+from mediux_posters.utils import BaseModel
 
 
 class BaseEpisode(BaseModel):

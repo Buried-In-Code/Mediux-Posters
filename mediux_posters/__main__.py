@@ -6,14 +6,23 @@ from typing import Annotated, Protocol, TypeVar
 
 from typer import Abort, Argument, Context, Exit, Option, Typer
 
-from visage import __project__, __version__, get_cache_root, setup_logging
-from visage.cli import settings_app
-from visage.console import CONSOLE
-from visage.errors import ServiceError
-from visage.mediux import CollectionSet, File, FileType, Mediux, MovieSet, ShowSet
-from visage.services import BaseService, Collection, Episode, Jellyfin, Movie, Plex, Season, Show
-from visage.settings import Settings
-from visage.utils import MediaType, delete_folder, get_cached_image, slugify
+from mediux_posters import __project__, __version__, get_cache_root, setup_logging
+from mediux_posters.cli import settings_app
+from mediux_posters.console import CONSOLE
+from mediux_posters.errors import ServiceError
+from mediux_posters.mediux import CollectionSet, File, FileType, Mediux, MovieSet, ShowSet
+from mediux_posters.services import (
+    BaseService,
+    Collection,
+    Episode,
+    Jellyfin,
+    Movie,
+    Plex,
+    Season,
+    Show,
+)
+from mediux_posters.settings import Settings
+from mediux_posters.utils import MediaType, delete_folder, get_cached_image, slugify
 
 LOGGER = logging.getLogger(__project__)
 app = Typer(no_args_is_help=True)
@@ -30,7 +39,7 @@ def setup(
     skip_services: list[ServiceOption], clean: bool, debug: bool = False
 ) -> tuple[Settings, Mediux, list[BaseService]]:
     setup_logging(debug=debug)
-    LOGGER.info("%s v%s", __project__, __version__)
+    LOGGER.info("%s v%s", __project__.title(), __version__)
     LOGGER.info("Python v%s", python_version())
 
     if clean:

@@ -1,6 +1,6 @@
 __all__ = ["BaseService", "Collection", "Episode", "Jellyfin", "Movie", "Plex", "Season", "Show"]
 
-from visage.services._base import (
+from mediux_posters.services._base import (
     BaseCollection as Collection,
     BaseEpisode as Episode,
     BaseMovie as Movie,
@@ -8,5 +8,5 @@ from visage.services._base import (
     BaseService,
     BaseShow as Show,
 )
-from visage.services.jellyfin import Jellyfin
-from visage.services.plex import Plex
+from mediux_posters.services.jellyfin import Jellyfin
+from mediux_posters.services.plex import Plex

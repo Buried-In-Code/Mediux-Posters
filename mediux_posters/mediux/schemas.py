@@ -15,7 +15,7 @@ from enum import Enum
 
 from pydantic import AliasPath, Field
 
-from visage.utils import BaseModel
+from mediux_posters.utils import BaseModel
 
 
 class MediuxModel(BaseModel, extra="ignore"): ...

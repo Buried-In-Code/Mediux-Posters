@@ -43,30 +43,30 @@ description = "Fetches Show, Movie, and Collection cover art from Mediux and upd
 dynamic = ["version"]
 keywords = []
 license = {text = "MIT"}
-name = "visage"
+name = "mediux-posters"
 readme = "README.md"
 requires-python = ">= 3.10"
 
 [project.scripts]
-Mediux-Posters = "visage.__main__:app"
-visage = "visage.__main__:app"
+Mediux-Posters = "mediux_posters.__main__:app"
+mediux-posters = "mediux_posters.__main__:app"
 
 [project.urls]
-Homepage = "https://pypi.org/project/Visage"
-Issues = "https://github.com/Buried-In-Code/Visage/issues"
-Source = "https://github.com/Buried-In-Code/Visage"
+Homepage = "https://pypi.org/project/Mediux-Posters"
+Issues = "https://github.com/Buried-In-Code/Mediux-Posters/issues"
+Source = "https://github.com/Buried-In-Code/Mediux-Posters"
 
 [tool.coverage.report]
 show_missing = true
 
 [tool.coverage.run]
-source = ["visage"]
+source = ["mediux_posters"]
 
 [tool.hatch.build.targets.sdist]
 exclude = [".github/"]
 
 [tool.hatch.version]
-path = "visage/__init__.py"
+path = "mediux_posters/__init__.py"
 
 [tool.pytest.ini_options]
 addopts = ["--cov"]

@@ -4,15 +4,15 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Generic, TypeVar
 
-from visage.services._base.schemas import (
+from mediux_posters.services._base.schemas import (
     BaseCollection,
     BaseEpisode,
     BaseMovie,
     BaseSeason,
     BaseShow,
 )
-from visage.services.service_cache import ServiceCache
-from visage.utils import MediaType
+from mediux_posters.services.service_cache import ServiceCache
+from mediux_posters.utils import MediaType
 
 T = TypeVar("T", bound=BaseShow)
 S = TypeVar("S", bound=BaseSeason)

@@ -12,11 +12,11 @@ from pydantic import TypeAdapter, ValidationError
 from ratelimit import limits, sleep_and_retry
 from rich.progress import Progress
 
-from visage import __project__, __version__
-from visage.console import CONSOLE
-from visage.errors import AuthenticationError, ServiceError
-from visage.mediux.schemas import CollectionSet, MovieSet, ShowSet
-from visage.utils import MediaType
+from mediux_posters import __project__, __version__
+from mediux_posters.console import CONSOLE
+from mediux_posters.errors import AuthenticationError, ServiceError
+from mediux_posters.mediux.schemas import CollectionSet, MovieSet, ShowSet
+from mediux_posters.utils import MediaType
 
 LOGGER = logging.getLogger(__name__)
 # 60 Calls per Minute

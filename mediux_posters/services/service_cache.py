@@ -4,8 +4,8 @@ import sqlite3
 from dataclasses import dataclass
 from datetime import datetime
 
-from visage import get_cache_root
-from visage.mediux import FileType
+from mediux_posters import get_cache_root
+from mediux_posters.mediux import FileType
 
 
 @dataclass(kw_only=True)

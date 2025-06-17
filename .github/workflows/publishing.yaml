@@ -30,7 +30,7 @@ jobs:
 
     environment:
       name: pypi
-      url: https://pypi.org/p/Visage
+      url: https://pypi.org/p/Mediux-Posters
     name: Publish to PyPI
     permissions:
       id-token: write

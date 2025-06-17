@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - README.md
-      - visage/__main__.py
+      - mediux_posters/__main__.py
   workflow_dispatch:
 
 permissions:
