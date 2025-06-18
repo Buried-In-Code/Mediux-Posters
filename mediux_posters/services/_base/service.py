@@ -11,6 +11,7 @@ from mediux_posters.services._base.schemas import (
     BaseSeason,
     BaseShow,
 )
+from mediux_posters.services.service_cache import ServiceCache
 from mediux_posters.utils import MediaType
 
 T = TypeVar("T", bound=BaseShow)
@@ -21,6 +22,9 @@ M = TypeVar("M", bound=BaseMovie)
 
 
 class BaseService(ABC, Generic[T, S, E, C, M]):
+    def __init__(self, cache: ServiceCache) -> None:
+        self.cache = cache
+
     @abstractmethod
     def list_episodes(self, show_id: int | str, season_id: int | str) -> list[E]: ...
 
