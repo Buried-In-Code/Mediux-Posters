@@ -102,7 +102,7 @@ class Mediux:
             headers={
                 "Accept": "application/json",
                 "Authorization": f"Bearer {token}",
-                "User-Agent": f"{__project__}/{__version__}/{system()}: {release()}",
+                "User-Agent": f"{__project__.title()}/{__version__}/{system()}: {release()}",
             },
         )
 
@@ -130,8 +130,8 @@ class Mediux:
 
     def validate(self) -> bool:
         try:
-            # TODO: Do single set call to validate credentials
-            return True
+            results = self.list_movie_sets(tmdb_id=324857)
+            return results != []
         except ServiceError as err:
             LOGGER.error("[Mediux] %s", err)
         return False

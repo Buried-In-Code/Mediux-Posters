@@ -160,11 +160,19 @@ def process_set_data(
                 set_data.username,
             )
             should_log = False
-        mediux.download_image(file_id=file.id, output=image_file)
+        try:
+            mediux.download_image(file_id=file.id, output=image_file)
+        except ServiceError as err:
+            LOGGER.error("[Mediux] %s", err)
+            return
 
-        success = service.upload_image(
-            object_id=obj.id, image_file=image_file, kometa_integration=kometa_integration
-        )
+        try:
+            success = service.upload_image(
+                object_id=obj.id, image_file=image_file, kometa_integration=kometa_integration
+            )
+        except ServiceError as err:
+            LOGGER.error("[%s] %s", type(service).__name__, err)
+            success = False
         setattr(obj, uploaded_attr, success)
         if success:
             service.cache.insert(
@@ -190,7 +198,12 @@ def process_set_data(
         filename="backdrop.jpg",
     )
     if isinstance(entry, Show) and isinstance(set_data, ShowSet):
-        for season in entry.seasons or service.list_seasons(show_id=entry.id):
+        try:
+            seasons = service.list_seasons(show_id=entry.id)
+        except ServiceError as err:
+            LOGGER.error("[%s] %s", type(service).__name__, err)
+            seasons = []
+        for season in seasons:
             entry.seasons.append(season)
             mediux_season = next(
                 (x for x in set_data.show.seasons if x.number == season.number), None
@@ -204,9 +217,12 @@ def process_set_data(
                 parent=slugify(value=entry.display_name),
                 filename=f"s{season.number:02}.jpg",
             )
-            for episode in season.episodes or service.list_episodes(
-                show_id=entry.id, season_id=season.id
-            ):
+            try:
+                episodes = service.list_episodes(show_id=entry.id, season_id=season.id)
+            except ServiceError as err:
+                LOGGER.error("[%s] %s", type(service).__name__, err)
+                episodes = []
+            for episode in episodes:
                 season.episodes.append(episode)
                 mediux_episode = next(
                     (x for x in mediux_season.episodes if x.number == episode.number), None
@@ -221,7 +237,12 @@ def process_set_data(
                     filename=f"s{season.number:02}e{episode.number:02}.jpg",
                 )
     elif isinstance(entry, Collection) and isinstance(set_data, CollectionSet):
-        for movie in service.list_collection_movies(collection_id=entry.id):
+        try:
+            movies = service.list_collection_movies(collection_id=entry.id)
+        except ServiceError as err:
+            LOGGER.error("[%s] %s", type(service).__name__, err)
+            movies = []
+        for movie in movies:
             entry.movies.append(movie)
             mediux_movie = next(
                 (x for x in set_data.collection.movies if x.id == movie.tmdb_id), None

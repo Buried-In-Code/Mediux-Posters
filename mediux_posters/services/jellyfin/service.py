@@ -36,7 +36,7 @@ class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
             headers={
                 "Accept": "application/json",
                 "X-Emby-Token": token,
-                "User-Agent": f"{__project__}/{__version__}/{system()}: {release()}",
+                "User-Agent": f"{__project__.title()}/{__version__}/{system()}: {release()}",
             },
         )
 
