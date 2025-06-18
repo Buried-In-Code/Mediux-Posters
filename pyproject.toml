@@ -8,9 +8,9 @@ dev = [
 ]
 tests = [
   "pytest >= 8.4.0",
-  "pytest-cov >= 6.1.1",
+  "pytest-cov >= 6.2.1",
   "pytest-httpx >= 0.35.0",
-  "tox >= 4.26.0",
+  "tox >= 4.27.0",
   "tox-uv >= 1.26.0"
 ]
 
@@ -32,7 +32,7 @@ classifiers = [
 dependencies = [
   "graphql-query >= 1.4.0",
   "httpx[http2] >= 0.28.1",
-  "pydantic >= 2.11.5",
+  "pydantic >= 2.11.7",
   "ratelimit >= 2.2.1",
   "rich >= 14.0.0",
   "tomli >= 2.2.1 ; python_version < '3.11'",
@@ -49,6 +49,7 @@ requires-python = ">= 3.10"
 
 [project.scripts]
 Mediux-Posters = "mediux_posters.__main__:app"
+mediux-posters = "mediux_posters.__main__:app"
 
 [project.urls]
 Homepage = "https://pypi.org/project/Mediux-Posters"
@@ -92,6 +93,7 @@ ignore = [
   "FIX",
   "PLR0912",
   "PLR0913",
+  "PLR0915",
   "PLW2901",
   "TCH",
   "TD",

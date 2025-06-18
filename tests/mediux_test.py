@@ -24,6 +24,7 @@ def test_list_show_sets(mediux_session: Mediux) -> None:
     assert result.files[0].collection_id is None
     assert result.id == 28831
     assert result.set_title == "Downton Abbey (2010) Set"
+    assert result.show.id == 33907
     assert result.show.release_date == date(2010, 9, 26)
     assert len(result.show.seasons) != 0
     assert len(result.show.seasons[0].episodes) != 0
@@ -34,7 +35,6 @@ def test_list_show_sets(mediux_session: Mediux) -> None:
     assert result.show.seasons[0].title == "Specials"
     assert result.show.seasons[0].number == 0
     assert result.show.title == "Downton Abbey"
-    assert result.show.tmdb_id == 33907
     assert result.username == "JackTaylor803"
 
 
@@ -66,12 +66,12 @@ def test_list_collection_sets(mediux_session: Mediux) -> None:
     result = next(iter(x for x in results if x.id == 24404), None)
     assert result is not None
 
+    assert result.collection.id == 573436
     assert len(result.collection.movies) != 0
+    assert result.collection.movies[0].id == 324857
     assert result.collection.movies[0].release_date == date(2018, 12, 6)
     assert result.collection.movies[0].title == "Spider-Man: Into the Spider-Verse"
-    assert result.collection.movies[0].tmdb_id == 324857
     assert result.collection.title == "Spider-Man: Spider-Verse Collection"
-    assert result.collection.tmdb_id == 573436
     assert len(result.files) != 0
     assert result.files[0].id == "3ae60cf9-ad99-449c-971f-5d7c6eaba02f"
     assert result.files[0].file_type == FileType.POSTER
@@ -122,9 +122,9 @@ def test_list_movie_sets(mediux_session: Mediux) -> None:
     assert result.files[0].movie_id == 535544
     assert result.files[0].collection_id is None
     assert result.id == 11023
+    assert result.movie.id == 535544
     assert result.movie.release_date == date(2019, 9, 12)
     assert result.movie.title == "Downton Abbey"
-    assert result.movie.tmdb_id == 535544
     assert result.set_title == "Downton Abbey (2019) Set"
     assert result.username == "fwlolx"
 
@@ -170,6 +170,7 @@ def test_download_image(mediux_session: Mediux) -> None:
         assert compute_file_hash(expected_image) == compute_file_hash(output_file), (
             "Downloaded image does not match expected image"
         )
+
 
 def test_season_name_none(mediux_session: Mediux) -> None:
     results = mediux_session.list_sets(media_type=MediaType.SHOW, tmdb_id=95479)
