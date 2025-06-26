@@ -330,7 +330,7 @@ class Plex(BaseService[Show, Season, Episode, Collection, Movie]):
                             body=stream.read(),
                         )
                     if kometa_integration:
-                        self.remove_label("Overlay", object_id=object_id)
+                        self.remove_labels("Overlay", object_id=object_id)
                 return True
             except ServiceError as err:
                 LOGGER.error(
