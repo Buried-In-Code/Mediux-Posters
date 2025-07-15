@@ -77,7 +77,7 @@ class Show(BaseShow, JellyfinModel):
         validation_alias=AliasPath("ProviderIds", "TvRage"), default=None
     )
     tvdb_id: int | None = Field(validation_alias=AliasPath("ProviderIds", "Tvdb"), default=None)
-    year: int = Field(alias="ProductionYear")
+    year: int | None = Field(alias="ProductionYear", default=None)
 
     @field_validator("premiere_date", mode="before")
     def datetime_to_date(cls, value: str | datetime | date | None) -> str | datetime | date | None:

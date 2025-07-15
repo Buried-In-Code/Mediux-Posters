@@ -119,17 +119,23 @@ class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
         return False
 
     def list_episodes(self, show_id: str, season_id: str) -> list[Episode]:
-        results = self._perform_get_request(
-            endpoint=f"/Shows/{show_id}/Episodes",
-            params={"seasonId": season_id, "fields": ["ProviderIds"]},
-        ).get("Items", [])
-        return TypeAdapter(list[Episode]).validate_python(results)
+        try:
+            results = self._perform_get_request(
+                endpoint=f"/Shows/{show_id}/Episodes",
+                params={"seasonId": season_id, "fields": ["ProviderIds"]},
+            ).get("Items", [])
+            return TypeAdapter(list[Episode]).validate_python(results)
+        except ValidationError as err:
+            raise ServiceError(err) from err
 
     def list_seasons(self, show_id: str) -> list[Season]:
-        results = self._perform_get_request(
-            endpoint=f"/Shows/{show_id}/Seasons", params={"fields": ["ProviderIds"]}
-        ).get("Items", [])
-        return TypeAdapter(list[Season]).validate_python(results)
+        try:
+            results = self._perform_get_request(
+                endpoint=f"/Shows/{show_id}/Seasons", params={"fields": ["ProviderIds"]}
+            ).get("Items", [])
+            return TypeAdapter(list[Season]).validate_python(results)
+        except ValidationError as err:
+            raise ServiceError(err) from err
 
     def _list_shows(
         self,
