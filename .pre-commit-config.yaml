@@ -39,6 +39,10 @@ repos:
         args:
           - --fix=auto
       - id: name-tests-test
+      - id: pretty-format-json
+        args:
+          - --autofix
+          - --indent=2
       - id: trailing-whitespace
         args:
           - --markdown-linebreak-ext=md

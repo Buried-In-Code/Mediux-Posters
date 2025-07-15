@@ -1,76 +1,76 @@
 {
-    "MediaContainer": {
-        "size": 1,
-        "allowSync": true,
-        "identifier": "com.plexapp.plugins.library",
+  "MediaContainer": {
+    "Metadata": [
+      {
+        "Field": [
+          {
+            "locked": true,
+            "name": "thumb"
+          },
+          {
+            "locked": true,
+            "name": "art"
+          },
+          {
+            "locked": true,
+            "name": "label"
+          }
+        ],
+        "Image": [
+          {
+            "alt": "The Amazing Spider-Man Collection",
+            "type": "coverPoster",
+            "url": "/library/metadata/120713/thumb/1744674535"
+          },
+          {
+            "alt": "The Amazing Spider-Man Collection",
+            "type": "background",
+            "url": "/library/metadata/120713/art/1744674535"
+          }
+        ],
+        "Label": [
+          {
+            "filter": "label=84372",
+            "id": 84372,
+            "tag": "Tmdb-125574"
+          }
+        ],
+        "UltraBlurColors": {
+          "bottomLeft": "0f020a",
+          "bottomRight": "853548",
+          "topLeft": "5a0414",
+          "topRight": "ac1438"
+        },
+        "addedAt": 1739860319,
+        "art": "/library/metadata/120713/art/1744674535",
+        "childCount": 2,
+        "contentRating": "nz/M",
+        "guid": "plex://collection/5ec2eb5d623af7003f9b9062",
+        "index": 84371,
+        "key": "/library/collections/120713/children",
         "librarySectionID": 1,
+        "librarySectionKey": "/library/sections/1",
         "librarySectionTitle": "Movies",
-        "librarySectionUUID": "09dd5d64-2d11-476f-9064-d2b4f776a3bb",
-        "mediaTagPrefix": "/system/bundle/media/flags/",
-        "mediaTagVersion": 1744189307,
-        "Metadata": [
-            {
-                "ratingKey": "120713",
-                "key": "/library/collections/120713/children",
-                "guid": "plex://collection/5ec2eb5d623af7003f9b9062",
-                "type": "collection",
-                "title": "The Amazing Spider-Man Collection",
-                "titleSort": "Amazing Spider-Man Collection",
-                "librarySectionTitle": "Movies",
-                "librarySectionID": 1,
-                "librarySectionKey": "/library/sections/1",
-                "contentRating": "nz/M",
-                "subtype": "movie",
-                "summary": "A superhero film series based on the Marvel Comics character Spider-Man. The series is centered on Peter Parker, a teenager struggling to find his place in life ever since his parents disappeared when he was a child. A spider bites him on the back of his neck, giving him spider-powers. It is a reboot of Sony's Spider-Man film franchise.",
-                "index": 84371,
-                "ratingCount": 1,
-                "thumb": "/library/metadata/120713/thumb/1744674535",
-                "art": "/library/metadata/120713/art/1744674535",
-                "addedAt": 1739860319,
-                "updatedAt": 1744674535,
-                "childCount": 2,
-                "maxYear": "2014",
-                "minYear": "2012",
-                "Image": [
-                    {
-                        "alt": "The Amazing Spider-Man Collection",
-                        "type": "coverPoster",
-                        "url": "/library/metadata/120713/thumb/1744674535"
-                    },
-                    {
-                        "alt": "The Amazing Spider-Man Collection",
-                        "type": "background",
-                        "url": "/library/metadata/120713/art/1744674535"
-                    }
-                ],
-                "UltraBlurColors": {
-                    "topLeft": "5a0414",
-                    "topRight": "ac1438",
-                    "bottomRight": "853548",
-                    "bottomLeft": "0f020a"
-                },
-                "Label": [
-                    {
-                        "id": 84372,
-                        "filter": "label=84372",
-                        "tag": "Tmdb-125574"
-                    }
-                ],
-                "Field": [
-                    {
-                        "locked": true,
-                        "name": "thumb"
-                    },
-                    {
-                        "locked": true,
-                        "name": "art"
-                    },
-                    {
-                        "locked": true,
-                        "name": "label"
-                    }
-                ]
-            }
-        ]
-    }
+        "maxYear": "2014",
+        "minYear": "2012",
+        "ratingCount": 1,
+        "ratingKey": "120713",
+        "subtype": "movie",
+        "summary": "A superhero film series based on the Marvel Comics character Spider-Man. The series is centered on Peter Parker, a teenager struggling to find his place in life ever since his parents disappeared when he was a child. A spider bites him on the back of his neck, giving him spider-powers. It is a reboot of Sony's Spider-Man film franchise.",
+        "thumb": "/library/metadata/120713/thumb/1744674535",
+        "title": "The Amazing Spider-Man Collection",
+        "titleSort": "Amazing Spider-Man Collection",
+        "type": "collection",
+        "updatedAt": 1744674535
+      }
+    ],
+    "allowSync": true,
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 1,
+    "librarySectionTitle": "Movies",
+    "librarySectionUUID": "09dd5d64-2d11-476f-9064-d2b4f776a3bb",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1744189307,
+    "size": 1
+  }
 }
