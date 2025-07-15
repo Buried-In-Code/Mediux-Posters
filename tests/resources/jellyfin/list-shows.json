@@ -85,7 +85,7 @@
     {
       "Name": "Downton Abbey",
       "ServerId": "dc3a12fa42114b4b9e119db7af393829",
-      "Id": "375ad80948bb3e9bd78684d915430bfa",
+      "Id": "7df9cc7bbd2d497ec18b448731d3c1ec",
       "PremiereDate": "2010-09-26T00:00:00.0000000Z",
       "OfficialRating": "TV-14",
       "ChannelId": null,
@@ -96,8 +96,7 @@
         "Imdb": "tt1606375",
         "Tmdb": "33907",
         "TvRage": "26615",
-        "Tvdb": "193131",
-        "TvMaze": "251"
+        "Tvdb": "193131"
       },
       "IsFolder": true,
       "Type": "Series",

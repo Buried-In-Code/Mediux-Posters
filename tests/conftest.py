@@ -1,8 +1,11 @@
 import os
+from datetime import date, datetime
 
 import pytest
 
-from mediux_posters.mediux import Mediux
+from mediux_posters.mediux import FileType, Mediux
+from mediux_posters.mediux.schemas import File, Movie as MediuxMedia, MovieSet as SetData
+from mediux_posters.services._base.schemas import BaseMovie as Media
 from mediux_posters.services.jellyfin import Jellyfin
 from mediux_posters.services.plex import Plex
 
@@ -60,3 +63,27 @@ def plex_session(plex_base_url: str | None, plex_token: str | None) -> Plex | No
         assert plex.validate() is True
         return plex
     return None
+
+
+@pytest.fixture
+def media_obj() -> Media:
+    return Media(id=1, name="Test Movie", tmdb_id=1, year=2025)
+
+
+@pytest.fixture
+def set_data() -> SetData:
+    return SetData(
+        date_updated=datetime.now(),  # noqa: DTZ005
+        files=[
+            File(
+                id="file-poster-id",
+                file_type=FileType.POSTER,
+                modified_on=datetime.now(),  # noqa: DTZ005
+                movie_id=1,
+            )
+        ],
+        id=1,
+        movie_id=MediuxMedia(id=1, release_date=date.today(), title="Test Movie"),  # noqa: DTZ011
+        set_title="Test Set",
+        username="Test User",
+    )
