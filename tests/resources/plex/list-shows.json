@@ -1,276 +1,276 @@
 {
-    "MediaContainer": {
-        "size": 3,
-        "allowSync": true,
-        "art": "/:/resources/show-fanart.jpg",
-        "content": "secondary",
-        "identifier": "com.plexapp.plugins.library",
-        "librarySectionID": 2,
-        "librarySectionTitle": "TV shows",
-        "librarySectionUUID": "ba066eda-f6c7-4410-8dc6-c12e8585acce",
-        "mediaTagPrefix": "/system/bundle/media/flags/",
-        "mediaTagVersion": 1744189307,
-        "nocache": true,
-        "thumb": "/:/resources/show.png",
-        "title1": "TV shows",
-        "title2": "All Shows",
-        "viewGroup": "show",
-        "Metadata": [
-            {
-                "ratingKey": "109448",
-                "key": "/library/metadata/109448/children",
-                "guid": "plex://show/5d9c07f72df347001e3a70b4",
-                "slug": "adventure-time-1",
-                "studio": "Frederator Studios",
-                "type": "show",
-                "title": "Adventure Time",
-                "contentRating": "nz/PG",
-                "summary": "Unlikely heroes Finn and Jake are buddies who traverse the mystical Land of Ooo. The best of friends, our heroes always find themselves in the middle of escapades. Finn and Jake depend on each other through thick and thin.",
-                "index": 1,
-                "audienceRating": 8.5,
-                "viewCount": 6,
-                "lastViewedAt": 1740775818,
-                "year": 2010,
-                "thumb": "/library/metadata/109448/thumb/1744674310",
-                "art": "/library/metadata/109448/art/1744674310",
-                "theme": "/library/metadata/109448/theme/1744674310",
-                "duration": 660000,
-                "originallyAvailableAt": "2010-04-05",
-                "leafCount": 296,
-                "viewedLeafCount": 296,
-                "childCount": 11,
-                "seasonCount": 10,
-                "addedAt": 1732362274,
-                "updatedAt": 1744674310,
-                "audienceRatingImage": "themoviedb://image.rating",
-                "Image": [
-                    {
-                        "alt": "Adventure Time",
-                        "type": "coverPoster",
-                        "url": "/library/metadata/109448/thumb/1744674310"
-                    },
-                    {
-                        "alt": "Adventure Time",
-                        "type": "background",
-                        "url": "/library/metadata/109448/art/1744674310"
-                    },
-                    {
-                        "alt": "Adventure Time",
-                        "type": "clearLogo",
-                        "url": "/library/metadata/109448/clearLogo/1744674310"
-                    }
-                ],
-                "UltraBlurColors": {
-                    "topLeft": "0c2f50",
-                    "topRight": "356c36",
-                    "bottomRight": "1a6175",
-                    "bottomLeft": "214d69"
-                },
-                "Guid": [
-                    {
-                        "id": "imdb://tt1305826"
-                    },
-                    {
-                        "id": "tmdb://15260"
-                    },
-                    {
-                        "id": "tvdb://152831"
-                    }
-                ],
-                "Genre": [
-                    {
-                        "tag": "Adventure"
-                    },
-                    {
-                        "tag": "Animation"
-                    }
-                ],
-                "Country": [
-                    {
-                        "tag": "United States of America"
-                    }
-                ],
-                "Role": [
-                    {
-                        "tag": "Jeremy Shada"
-                    },
-                    {
-                        "tag": "John DiMaggio"
-                    },
-                    {
-                        "tag": "Tom Kenny"
-                    }
-                ]
-            },
-            {
-                "ratingKey": "109436",
-                "key": "/library/metadata/109436/children",
-                "guid": "plex://show/611cdc357032b6002cb92e97",
-                "slug": "adventure-time-fionna-and-cake",
-                "studio": "Cartoon Network Studios",
-                "type": "show",
-                "title": "Adventure Time: Fionna & Cake",
-                "originalTitle": "Adventure Time: Fionna and Cake",
-                "contentRating": "TV-14",
-                "summary": "Fionna and Cake--with help from the former Ice King, Simon Petrikov--embark on a multiverse-hopping adventure and journey of self-discovery. All the while, lurking in the shadows is a powerful new antagonist determined to track them down and erase them from existence.",
-                "index": 1,
-                "audienceRating": 9.1,
-                "year": 2023,
-                "thumb": "/library/metadata/109436/thumb/1744674399",
-                "art": "/library/metadata/109436/art/1744674399",
-                "theme": "/library/metadata/109436/theme/1744674399",
-                "duration": 1800000,
-                "originallyAvailableAt": "2023-08-31",
-                "leafCount": 10,
-                "viewedLeafCount": 10,
-                "childCount": 1,
-                "addedAt": 1732362269,
-                "updatedAt": 1744674399,
-                "audienceRatingImage": "themoviedb://image.rating",
-                "Image": [
-                    {
-                        "alt": "Adventure Time: Fionna & Cake",
-                        "type": "coverPoster",
-                        "url": "/library/metadata/109436/thumb/1744674399"
-                    },
-                    {
-                        "alt": "Adventure Time: Fionna & Cake",
-                        "type": "background",
-                        "url": "/library/metadata/109436/art/1744674399"
-                    },
-                    {
-                        "alt": "Adventure Time: Fionna & Cake",
-                        "type": "clearLogo",
-                        "url": "/library/metadata/109436/clearLogo/1744674399"
-                    }
-                ],
-                "UltraBlurColors": {
-                    "topLeft": "4c1733",
-                    "topRight": "116492",
-                    "bottomRight": "2c657d",
-                    "bottomLeft": "1a6589"
-                },
-                "Guid": [
-                    {
-                        "id": "imdb://tt15248880"
-                    },
-                    {
-                        "id": "tmdb://131378"
-                    },
-                    {
-                        "id": "tvdb://408850"
-                    }
-                ],
-                "Genre": [
-                    {
-                        "tag": "Animation"
-                    },
-                    {
-                        "tag": "Comedy"
-                    }
-                ],
-                "Country": [
-                    {
-                        "tag": "United States of America"
-                    }
-                ],
-                "Role": [
-                    {
-                        "tag": "Madeleine Martin"
-                    },
-                    {
-                        "tag": "Roz Ryan"
-                    },
-                    {
-                        "tag": "Tom Kenny"
-                    }
-                ]
-            },
-            {
-                "ratingKey": "120654",
-                "key": "/library/metadata/120654/children",
-                "guid": "plex://show/5d9c08decb3ffa001f1b7f21",
-                "slug": "adventures-in-dinotopia",
-                "studio": "Hallmark Entertainment",
-                "type": "show",
-                "title": "Adventures in Dinotopia",
-                "contentRating": "TV-PG",
-                "summary": "After a plane crash, two opposing half-brothers find themselves on an amazing lost island where enlightened pacifist humans and intelligent talking dinosaurs have created a utopian medieval society. But imminent disaster approaches.",
-                "index": 1,
-                "audienceRating": 6.4,
-                "viewCount": 3,
-                "lastViewedAt": 1743318309,
-                "year": 2002,
-                "tagline": "A secret world is about to be revealed.",
-                "thumb": "/library/metadata/120654/thumb/1744299056",
-                "art": "/library/metadata/120654/art/1744299056",
-                "duration": 4980000,
-                "originallyAvailableAt": "2002-05-12",
-                "leafCount": 3,
-                "viewedLeafCount": 3,
-                "childCount": 1,
-                "addedAt": 1739084286,
-                "updatedAt": 1744299056,
-                "audienceRatingImage": "themoviedb://image.rating",
-                "Image": [
-                    {
-                        "alt": "Adventures in Dinotopia",
-                        "type": "coverPoster",
-                        "url": "/library/metadata/120654/thumb/1744299056"
-                    },
-                    {
-                        "alt": "Adventures in Dinotopia",
-                        "type": "background",
-                        "url": "/library/metadata/120654/art/1744299056"
-                    },
-                    {
-                        "alt": "Adventures in Dinotopia",
-                        "type": "clearLogo",
-                        "url": "/library/metadata/120654/clearLogo/1744299056"
-                    }
-                ],
-                "UltraBlurColors": {
-                    "topLeft": "4c1d1d",
-                    "topRight": "481922",
-                    "bottomRight": "853939",
-                    "bottomLeft": "933e48"
-                },
-                "Guid": [
-                    {
-                        "id": "imdb://tt0233044"
-                    },
-                    {
-                        "id": "tmdb://73536"
-                    },
-                    {
-                        "id": "tvdb://436458"
-                    }
-                ],
-                "Genre": [
-                    {
-                        "tag": "Family"
-                    },
-                    {
-                        "tag": "Adventure"
-                    }
-                ],
-                "Country": [
-                    {
-                        "tag": "United States of America"
-                    }
-                ],
-                "Role": [
-                    {
-                        "tag": "David Thewlis"
-                    },
-                    {
-                        "tag": "Katie Carr"
-                    },
-                    {
-                        "tag": "Jim Carter"
-                    }
-                ]
-            }
-        ]
-    }
+  "MediaContainer": {
+    "Metadata": [
+      {
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Adventure"
+          },
+          {
+            "tag": "Animation"
+          }
+        ],
+        "Guid": [
+          {
+            "id": "imdb://tt1305826"
+          },
+          {
+            "id": "tmdb://15260"
+          },
+          {
+            "id": "tvdb://152831"
+          }
+        ],
+        "Image": [
+          {
+            "alt": "Adventure Time",
+            "type": "coverPoster",
+            "url": "/library/metadata/109448/thumb/1744674310"
+          },
+          {
+            "alt": "Adventure Time",
+            "type": "background",
+            "url": "/library/metadata/109448/art/1744674310"
+          },
+          {
+            "alt": "Adventure Time",
+            "type": "clearLogo",
+            "url": "/library/metadata/109448/clearLogo/1744674310"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jeremy Shada"
+          },
+          {
+            "tag": "John DiMaggio"
+          },
+          {
+            "tag": "Tom Kenny"
+          }
+        ],
+        "UltraBlurColors": {
+          "bottomLeft": "214d69",
+          "bottomRight": "1a6175",
+          "topLeft": "0c2f50",
+          "topRight": "356c36"
+        },
+        "addedAt": 1732362274,
+        "art": "/library/metadata/109448/art/1744674310",
+        "audienceRating": 8.5,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "childCount": 11,
+        "contentRating": "nz/PG",
+        "duration": 660000,
+        "guid": "plex://show/5d9c07f72df347001e3a70b4",
+        "index": 1,
+        "key": "/library/metadata/109448/children",
+        "lastViewedAt": 1740775818,
+        "leafCount": 296,
+        "originallyAvailableAt": "2010-04-05",
+        "ratingKey": "109448",
+        "seasonCount": 10,
+        "slug": "adventure-time-1",
+        "studio": "Frederator Studios",
+        "summary": "Unlikely heroes Finn and Jake are buddies who traverse the mystical Land of Ooo. The best of friends, our heroes always find themselves in the middle of escapades. Finn and Jake depend on each other through thick and thin.",
+        "theme": "/library/metadata/109448/theme/1744674310",
+        "thumb": "/library/metadata/109448/thumb/1744674310",
+        "title": "Adventure Time",
+        "type": "show",
+        "updatedAt": 1744674310,
+        "viewCount": 6,
+        "viewedLeafCount": 296,
+        "year": 2010
+      },
+      {
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Guid": [
+          {
+            "id": "imdb://tt15248880"
+          },
+          {
+            "id": "tmdb://131378"
+          },
+          {
+            "id": "tvdb://408850"
+          }
+        ],
+        "Image": [
+          {
+            "alt": "Adventure Time: Fionna & Cake",
+            "type": "coverPoster",
+            "url": "/library/metadata/109436/thumb/1744674399"
+          },
+          {
+            "alt": "Adventure Time: Fionna & Cake",
+            "type": "background",
+            "url": "/library/metadata/109436/art/1744674399"
+          },
+          {
+            "alt": "Adventure Time: Fionna & Cake",
+            "type": "clearLogo",
+            "url": "/library/metadata/109436/clearLogo/1744674399"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Madeleine Martin"
+          },
+          {
+            "tag": "Roz Ryan"
+          },
+          {
+            "tag": "Tom Kenny"
+          }
+        ],
+        "UltraBlurColors": {
+          "bottomLeft": "1a6589",
+          "bottomRight": "2c657d",
+          "topLeft": "4c1733",
+          "topRight": "116492"
+        },
+        "addedAt": 1732362269,
+        "art": "/library/metadata/109436/art/1744674399",
+        "audienceRating": 9.1,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "childCount": 1,
+        "contentRating": "TV-14",
+        "duration": 1800000,
+        "guid": "plex://show/611cdc357032b6002cb92e97",
+        "index": 1,
+        "key": "/library/metadata/109436/children",
+        "leafCount": 10,
+        "originalTitle": "Adventure Time: Fionna and Cake",
+        "originallyAvailableAt": "2023-08-31",
+        "ratingKey": "109436",
+        "slug": "adventure-time-fionna-and-cake",
+        "studio": "Cartoon Network Studios",
+        "summary": "Fionna and Cake--with help from the former Ice King, Simon Petrikov--embark on a multiverse-hopping adventure and journey of self-discovery. All the while, lurking in the shadows is a powerful new antagonist determined to track them down and erase them from existence.",
+        "theme": "/library/metadata/109436/theme/1744674399",
+        "thumb": "/library/metadata/109436/thumb/1744674399",
+        "title": "Adventure Time: Fionna & Cake",
+        "type": "show",
+        "updatedAt": 1744674399,
+        "viewedLeafCount": 10,
+        "year": 2023
+      },
+      {
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Family"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Guid": [
+          {
+            "id": "imdb://tt0233044"
+          },
+          {
+            "id": "tmdb://73536"
+          },
+          {
+            "id": "tvdb://436458"
+          }
+        ],
+        "Image": [
+          {
+            "alt": "Adventures in Dinotopia",
+            "type": "coverPoster",
+            "url": "/library/metadata/120654/thumb/1744299056"
+          },
+          {
+            "alt": "Adventures in Dinotopia",
+            "type": "background",
+            "url": "/library/metadata/120654/art/1744299056"
+          },
+          {
+            "alt": "Adventures in Dinotopia",
+            "type": "clearLogo",
+            "url": "/library/metadata/120654/clearLogo/1744299056"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "David Thewlis"
+          },
+          {
+            "tag": "Katie Carr"
+          },
+          {
+            "tag": "Jim Carter"
+          }
+        ],
+        "UltraBlurColors": {
+          "bottomLeft": "933e48",
+          "bottomRight": "853939",
+          "topLeft": "4c1d1d",
+          "topRight": "481922"
+        },
+        "addedAt": 1739084286,
+        "art": "/library/metadata/120654/art/1744299056",
+        "audienceRating": 6.4,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "childCount": 1,
+        "contentRating": "TV-PG",
+        "duration": 4980000,
+        "guid": "plex://show/5d9c08decb3ffa001f1b7f21",
+        "index": 1,
+        "key": "/library/metadata/120654/children",
+        "lastViewedAt": 1743318309,
+        "leafCount": 3,
+        "originallyAvailableAt": "2002-05-12",
+        "ratingKey": "120654",
+        "slug": "adventures-in-dinotopia",
+        "studio": "Hallmark Entertainment",
+        "summary": "After a plane crash, two opposing half-brothers find themselves on an amazing lost island where enlightened pacifist humans and intelligent talking dinosaurs have created a utopian medieval society. But imminent disaster approaches.",
+        "tagline": "A secret world is about to be revealed.",
+        "thumb": "/library/metadata/120654/thumb/1744299056",
+        "title": "Adventures in Dinotopia",
+        "type": "show",
+        "updatedAt": 1744299056,
+        "viewCount": 3,
+        "viewedLeafCount": 3,
+        "year": 2002
+      }
+    ],
+    "allowSync": true,
+    "art": "/:/resources/show-fanart.jpg",
+    "content": "secondary",
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 2,
+    "librarySectionTitle": "TV shows",
+    "librarySectionUUID": "ba066eda-f6c7-4410-8dc6-c12e8585acce",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1744189307,
+    "nocache": true,
+    "size": 3,
+    "thumb": "/:/resources/show.png",
+    "title1": "TV shows",
+    "title2": "All Shows",
+    "viewGroup": "show"
+  }
 }

@@ -1,42 +1,77 @@
 {
   "MediaContainer": {
-    "size": 1,
-    "allowSync": true,
-    "identifier": "com.plexapp.plugins.library",
-    "librarySectionID": 2,
-    "librarySectionTitle": "TV shows",
-    "librarySectionUUID": "ba066eda-f6c7-4410-8dc6-c12e8585acce",
-    "mediaTagPrefix": "/system/bundle/media/flags/",
-    "mediaTagVersion": 1744189307,
     "Metadata": [
       {
-        "ratingKey": "109436",
-        "key": "/library/metadata/109436/children",
-        "guid": "plex://show/611cdc357032b6002cb92e97",
-        "slug": "adventure-time-fionna-and-cake",
-        "studio": "Cartoon Network Studios",
-        "type": "show",
-        "title": "Adventure Time: Fionna & Cake",
-        "librarySectionTitle": "TV shows",
-        "librarySectionID": 2,
-        "librarySectionKey": "/library/sections/2",
-        "originalTitle": "Adventure Time: Fionna and Cake",
-        "contentRating": "TV-14",
-        "summary": "Fionna and Cake--with help from the former Ice King, Simon Petrikov--embark on a multiverse-hopping adventure and journey of self-discovery. All the while, lurking in the shadows is a powerful new antagonist determined to track them down and erase them from existence.",
-        "index": 1,
-        "audienceRating": 9.1,
-        "year": 2023,
-        "thumb": "/library/metadata/109436/thumb/1744674399",
-        "art": "/library/metadata/109436/art/1744674399",
-        "theme": "/library/metadata/109436/theme/1744674399",
-        "duration": 1800000,
-        "originallyAvailableAt": "2023-08-31",
-        "leafCount": 10,
-        "viewedLeafCount": 10,
-        "childCount": 1,
-        "addedAt": 1732362269,
-        "updatedAt": 1744674399,
-        "audienceRatingImage": "themoviedb://image.rating",
+        "Country": [
+          {
+            "filter": "country=505",
+            "id": 505,
+            "tag": "United States of America"
+          }
+        ],
+        "Field": [
+          {
+            "locked": true,
+            "name": "thumb"
+          },
+          {
+            "locked": true,
+            "name": "art"
+          }
+        ],
+        "Genre": [
+          {
+            "filter": "genre=7",
+            "id": 7,
+            "tag": "Animation"
+          },
+          {
+            "filter": "genre=174",
+            "id": 174,
+            "tag": "Comedy"
+          },
+          {
+            "filter": "genre=5",
+            "id": 5,
+            "tag": "Action"
+          },
+          {
+            "filter": "genre=6",
+            "id": 6,
+            "tag": "Adventure"
+          },
+          {
+            "filter": "genre=175",
+            "id": 175,
+            "tag": "Drama"
+          },
+          {
+            "filter": "genre=8",
+            "id": 8,
+            "tag": "Fantasy"
+          },
+          {
+            "filter": "genre=10",
+            "id": 10,
+            "tag": "Science Fiction"
+          },
+          {
+            "filter": "genre=13154",
+            "id": 13154,
+            "tag": "Sci-Fi & Fantasy"
+          }
+        ],
+        "Guid": [
+          {
+            "id": "imdb://tt15248880"
+          },
+          {
+            "id": "tmdb://131378"
+          },
+          {
+            "id": "tvdb://408850"
+          }
+        ],
         "Image": [
           {
             "alt": "Adventure Time: Fionna & Cake",
@@ -54,529 +89,494 @@
             "url": "/library/metadata/109436/clearLogo/1744674399"
           }
         ],
-        "UltraBlurColors": {
-          "topLeft": "4c1733",
-          "topRight": "116492",
-          "bottomRight": "2c657d",
-          "bottomLeft": "1a6589"
-        },
-        "Genre": [
+        "Location": [
           {
-            "id": 7,
-            "filter": "genre=7",
-            "tag": "Animation"
-          },
-          {
-            "id": 174,
-            "filter": "genre=174",
-            "tag": "Comedy"
-          },
-          {
-            "id": 5,
-            "filter": "genre=5",
-            "tag": "Action"
-          },
-          {
-            "id": 6,
-            "filter": "genre=6",
-            "tag": "Adventure"
-          },
-          {
-            "id": 175,
-            "filter": "genre=175",
-            "tag": "Drama"
-          },
-          {
-            "id": 8,
-            "filter": "genre=8",
-            "tag": "Fantasy"
-          },
-          {
-            "id": 10,
-            "filter": "genre=10",
-            "tag": "Science Fiction"
-          },
-          {
-            "id": 13154,
-            "filter": "genre=13154",
-            "tag": "Sci-Fi & Fantasy"
-          }
-        ],
-        "Country": [
-          {
-            "id": 505,
-            "filter": "country=505",
-            "tag": "United States of America"
-          }
-        ],
-        "Guid": [
-          {
-            "id": "imdb://tt15248880"
-          },
-          {
-            "id": "tmdb://131378"
-          },
-          {
-            "id": "tvdb://408850"
+            "path": "/data/tv-shows/Adventure-Time-Fionna-and-Cake-2023_[tmdb-131378]"
           }
         ],
         "Rating": [
           {
             "image": "imdb://image.rating",
-            "value": 8.8,
-            "type": "audience"
+            "type": "audience",
+            "value": 8.8
           },
           {
             "image": "rottentomatoes://image.rating.ripe",
-            "value": 10.0,
-            "type": "critic"
+            "type": "critic",
+            "value": 10.0
           },
           {
             "image": "rottentomatoes://image.rating.upright",
-            "value": 9.7,
-            "type": "audience"
+            "type": "audience",
+            "value": 9.7
           },
           {
             "image": "themoviedb://image.rating",
-            "value": 9.1,
-            "type": "audience"
+            "type": "audience",
+            "value": 9.1
           }
         ],
         "Role": [
           {
-            "id": 16033,
             "filter": "actor=16033",
+            "id": 16033,
+            "role": "Fionna Campbell (voice)",
             "tag": "Madeleine Martin",
             "tagKey": "5d77682954f42c001f8c2e30",
-            "role": "Fionna Campbell (voice)",
             "thumb": "https://metadata-static.plex.tv/2/people/2ff2266bfd7b1d02b0dd50e3a4396177.jpg"
           },
           {
-            "id": 16034,
             "filter": "actor=16034",
+            "id": 16034,
+            "role": "Cake (voice)",
             "tag": "Roz Ryan",
             "tagKey": "5d77683c7228e5001f1dfaed",
-            "role": "Cake (voice)",
             "thumb": "https://metadata-static.plex.tv/e/people/e019299ebaab05b4b0150c1ce6861819.jpg"
           },
           {
-            "id": 2688,
             "filter": "actor=2688",
+            "id": 2688,
+            "role": "Simon Petrikov / Ice King (voice)",
             "tag": "Tom Kenny",
             "tagKey": "5d776829103a2d001f564c0c",
-            "role": "Simon Petrikov / Ice King (voice)",
             "thumb": "https://metadata-static.plex.tv/7/people/7a7654471f4b87c2f8ce757357e860b5.jpg"
           },
           {
-            "id": 5207,
             "filter": "actor=5207",
+            "id": 5207,
+            "role": "Additional Voices (voice)",
             "tag": "Dee Bradley Baker",
             "tagKey": "5d77682d5af944001f1f8215",
-            "role": "Additional Voices (voice)",
             "thumb": "https://metadata-static.plex.tv/7/people/70a275d4944a00cd5a518b998624e3dd.jpg"
           },
           {
-            "id": 16035,
             "filter": "actor=16035",
+            "id": 16035,
+            "role": "Scarab (voice)",
             "tag": "Kayleigh McKee",
             "tagKey": "5f3fbfb852f20000414829d5",
-            "role": "Scarab (voice)",
             "thumb": "https://metadata-static.plex.tv/7/people/74e4d27b40610f6b064b11d5a516da54.jpg"
           },
           {
-            "id": 16036,
             "filter": "actor=16036",
+            "id": 16036,
+            "role": "Prismo (voice)",
             "tag": "Sean Rohani",
             "tagKey": "5f402a4e864225004283e1d6",
-            "role": "Prismo (voice)",
             "thumb": "https://metadata-static.plex.tv/d/people/d282b628636c01ae7afa3f61233017d0.jpg"
           },
           {
-            "id": 8234,
             "filter": "actor=8234",
+            "id": 8234,
+            "role": "Marshall Lee (voice)",
             "tag": "Donald Glover",
             "tagKey": "5d77686d6f4521001eaa6797",
-            "role": "Marshall Lee (voice)",
             "thumb": "https://metadata-static.plex.tv/5/people/50b2d0b715625e2ec16b6a276452821b.jpg"
           },
           {
-            "id": 16037,
             "filter": "actor=16037",
+            "id": 16037,
+            "role": "Gary Prince (voice)",
             "tag": "Andrew Rannells",
             "tagKey": "5d776891308bca002032d137",
-            "role": "Gary Prince (voice)",
             "thumb": "https://metadata-static.plex.tv/c/people/c7cd1cfccca777e3ad4bd5748a52d5b6.jpg"
           },
           {
-            "id": 5423,
             "filter": "actor=5423",
+            "id": 5423,
+            "role": "Farmworld Finn / Ice Finn (voice)",
             "tag": "Jeremy Shada",
             "tagKey": "5d77682ee6d55c002040bce6",
-            "role": "Farmworld Finn / Ice Finn (voice)",
             "thumb": "https://metadata-static.plex.tv/b/people/ba6413846e4fc49884ec7694d012b198.jpg"
           },
           {
-            "id": 16038,
             "filter": "actor=16038",
+            "id": 16038,
+            "role": "Ellis P (voice)",
             "tag": "Pendleton Ward",
             "tagKey": "5d7768987a53e9001e6d3969",
-            "role": "Ellis P (voice)",
             "thumb": "https://metadata-static.plex.tv/e/people/eeeaf23b8fe142b279f184477569af06.jpg"
           },
           {
-            "id": 16039,
             "filter": "actor=16039",
+            "id": 16039,
+            "role": "Additional Voices (voice)",
             "tag": "Jinkx Monsoon",
             "tagKey": "5d776b87594b2b001e6dca2f",
-            "role": "Additional Voices (voice)",
             "thumb": "https://metadata-static.plex.tv/0/people/074a233dd3beab9fdf08b29f3892510f.jpg"
           },
           {
-            "id": 65639,
             "filter": "actor=65639",
+            "id": 65639,
+            "role": "Astrid (voice)",
             "tag": "Audrey Bennett",
             "tagKey": "5ee50da24757a1003fabcce8",
-            "role": "Astrid (voice)",
             "thumb": "https://metadata-static.plex.tv/5/people/5923fdb66e8e8800359d6f3ce8721db4.jpg"
           },
           {
-            "id": 16041,
             "filter": "actor=16041",
+            "id": 16041,
+            "role": "Starchy (voice)",
             "tag": "Maria Bamford",
             "tagKey": "5d776834151a60001f24d6de",
-            "role": "Starchy (voice)",
             "thumb": "https://metadata-static.plex.tv/2/cc68393fae/people/2676d64482b6d1989dcdf41afa10fa8f.jpg"
           },
           {
-            "id": 4310,
             "filter": "actor=4310",
+            "id": 4310,
+            "role": "Evil Choose Goose (voice)",
             "tag": "Jeff Bennett",
             "tagKey": "5d77682e2e80df001ebdd858",
-            "role": "Evil Choose Goose (voice)",
             "thumb": "https://metadata-static.plex.tv/d/people/ddd3945c42a8890523e7a94648425453.jpg"
           },
           {
-            "id": 16042,
             "filter": "actor=16042",
+            "id": 16042,
+            "role": "Skater Fairies (voice)",
             "tag": "Cristina Valenzuela",
             "tagKey": "5d776850880197001ec98353",
-            "role": "Skater Fairies (voice)",
             "thumb": "https://metadata-static.plex.tv/people/5d776850880197001ec98353.jpg"
           },
           {
-            "id": 16043,
             "filter": "actor=16043",
+            "id": 16043,
+            "role": "Additional Voices (voice)",
             "tag": "Erica Mendez",
             "tagKey": "5d776a429ab54400214fce21",
-            "role": "Additional Voices (voice)",
             "thumb": "https://metadata-static.plex.tv/people/5d776a429ab54400214fce21.jpg"
           },
           {
-            "id": 549,
             "filter": "actor=549",
+            "id": 549,
+            "role": "Additional Voices (voice)",
             "tag": "Cree Summer",
             "tagKey": "5d7768337e9a3c0020c6c48c",
-            "role": "Additional Voices (voice)",
             "thumb": "https://metadata-static.plex.tv/9/people/9e58cff0835d350e3d279d321794ec75.jpg"
           },
           {
-            "id": 16044,
             "filter": "actor=16044",
+            "id": 16044,
+            "role": "Betty (voice)",
             "tag": "Felicia Day",
             "tagKey": "5d776839151a60001f24ecfc",
-            "role": "Betty (voice)",
             "thumb": "https://metadata-static.plex.tv/people/5d776839151a60001f24ecfc.jpg"
           },
           {
-            "id": 10790,
             "filter": "actor=10790",
+            "id": 10790,
+            "role": "Bonnie (voice)",
             "tag": "Hynden Walch",
             "tagKey": "5d77682761141d001fb13617",
-            "role": "Bonnie (voice)",
             "thumb": "https://metadata-static.plex.tv/b/people/b2588be9b38393facd27de7fc4081720.jpg"
           },
           {
-            "id": 1168,
             "filter": "actor=1168",
+            "id": 1168,
+            "role": "Dog Cake / Nightmare Cake / Beard Guy (voice)",
             "tag": "Phil LaMarr",
             "tagKey": "5d776827103a2d001f564619",
-            "role": "Dog Cake / Nightmare Cake / Beard Guy (voice)",
             "thumb": "https://metadata-static.plex.tv/e/people/e37f3a5764a078ff3c3ecbb18b32b5c8.jpg"
           },
           {
-            "id": 16045,
             "filter": "actor=16045",
+            "id": 16045,
+            "role": "Hunter / Fern (voice)",
             "tag": "Vico Ortiz",
             "tagKey": "5d776aaaf617c9002016ff50",
-            "role": "Hunter / Fern (voice)",
             "thumb": "https://metadata-static.plex.tv/c/people/cf1802f8acea4f77941c03ffcdf41f7b.jpg"
           },
           {
-            "id": 4075,
             "filter": "actor=4075",
+            "id": 4075,
+            "role": "Queenie (voice)",
             "tag": "Chelsea Peretti",
             "tagKey": "5d776b17ad5437001f792c75",
-            "role": "Queenie (voice)",
             "thumb": "https://metadata-static.plex.tv/d/people/dd8cc5753b4aee938c2e03305bab1b52.jpg"
           },
           {
-            "id": 16046,
             "filter": "actor=16046",
+            "id": 16046,
+            "role": "Marceline (voice)",
             "tag": "Olivia Olson",
             "tagKey": "5d776826961905001eb91136",
-            "role": "Marceline (voice)",
             "thumb": "https://metadata-static.plex.tv/4/people/4eec0b6c6d36f6c4cd0574af354d74aa.jpg"
           },
           {
-            "id": 1972,
             "filter": "actor=1972",
+            "id": 1972,
+            "role": "Jake (voice)",
             "tag": "John DiMaggio",
             "tagKey": "5d7768256f4521001ea989ff",
-            "role": "Jake (voice)",
             "thumb": "https://metadata-static.plex.tv/0/people/0a945543418d442fea7ae4948b2a2fda.jpg"
           },
           {
-            "id": 16047,
             "filter": "actor=16047",
+            "id": 16047,
+            "role": "Additional Voices (voice)",
             "tag": "Sharon Horgan",
             "tagKey": "5d77682aeb5d26001f1de2f1",
-            "role": "Additional Voices (voice)",
             "thumb": "https://metadata-static.plex.tv/b/cc68393fae/people/bfe124a4f2df1ef8bb3fa7734a3467b3.jpg"
           },
           {
-            "id": 16048,
             "filter": "actor=16048",
+            "id": 16048,
+            "role": "BMO / Library Person (voice)",
             "tag": "Niki Yang",
             "tagKey": "5d776ca9fb0d55001f58eccd",
-            "role": "BMO / Library Person (voice)",
             "thumb": "https://metadata-static.plex.tv/d/people/d1b7b429e084b7472a641b4879be87ad.jpg"
           },
           {
-            "id": 6202,
             "filter": "actor=6202",
+            "id": 6202,
+            "role": "Ice Prince / TV Announcer / Bar Guy (voice)",
             "tag": "Robbie Daymond",
             "tagKey": "5d77688f3ab0e7001f504370",
-            "role": "Ice Prince / TV Announcer / Bar Guy (voice)",
             "thumb": "https://metadata-static.plex.tv/4/people/4121347200face12cadd1585e9d3d25d.jpg"
           },
           {
-            "id": 1162,
             "filter": "actor=1162",
+            "id": 1162,
+            "role": "Additional Voices (voice)",
             "tag": "Grey DeLisle",
             "tagKey": "5d776831999c64001ec2e687",
-            "role": "Additional Voices (voice)",
             "thumb": "https://metadata-static.plex.tv/b/people/bc592fecc2fd2d025c4b921bec82fc2a.jpg"
           },
           {
-            "id": 2486,
             "filter": "actor=2486",
+            "id": 2486,
+            "role": "Squirrel (voice)",
             "tag": "Marc Maron",
             "tagKey": "5d776829e6d55c002040b37f",
-            "role": "Squirrel (voice)",
             "thumb": "https://metadata-static.plex.tv/a/people/a44a20ac368345c47114eab65c0f038a.jpg"
           },
           {
-            "id": 8844,
             "filter": "actor=8844",
+            "id": 8844,
+            "role": "Kheirosiphon / Wyatt (voice)",
             "tag": "Andy Daly",
             "tagKey": "5d776832151a60001f24d33d",
-            "role": "Kheirosiphon / Wyatt (voice)",
             "thumb": "https://metadata-static.plex.tv/people/5d776832151a60001f24d33d.jpg"
           },
           {
-            "id": 16049,
             "filter": "actor=16049",
-            "tag": "Melissa Villaseñor",
-            "tagKey": "5d776c5423d5a3001f51a494",
+            "id": 16049,
             "role": "Candy Cuffs (voice)",
+            "tag": "Melissa Villase\u00f1or",
+            "tagKey": "5d776c5423d5a3001f51a494",
             "thumb": "https://metadata-static.plex.tv/2/people/2ab99580d8f6ae7d723b1bb5ec2a6f5c.jpg"
           },
           {
-            "id": 16050,
             "filter": "actor=16050",
+            "id": 16050,
+            "role": "Additional Voices (voice)",
             "tag": "Steve Little",
             "tagKey": "5d7768472e80df001ebe0893",
-            "role": "Additional Voices (voice)",
             "thumb": "https://metadata-static.plex.tv/people/5d7768472e80df001ebe0893.jpg"
           },
           {
-            "id": 16051,
             "filter": "actor=16051",
+            "id": 16051,
+            "role": "Additional Voices (voice)",
             "tag": "Mickey Zacchilli",
-            "tagKey": "60f533b4a09cc2002c64202c",
-            "role": "Additional Voices (voice)"
+            "tagKey": "60f533b4a09cc2002c64202c"
           },
           {
-            "id": 16052,
             "filter": "actor=16052",
+            "id": 16052,
+            "role": "Additional Voices (voice)",
             "tag": "Cole Sanchez",
-            "tagKey": "5d776c7596b655001fe31478",
-            "role": "Additional Voices (voice)"
+            "tagKey": "5d776c7596b655001fe31478"
           },
           {
-            "id": 2368,
             "filter": "actor=2368",
+            "id": 2368,
+            "role": "Lich (voice)",
             "tag": "Ron Perlman",
             "tagKey": "5d776824151a60001f24a38c",
-            "role": "Lich (voice)",
             "thumb": "https://metadata-static.plex.tv/3/people/3333d65b7450b7bc33d60ed9d3a7c784.jpg"
           },
           {
-            "id": 16053,
             "filter": "actor=16053",
+            "id": 16053,
+            "role": "Jay / Finn's Kid #2 (voice)",
             "tag": "Tiffany Wu",
-            "tagKey": "6413056329da5a2489ce5ef2",
-            "role": "Jay / Finn's Kid #2 (voice)"
+            "tagKey": "6413056329da5a2489ce5ef2"
           },
           {
-            "id": 3394,
             "filter": "actor=3394",
+            "id": 3394,
+            "role": "Shermy (voice)",
             "tag": "Sean Giambrone",
             "tagKey": "5d776959fb0d55001f523663",
-            "role": "Shermy (voice)",
             "thumb": "https://metadata-static.plex.tv/6/people/6f58988eca6ae95d13d560b31bab7f73.jpg"
           },
           {
-            "id": 16054,
             "filter": "actor=16054",
+            "id": 16054,
+            "role": "Beth (voice)",
             "tag": "Imani Hakim",
             "tagKey": "5d77682beb5d26001f1de90d",
-            "role": "Beth (voice)",
             "thumb": "https://metadata-static.plex.tv/0/people/02dde155823d9ef9b78f4764b2e795af.jpg"
           },
           {
-            "id": 7605,
             "filter": "actor=7605",
+            "id": 7605,
+            "role": "Beatrice Buttler / Van Driver (voice)",
             "tag": "Elle Newlands",
             "tagKey": "5d7769a9594b2b001e6a6c2f",
-            "role": "Beatrice Buttler / Van Driver (voice)",
             "thumb": "https://metadata-static.plex.tv/0/people/052a8940e47749b26626db77341eba78.jpg"
           },
           {
-            "id": 16055,
             "filter": "actor=16055",
+            "id": 16055,
+            "role": "TV (voice)",
             "tag": "Dan Mintz",
             "tagKey": "5d776846e6d55c002040fcc6",
-            "role": "TV (voice)",
             "thumb": "https://metadata-static.plex.tv/people/5d776846e6d55c002040fcc6.jpg"
           },
           {
-            "id": 16056,
             "filter": "actor=16056",
+            "id": 16056,
+            "role": "Dirt Beer Guy (voice)",
             "tag": "Jack Pendarvis",
-            "tagKey": "5dd2d702b5e7a0001f3b1862",
-            "role": "Dirt Beer Guy (voice)"
+            "tagKey": "5dd2d702b5e7a0001f3b1862"
           },
           {
-            "id": 3444,
             "filter": "actor=3444",
+            "id": 3444,
+            "role": "Additional Voices (voice)",
             "tag": "Jim Cummings",
             "tagKey": "5d776828eb5d26001f1ddbb7",
-            "role": "Additional Voices (voice)",
             "thumb": "https://metadata-static.plex.tv/8/people/86d6b589fcbd7f035587ff04a3ac1873.jpg"
           },
           {
-            "id": 4892,
             "filter": "actor=4892",
+            "id": 4892,
+            "role": "Peanut / Tromo / Tire Seller (voice)",
             "tag": "Eric Bauza",
             "tagKey": "5d776850e870fd001f19df2b",
-            "role": "Peanut / Tromo / Tire Seller (voice)",
             "thumb": "https://metadata-static.plex.tv/7/people/71a24cff2a95495a57e4aa5dbe17bb92.jpg"
           },
           {
-            "id": 5518,
             "filter": "actor=5518",
+            "id": 5518,
+            "role": "Big Destiny / Handbag Helmet (voice)",
             "tag": "James Kyson",
             "tagKey": "5d776836f54112001f5bd9a9",
-            "role": "Big Destiny / Handbag Helmet (voice)",
             "thumb": "https://metadata-static.plex.tv/b/people/bb8370b194bbbfb011a2b40f6c1f2686.jpg"
           },
           {
-            "id": 16057,
             "filter": "actor=16057",
+            "id": 16057,
+            "role": "Winter King / Singing Banana Guard (voice)",
             "tag": "Brian David Gilbert",
             "tagKey": "5f3fc7dcce2564003f85b46f",
-            "role": "Winter King / Singing Banana Guard (voice)",
             "thumb": "https://metadata-static.plex.tv/7/people/73d2c45d6b88228d8d5a9f1102cd9d3e.jpg"
           },
           {
-            "id": 3383,
             "filter": "actor=3383",
+            "id": 3383,
+            "role": "Huntress (voice)",
             "tag": "Jenny Slate",
             "tagKey": "5d776896431c830024c100cd",
-            "role": "Huntress (voice)",
             "thumb": "https://metadata-static.plex.tv/8/people/8a2386041a3d151bb8474dfd0072d85c.jpg"
           },
           {
-            "id": 5458,
             "filter": "actor=5458",
+            "id": 5458,
+            "role": "Hana Abadeer (voice)",
             "tag": "Erica Luttrell",
             "tagKey": "5d7768378a7581001f12d96a",
-            "role": "Hana Abadeer (voice)",
             "thumb": "https://metadata-static.plex.tv/7/people/7ab731ac8188678c3d41ab74f2d28f6c.jpg"
           },
           {
-            "id": 6155,
             "filter": "actor=6155",
+            "id": 6155,
+            "role": "Martin Mertens (voice)",
             "tag": "Stephen Root",
             "tagKey": "5d776824961905001eb9096e",
-            "role": "Martin Mertens (voice)",
             "thumb": "https://metadata-static.plex.tv/8/people/80c936dbdfcd15a4fb492b0623603771.jpg"
           },
           {
-            "id": 7642,
             "filter": "actor=7642",
+            "id": 7642,
+            "role": "Vampire King (voice)",
             "tag": "Billy Brown",
             "tagKey": "5d7768263c3c2a001fbcaddb",
-            "role": "Vampire King (voice)",
             "thumb": "https://metadata-static.plex.tv/9/people/96b2e294d0ac0da40d72f5fe04e1737d.jpg"
           },
           {
-            "id": 72327,
             "filter": "actor=72327",
+            "id": 72327,
+            "role": "Orbo (voice)",
             "tag": "Dave McCormack",
-            "tagKey": "5d776a0523d5a3001f4ff974",
-            "role": "Orbo (voice)"
+            "tagKey": "5d776a0523d5a3001f4ff974"
           },
           {
-            "id": 16059,
             "filter": "actor=16059",
+            "id": 16059,
+            "role": "Casper (voice)",
             "tag": "Iggy Craig",
-            "tagKey": "5ef5edf41ce3fd00403996e6",
-            "role": "Casper (voice)"
+            "tagKey": "5ef5edf41ce3fd00403996e6"
           },
           {
-            "id": 16060,
             "filter": "actor=16060",
+            "id": 16060,
+            "role": "Nova (voice)",
             "tag": "Rosie Brand",
-            "tagKey": "5f3e352b6359e30040d344e1",
-            "role": "Nova (voice)"
+            "tagKey": "5f3e352b6359e30040d344e1"
           },
           {
-            "id": 16061,
             "filter": "actor=16061",
+            "id": 16061,
+            "role": "Bonnie (voice)",
             "tag": "Nia Castro",
             "tagKey": "650d7bf2c3b63b09d411764c",
-            "role": "Bonnie (voice)",
             "thumb": "https://metadata-static.plex.tv/b/people/b824855a2706f500069ea55322ed7761.jpg"
           }
         ],
-        "Field": [
-          {
-            "locked": true,
-            "name": "thumb"
-          },
-          {
-            "locked": true,
-            "name": "art"
-          }
-        ],
-        "Location": [
-          {
-            "path": "/data/tv-shows/Adventure-Time-Fionna-and-Cake-2023_[tmdb-131378]"
-          }
-        ]
+        "UltraBlurColors": {
+          "bottomLeft": "1a6589",
+          "bottomRight": "2c657d",
+          "topLeft": "4c1733",
+          "topRight": "116492"
+        },
+        "addedAt": 1732362269,
+        "art": "/library/metadata/109436/art/1744674399",
+        "audienceRating": 9.1,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "childCount": 1,
+        "contentRating": "TV-14",
+        "duration": 1800000,
+        "guid": "plex://show/611cdc357032b6002cb92e97",
+        "index": 1,
+        "key": "/library/metadata/109436/children",
+        "leafCount": 10,
+        "librarySectionID": 2,
+        "librarySectionKey": "/library/sections/2",
+        "librarySectionTitle": "TV shows",
+        "originalTitle": "Adventure Time: Fionna and Cake",
+        "originallyAvailableAt": "2023-08-31",
+        "ratingKey": "109436",
+        "slug": "adventure-time-fionna-and-cake",
+        "studio": "Cartoon Network Studios",
+        "summary": "Fionna and Cake--with help from the former Ice King, Simon Petrikov--embark on a multiverse-hopping adventure and journey of self-discovery. All the while, lurking in the shadows is a powerful new antagonist determined to track them down and erase them from existence.",
+        "theme": "/library/metadata/109436/theme/1744674399",
+        "thumb": "/library/metadata/109436/thumb/1744674399",
+        "title": "Adventure Time: Fionna & Cake",
+        "type": "show",
+        "updatedAt": 1744674399,
+        "viewedLeafCount": 10,
+        "year": 2023
       }
-    ]
+    ],
+    "allowSync": true,
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 2,
+    "librarySectionTitle": "TV shows",
+    "librarySectionUUID": "ba066eda-f6c7-4410-8dc6-c12e8585acce",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1744189307,
+    "size": 1
   }
 }
