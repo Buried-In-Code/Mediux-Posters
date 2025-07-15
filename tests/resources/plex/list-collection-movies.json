@@ -1,277 +1,277 @@
 {
-    "MediaContainer": {
-        "size": 2,
-        "allowSync": true,
-        "art": "/library/metadata/120713/art/1744674535",
-        "identifier": "com.plexapp.plugins.library",
-        "key": "120713",
-        "librarySectionID": 1,
-        "librarySectionTitle": "Movies",
-        "librarySectionUUID": "09dd5d64-2d11-476f-9064-d2b4f776a3bb",
-        "mediaTagPrefix": "/system/bundle/media/flags/",
-        "mediaTagVersion": 1744189307,
-        "nocache": true,
-        "parentIndex": 84371,
-        "parentTitle": "The Amazing Spider-Man Collection",
-        "summary": "A superhero film series based on the Marvel Comics character Spider-Man. The series is centered on Peter Parker, a teenager struggling to find his place in life ever since his parents disappeared when he was a child. A spider bites him on the back of his neck, giving him spider-powers. It is a reboot of Sony's Spider-Man film franchise.",
-        "thumb": "/library/metadata/120713/thumb/1744674535",
-        "title1": "Movies",
-        "title2": "The Amazing Spider-Man Collection",
-        "viewGroup": "movie",
-        "Metadata": [
-            {
-                "ratingKey": "120717",
-                "key": "/library/metadata/120717",
-                "guid": "plex://movie/5d77682a961905001eb91f6c",
-                "slug": "the-amazing-spider-man",
-                "studio": "Marvel Entertainment",
-                "type": "movie",
-                "title": "The Amazing Spider-Man",
-                "titleSort": "Amazing Spider-Man",
-                "contentRating": "nz/M",
-                "summary": "After Peter Parker is bitten by a genetically altered spider, he gains newfound, spider-like powers and ventures out to save the city from the machinations of a mysterious reptilian foe.",
-                "audienceRating": 6.7,
-                "year": 2012,
-                "tagline": "The untold story begins.",
-                "thumb": "/library/metadata/120717/thumb/1744674531",
-                "art": "/library/metadata/120717/art/1744674531",
+  "MediaContainer": {
+    "Metadata": [
+      {
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Marc Webb"
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Action"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Guid": [
+          {
+            "id": "imdb://tt0948470"
+          },
+          {
+            "id": "tmdb://1930"
+          },
+          {
+            "id": "tvdb://473"
+          }
+        ],
+        "Image": [
+          {
+            "alt": "The Amazing Spider-Man",
+            "type": "coverPoster",
+            "url": "/library/metadata/120717/thumb/1744674531"
+          },
+          {
+            "alt": "The Amazing Spider-Man",
+            "type": "background",
+            "url": "/library/metadata/120717/art/1744674531"
+          },
+          {
+            "alt": "The Amazing Spider-Man",
+            "type": "clearLogo",
+            "url": "/library/metadata/120717/clearLogo/1744674531"
+          }
+        ],
+        "Media": [
+          {
+            "Part": [
+              {
+                "audioProfile": "lc",
+                "container": "mp4",
                 "duration": 8177294,
-                "originallyAvailableAt": "2012-06-28",
-                "addedAt": 1739862827,
-                "updatedAt": 1744674531,
-                "audienceRatingImage": "themoviedb://image.rating",
-                "Media": [
-                    {
-                        "id": 274725,
-                        "duration": 8177294,
-                        "bitrate": 2097,
-                        "width": 1920,
-                        "height": 804,
-                        "aspectRatio": 2.35,
-                        "audioChannels": 2,
-                        "audioCodec": "aac",
-                        "videoCodec": "h264",
-                        "videoResolution": "1080",
-                        "container": "mp4",
-                        "videoFrameRate": "24p",
-                        "optimizedForStreaming": 1,
-                        "audioProfile": "lc",
-                        "has64bitOffsets": false,
-                        "videoProfile": "high",
-                        "hasVoiceActivity": true,
-                        "Part": [
-                            {
-                                "id": 283902,
-                                "key": "/library/parts/283902/1351468800/file.mp4",
-                                "duration": 8177294,
-                                "file": "/data/movies/The-Amazing-Spider-Man_(2012)_[tmdb-1930]/The-Amazing-Spider-Man_(2012).mp4",
-                                "size": 2147616422,
-                                "audioProfile": "lc",
-                                "container": "mp4",
-                                "has64bitOffsets": false,
-                                "indexes": "sd",
-                                "optimizedForStreaming": true,
-                                "videoProfile": "high"
-                            }
-                        ]
-                    }
-                ],
-                "Image": [
-                    {
-                        "alt": "The Amazing Spider-Man",
-                        "type": "coverPoster",
-                        "url": "/library/metadata/120717/thumb/1744674531"
-                    },
-                    {
-                        "alt": "The Amazing Spider-Man",
-                        "type": "background",
-                        "url": "/library/metadata/120717/art/1744674531"
-                    },
-                    {
-                        "alt": "The Amazing Spider-Man",
-                        "type": "clearLogo",
-                        "url": "/library/metadata/120717/clearLogo/1744674531"
-                    }
-                ],
-                "UltraBlurColors": {
-                    "topLeft": "113711",
-                    "topRight": "1e7115",
-                    "bottomRight": "224f1f",
-                    "bottomLeft": "19477a"
-                },
-                "Guid": [
-                    {
-                        "id": "imdb://tt0948470"
-                    },
-                    {
-                        "id": "tmdb://1930"
-                    },
-                    {
-                        "id": "tvdb://473"
-                    }
-                ],
-                "Genre": [
-                    {
-                        "tag": "Action"
-                    },
-                    {
-                        "tag": "Adventure"
-                    }
-                ],
-                "Country": [
-                    {
-                        "tag": "United States of America"
-                    }
-                ],
-                "Director": [
-                    {
-                        "tag": "Marc Webb"
-                    }
-                ],
-                "Writer": [
-                    {
-                        "tag": "James Vanderbilt"
-                    },
-                    {
-                        "tag": "Steve Ditko"
-                    }
-                ],
-                "Role": [
-                    {
-                        "tag": "Andrew Garfield"
-                    },
-                    {
-                        "tag": "Emma Stone"
-                    },
-                    {
-                        "tag": "Rhys Ifans"
-                    }
-                ]
-            },
-            {
-                "ratingKey": "120711",
-                "key": "/library/metadata/120711",
-                "guid": "plex://movie/5d77690d47dd6e001f6c2871",
-                "slug": "the-amazing-spider-man-2",
-                "studio": "Columbia Pictures",
-                "type": "movie",
-                "title": "The Amazing Spider-Man 2",
-                "titleSort": "Amazing Spider-Man 2",
-                "contentRating": "nz/M",
-                "summary": "When New York is put under siege by Oscorp, it is up to Spider-Man to save the city he swore to protect as well as his loved ones.",
-                "audienceRating": 6.5,
-                "year": 2014,
-                "tagline": "His greatest battle begins.",
-                "thumb": "/library/metadata/120711/thumb/1744674533",
-                "art": "/library/metadata/120711/art/1744674533",
+                "file": "/data/movies/The-Amazing-Spider-Man_(2012)_[tmdb-1930]/The-Amazing-Spider-Man_(2012).mp4",
+                "has64bitOffsets": false,
+                "id": 283902,
+                "indexes": "sd",
+                "key": "/library/parts/283902/1351468800/file.mp4",
+                "optimizedForStreaming": true,
+                "size": 2147616422,
+                "videoProfile": "high"
+              }
+            ],
+            "aspectRatio": 2.35,
+            "audioChannels": 2,
+            "audioCodec": "aac",
+            "audioProfile": "lc",
+            "bitrate": 2097,
+            "container": "mp4",
+            "duration": 8177294,
+            "has64bitOffsets": false,
+            "hasVoiceActivity": true,
+            "height": 804,
+            "id": 274725,
+            "optimizedForStreaming": 1,
+            "videoCodec": "h264",
+            "videoFrameRate": "24p",
+            "videoProfile": "high",
+            "videoResolution": "1080",
+            "width": 1920
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Andrew Garfield"
+          },
+          {
+            "tag": "Emma Stone"
+          },
+          {
+            "tag": "Rhys Ifans"
+          }
+        ],
+        "UltraBlurColors": {
+          "bottomLeft": "19477a",
+          "bottomRight": "224f1f",
+          "topLeft": "113711",
+          "topRight": "1e7115"
+        },
+        "Writer": [
+          {
+            "tag": "James Vanderbilt"
+          },
+          {
+            "tag": "Steve Ditko"
+          }
+        ],
+        "addedAt": 1739862827,
+        "art": "/library/metadata/120717/art/1744674531",
+        "audienceRating": 6.7,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "contentRating": "nz/M",
+        "duration": 8177294,
+        "guid": "plex://movie/5d77682a961905001eb91f6c",
+        "key": "/library/metadata/120717",
+        "originallyAvailableAt": "2012-06-28",
+        "ratingKey": "120717",
+        "slug": "the-amazing-spider-man",
+        "studio": "Marvel Entertainment",
+        "summary": "After Peter Parker is bitten by a genetically altered spider, he gains newfound, spider-like powers and ventures out to save the city from the machinations of a mysterious reptilian foe.",
+        "tagline": "The untold story begins.",
+        "thumb": "/library/metadata/120717/thumb/1744674531",
+        "title": "The Amazing Spider-Man",
+        "titleSort": "Amazing Spider-Man",
+        "type": "movie",
+        "updatedAt": 1744674531,
+        "year": 2012
+      },
+      {
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Marc Webb"
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Action"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Guid": [
+          {
+            "id": "imdb://tt1872181"
+          },
+          {
+            "id": "tmdb://102382"
+          },
+          {
+            "id": "tvdb://552"
+          }
+        ],
+        "Image": [
+          {
+            "alt": "The Amazing Spider-Man 2",
+            "type": "coverPoster",
+            "url": "/library/metadata/120711/thumb/1744674533"
+          },
+          {
+            "alt": "The Amazing Spider-Man 2",
+            "type": "background",
+            "url": "/library/metadata/120711/art/1744674533"
+          },
+          {
+            "alt": "The Amazing Spider-Man 2",
+            "type": "clearLogo",
+            "url": "/library/metadata/120711/clearLogo/1744674533"
+          }
+        ],
+        "Media": [
+          {
+            "Part": [
+              {
+                "container": "mkv",
                 "duration": 8494751,
-                "originallyAvailableAt": "2014-04-16",
-                "addedAt": 1739860016,
-                "updatedAt": 1744674533,
-                "audienceRatingImage": "themoviedb://image.rating",
-                "chapterSource": "media",
-                "Media": [
-                    {
-                        "id": 274720,
-                        "duration": 8494751,
-                        "bitrate": 3645,
-                        "width": 1920,
-                        "height": 800,
-                        "aspectRatio": 2.35,
-                        "audioChannels": 6,
-                        "audioCodec": "eac3",
-                        "videoCodec": "hevc",
-                        "videoResolution": "1080",
-                        "container": "mkv",
-                        "videoFrameRate": "24p",
-                        "videoProfile": "main 10",
-                        "hasVoiceActivity": true,
-                        "Part": [
-                            {
-                                "id": 283897,
-                                "key": "/library/parts/283897/1408492800/file.mkv",
-                                "duration": 8494751,
-                                "file": "/data/movies/The-Amazing-Spider-Man-2_(2014)_[tmdb-102382]/The-Amazing-Spider-Man-2_(2014).mkv",
-                                "size": 3856113861,
-                                "container": "mkv",
-                                "indexes": "sd",
-                                "videoProfile": "main 10"
-                            }
-                        ]
-                    }
-                ],
-                "Image": [
-                    {
-                        "alt": "The Amazing Spider-Man 2",
-                        "type": "coverPoster",
-                        "url": "/library/metadata/120711/thumb/1744674533"
-                    },
-                    {
-                        "alt": "The Amazing Spider-Man 2",
-                        "type": "background",
-                        "url": "/library/metadata/120711/art/1744674533"
-                    },
-                    {
-                        "alt": "The Amazing Spider-Man 2",
-                        "type": "clearLogo",
-                        "url": "/library/metadata/120711/clearLogo/1744674533"
-                    }
-                ],
-                "UltraBlurColors": {
-                    "topLeft": "031d5e",
-                    "topRight": "062560",
-                    "bottomRight": "231f57",
-                    "bottomLeft": "05379a"
-                },
-                "Guid": [
-                    {
-                        "id": "imdb://tt1872181"
-                    },
-                    {
-                        "id": "tmdb://102382"
-                    },
-                    {
-                        "id": "tvdb://552"
-                    }
-                ],
-                "Genre": [
-                    {
-                        "tag": "Action"
-                    },
-                    {
-                        "tag": "Adventure"
-                    }
-                ],
-                "Country": [
-                    {
-                        "tag": "United States of America"
-                    }
-                ],
-                "Director": [
-                    {
-                        "tag": "Marc Webb"
-                    }
-                ],
-                "Writer": [
-                    {
-                        "tag": "Alex Kurtzman"
-                    },
-                    {
-                        "tag": "Jeff Pinkner"
-                    }
-                ],
-                "Role": [
-                    {
-                        "tag": "Andrew Garfield"
-                    },
-                    {
-                        "tag": "Emma Stone"
-                    },
-                    {
-                        "tag": "Jamie Foxx"
-                    }
-                ]
-            }
-        ]
-    }
+                "file": "/data/movies/The-Amazing-Spider-Man-2_(2014)_[tmdb-102382]/The-Amazing-Spider-Man-2_(2014).mkv",
+                "id": 283897,
+                "indexes": "sd",
+                "key": "/library/parts/283897/1408492800/file.mkv",
+                "size": 3856113861,
+                "videoProfile": "main 10"
+              }
+            ],
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "bitrate": 3645,
+            "container": "mkv",
+            "duration": 8494751,
+            "hasVoiceActivity": true,
+            "height": 800,
+            "id": 274720,
+            "videoCodec": "hevc",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "videoResolution": "1080",
+            "width": 1920
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Andrew Garfield"
+          },
+          {
+            "tag": "Emma Stone"
+          },
+          {
+            "tag": "Jamie Foxx"
+          }
+        ],
+        "UltraBlurColors": {
+          "bottomLeft": "05379a",
+          "bottomRight": "231f57",
+          "topLeft": "031d5e",
+          "topRight": "062560"
+        },
+        "Writer": [
+          {
+            "tag": "Alex Kurtzman"
+          },
+          {
+            "tag": "Jeff Pinkner"
+          }
+        ],
+        "addedAt": 1739860016,
+        "art": "/library/metadata/120711/art/1744674533",
+        "audienceRating": 6.5,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "chapterSource": "media",
+        "contentRating": "nz/M",
+        "duration": 8494751,
+        "guid": "plex://movie/5d77690d47dd6e001f6c2871",
+        "key": "/library/metadata/120711",
+        "originallyAvailableAt": "2014-04-16",
+        "ratingKey": "120711",
+        "slug": "the-amazing-spider-man-2",
+        "studio": "Columbia Pictures",
+        "summary": "When New York is put under siege by Oscorp, it is up to Spider-Man to save the city he swore to protect as well as his loved ones.",
+        "tagline": "His greatest battle begins.",
+        "thumb": "/library/metadata/120711/thumb/1744674533",
+        "title": "The Amazing Spider-Man 2",
+        "titleSort": "Amazing Spider-Man 2",
+        "type": "movie",
+        "updatedAt": 1744674533,
+        "year": 2014
+      }
+    ],
+    "allowSync": true,
+    "art": "/library/metadata/120713/art/1744674535",
+    "identifier": "com.plexapp.plugins.library",
+    "key": "120713",
+    "librarySectionID": 1,
+    "librarySectionTitle": "Movies",
+    "librarySectionUUID": "09dd5d64-2d11-476f-9064-d2b4f776a3bb",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1744189307,
+    "nocache": true,
+    "parentIndex": 84371,
+    "parentTitle": "The Amazing Spider-Man Collection",
+    "size": 2,
+    "summary": "A superhero film series based on the Marvel Comics character Spider-Man. The series is centered on Peter Parker, a teenager struggling to find his place in life ever since his parents disappeared when he was a child. A spider bites him on the back of his neck, giving him spider-powers. It is a reboot of Sony's Spider-Man film franchise.",
+    "thumb": "/library/metadata/120713/thumb/1744674535",
+    "title1": "Movies",
+    "title2": "The Amazing Spider-Man Collection",
+    "viewGroup": "movie"
+  }
 }

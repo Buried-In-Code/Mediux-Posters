@@ -2,7 +2,7 @@ import logging
 from collections.abc import Generator
 from enum import Enum
 from platform import python_version
-from typing import Annotated, Protocol, TypeVar
+from typing import Annotated, Final, Protocol, TypeVar
 
 from typer import Abort, Argument, Context, Exit, Option, Typer
 
@@ -27,7 +27,10 @@ from mediux_posters.utils import MediaType, delete_folder, get_cached_image, slu
 LOGGER = logging.getLogger(__project__)
 app = Typer(no_args_is_help=True)
 app.add_typer(settings_app, name="settings")
-HIGH_VALUE = 1_000_000
+
+# Constants
+DEFAULT_CREATOR_RANK: Final[int] = 1_000_000
+MAX_IMAGE_SIZE: Final[int] = 10_000_000  # 10 MB
 
 
 class ServiceOption(str, Enum):
@@ -108,7 +111,7 @@ def process_set_data(
     def get_creator_rank(creator: str | None) -> int:
         if creator and creator in priority_usernames:
             return priority_usernames.index(creator)
-        return HIGH_VALUE
+        return DEFAULT_CREATOR_RANK
 
     def find_matching_file(file_type: FileType, id_value: int) -> File | None:
         for f in set_data.files:
@@ -166,6 +169,14 @@ def process_set_data(
             LOGGER.error("[Mediux] %s", err)
             return
 
+        if image_file.stat().st_size >= MAX_IMAGE_SIZE:
+            LOGGER.warning(
+                "[%s] Image file '%s' is larger than %d MB, skipping upload",
+                type(service).__name__,
+                image_file,
+                MAX_IMAGE_SIZE,
+            )
+            return
         try:
             success = service.upload_image(
                 object_id=obj.id, image_file=image_file, kometa_integration=kometa_integration

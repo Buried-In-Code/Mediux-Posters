@@ -61,12 +61,12 @@ def test_get_series(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock) ->
     result = jellyfin_session.get_show(tmdb_id=33907)
     assert result is not None
 
-    assert result.id == "375ad80948bb3e9bd78684d915430bfa"
+    assert result.id == "7df9cc7bbd2d497ec18b448731d3c1ec"
     assert result.imdb_id == "tt1606375"
     assert result.name == "Downton Abbey"
     assert result.premiere_date == date(2010, 9, 26)
     assert result.tmdb_id == 33907
-    assert result.tv_maze_id == 251
+    assert result.tv_maze_id is None
     assert result.tv_rage_id == 26615
     assert result.tvdb_id == 193131
     assert result.year == 2010
@@ -87,10 +87,10 @@ def test_list_seasons(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock) 
         is_reusable=True,
     )
 
-    results = jellyfin_session.list_seasons(show_id="375ad80948bb3e9bd78684d915430bfa")
+    results = jellyfin_session.list_seasons(show_id="7df9cc7bbd2d497ec18b448731d3c1ec")
     assert len(results) != 0
 
-    assert results[1].id == "759a122515cb24b264e906bb80f3f06a"
+    assert results[1].id == "a32f5e92104998e8991c370feccb83e6"
     assert results[1].imdb_id is None
     assert results[1].name == "Season 1"
     assert results[1].number == 1
@@ -117,11 +117,11 @@ def test_list_episodes(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock)
     )
 
     results = jellyfin_session.list_episodes(
-        show_id="375ad80948bb3e9bd78684d915430bfa", season_id="759a122515cb24b264e906bb80f3f06a"
+        show_id="7df9cc7bbd2d497ec18b448731d3c1ec", season_id="a32f5e92104998e8991c370feccb83e6"
     )
     assert len(results) != 0
 
-    assert results[0].id == "d26bb397376eb1e63b2621eaa3ff9add"
+    assert results[0].id == "54cdfd0a76e33e9aa61d0946856b963f"
     assert results[0].imdb_id == "tt1608844"
     assert results[0].name == "Episode 1"
     assert results[0].number == 1

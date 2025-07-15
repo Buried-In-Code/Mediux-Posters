@@ -243,7 +243,7 @@ def test_list_movies(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
     results = plex_session.list_movies()
     assert len(results) != 0
 
-    result = next(iter(x for x in results if x.tmdb_id == 431580), None)
+    result = next(iter(x for x in results if x.tmdb_id == 302946), None)
     assert result is not None
 
 
@@ -267,13 +267,13 @@ def test_get_movie(plex_session: Plex | None, httpx_mock: HTTPXMock) -> None:
         is_reusable=True,
     )
 
-    result = plex_session.get_movie(tmdb_id=431580)
+    result = plex_session.get_movie(tmdb_id=302946)
     assert result is not None
 
-    assert result.id == 102210
-    assert result.imdb_id == "tt6324278"
-    assert result.name == "Abominable"
-    assert result.premiere_date == date(2019, 9, 19)
-    assert result.tmdb_id == 431580
-    assert result.tvdb_id == 12176
-    assert result.year == 2019
+    assert result.id == 120683
+    assert result.imdb_id == "tt2140479"
+    assert result.name == "The Accountant"
+    assert result.premiere_date == date(2016, 10, 13)
+    assert result.tmdb_id == 302946
+    assert result.tvdb_id == 940
+    assert result.year == 2016
