@@ -48,6 +48,7 @@ class ServiceCache:
                 );
                 """
             )
+            conn.commit()
 
     def select(self, object_id: int | str, file_type: FileType) -> CacheData | None:
         with self._connect() as conn:
@@ -82,9 +83,11 @@ class ServiceCache:
                 """,
                 (str(object_id), str(file_type), creator, set_id, last_updated.isoformat()),
             )
+            conn.commit()
 
     def delete(self, object_id: int | str, file_type: FileType) -> None:
         with self._connect() as conn:
             conn.execute(
                 "DELETE FROM cache WHERE id = ? AND type = ?;", (str(object_id), str(file_type))
             )
+            conn.commit()
