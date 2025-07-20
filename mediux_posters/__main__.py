@@ -471,7 +471,7 @@ def media_posters(
                 try:
                     set_list = mediux.list_sets(
                         media_type=media_type,
-                        tmdb_id=tmdb_id,
+                        tmdb_id=entry.tmdb_id,
                         exclude_usernames=settings.exclude_usernames,
                     )
                 except ServiceError as err:
