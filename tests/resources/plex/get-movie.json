@@ -1,0 +1,868 @@
+{
+  "MediaContainer": {
+    "Metadata": [
+      {
+        "Collection": [
+          {
+            "filter": "collection=88125",
+            "guid": "plex://collection/6134cfd4dbb36e76505baa2f",
+            "id": 88125,
+            "summary": "An intended trilogy of crime thriller films starring Ben Affleck as a mathematics savant with more affinity for numbers than people. Using a small-town CPA office as a cover, he makes his living as a freelance accountant for dangerous criminal organizations.",
+            "tag": "The Accountant Collection"
+          }
+        ],
+        "Country": [
+          {
+            "filter": "country=505",
+            "id": 505,
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "filter": "director=83936",
+            "id": 83936,
+            "tag": "Gavin O'Connor",
+            "tagKey": "5d77682b8718ba001e312815",
+            "thumb": "https://metadata-static.plex.tv/3/people/3b3bb7a2c1f7ec3ff5480b2627b449f3.jpg"
+          }
+        ],
+        "Field": [
+          {
+            "locked": true,
+            "name": "thumb"
+          },
+          {
+            "locked": true,
+            "name": "art"
+          }
+        ],
+        "Genre": [
+          {
+            "filter": "genre=175",
+            "id": 175,
+            "tag": "Drama"
+          },
+          {
+            "filter": "genre=1889",
+            "id": 1889,
+            "tag": "Crime"
+          },
+          {
+            "filter": "genre=11",
+            "id": 11,
+            "tag": "Thriller"
+          },
+          {
+            "filter": "genre=5",
+            "id": 5,
+            "tag": "Action"
+          }
+        ],
+        "Guid": [
+          {
+            "id": "imdb://tt2140479"
+          },
+          {
+            "id": "tmdb://302946"
+          },
+          {
+            "id": "tvdb://940"
+          }
+        ],
+        "Image": [
+          {
+            "alt": "The Accountant",
+            "type": "coverPoster",
+            "url": "/library/metadata/120683/thumb/1752142375"
+          },
+          {
+            "alt": "The Accountant",
+            "type": "background",
+            "url": "/library/metadata/120683/art/1752142375"
+          },
+          {
+            "alt": "The Accountant",
+            "type": "clearLogo",
+            "url": "/library/metadata/120683/clearLogo/1752142375"
+          }
+        ],
+        "Media": [
+          {
+            "Part": [
+              {
+                "Stream": [
+                  {
+                    "bitDepth": 8,
+                    "bitrate": 2444,
+                    "chromaLocation": "left",
+                    "chromaSubsampling": "4:2:0",
+                    "codec": "h264",
+                    "codedHeight": 800,
+                    "codedWidth": 1920,
+                    "colorPrimaries": "bt709",
+                    "colorRange": "tv",
+                    "colorSpace": "bt709",
+                    "colorTrc": "bt709",
+                    "default": true,
+                    "displayTitle": "1080p",
+                    "extendedDisplayTitle": "...::: jeddak MIRCrew :::... (1080p H.264)",
+                    "frameRate": 23.976,
+                    "hasScalingMatrix": false,
+                    "height": 800,
+                    "id": 644599,
+                    "index": 0,
+                    "level": 41,
+                    "profile": "high",
+                    "refFrames": 4,
+                    "scanType": "progressive",
+                    "streamType": 1,
+                    "title": "...::: jeddak MIRCrew :::...",
+                    "width": 1920
+                  },
+                  {
+                    "audioChannelLayout": "5.1(side)",
+                    "bitrate": 448,
+                    "channels": 6,
+                    "codec": "ac3",
+                    "default": true,
+                    "displayTitle": "Italiano (AC3 5.1)",
+                    "extendedDisplayTitle": "iTA AC3 5.1 (Italiano)",
+                    "id": 644600,
+                    "index": 1,
+                    "language": "Italiano",
+                    "languageCode": "ita",
+                    "languageTag": "it",
+                    "samplingRate": 48000,
+                    "streamType": 2,
+                    "title": "iTA AC3 5.1"
+                  },
+                  {
+                    "audioChannelLayout": "5.1(side)",
+                    "bitrate": 448,
+                    "channels": 6,
+                    "codec": "ac3",
+                    "displayTitle": "English (AC3 5.1)",
+                    "extendedDisplayTitle": "ENG AC3 5.1 (English)",
+                    "id": 644601,
+                    "index": 2,
+                    "language": "English",
+                    "languageCode": "eng",
+                    "languageTag": "en",
+                    "samplingRate": 48000,
+                    "selected": true,
+                    "streamType": 2,
+                    "title": "ENG AC3 5.1"
+                  },
+                  {
+                    "bitrate": 0,
+                    "canAutoSync": false,
+                    "codec": "srt",
+                    "displayTitle": "Italiano Forced",
+                    "extendedDisplayTitle": "iTA FORCED - SRT (Italiano)",
+                    "forced": true,
+                    "id": 644602,
+                    "index": 3,
+                    "language": "Italiano",
+                    "languageCode": "ita",
+                    "languageTag": "it",
+                    "streamType": 3,
+                    "title": "iTA FORCED - SRT"
+                  },
+                  {
+                    "bitrate": 1,
+                    "canAutoSync": false,
+                    "codec": "pgs",
+                    "default": true,
+                    "displayTitle": "Italiano Forced",
+                    "extendedDisplayTitle": "iTA FORCED - PGS (Italiano)",
+                    "forced": true,
+                    "id": 644603,
+                    "index": 4,
+                    "language": "Italiano",
+                    "languageCode": "ita",
+                    "languageTag": "it",
+                    "streamType": 3,
+                    "title": "iTA FORCED - PGS"
+                  },
+                  {
+                    "bitrate": 0,
+                    "canAutoSync": false,
+                    "codec": "srt",
+                    "displayTitle": "Italiano",
+                    "extendedDisplayTitle": "iTA REGULAR - SRT (Italiano)",
+                    "id": 644604,
+                    "index": 5,
+                    "language": "Italiano",
+                    "languageCode": "ita",
+                    "languageTag": "it",
+                    "streamType": 3,
+                    "title": "iTA REGULAR - SRT"
+                  },
+                  {
+                    "bitrate": 0,
+                    "canAutoSync": false,
+                    "codec": "srt",
+                    "displayTitle": "English",
+                    "extendedDisplayTitle": "ENG REGULAR - SRT (English)",
+                    "id": 644605,
+                    "index": 6,
+                    "language": "English",
+                    "languageCode": "eng",
+                    "languageTag": "en",
+                    "selected": true,
+                    "streamType": 3,
+                    "title": "ENG REGULAR - SRT"
+                  },
+                  {
+                    "bitrate": 0,
+                    "canAutoSync": false,
+                    "codec": "srt",
+                    "displayTitle": "Italiano",
+                    "extendedDisplayTitle": "iTA NON UDENTI - SRT (Italiano)",
+                    "id": 644606,
+                    "index": 7,
+                    "language": "Italiano",
+                    "languageCode": "ita",
+                    "languageTag": "it",
+                    "streamType": 3,
+                    "title": "iTA NON UDENTI - SRT"
+                  },
+                  {
+                    "bitrate": 34,
+                    "canAutoSync": false,
+                    "codec": "pgs",
+                    "displayTitle": "Italiano",
+                    "extendedDisplayTitle": "iTA NON UDENTI - PGS (Italiano)",
+                    "id": 644607,
+                    "index": 8,
+                    "language": "Italiano",
+                    "languageCode": "ita",
+                    "languageTag": "it",
+                    "streamType": 3,
+                    "title": "iTA NON UDENTI - PGS"
+                  },
+                  {
+                    "bitrate": 0,
+                    "canAutoSync": false,
+                    "codec": "srt",
+                    "displayTitle": "English",
+                    "extendedDisplayTitle": "ENG NON UDENTI - SRT (English)",
+                    "id": 644608,
+                    "index": 9,
+                    "language": "English",
+                    "languageCode": "eng",
+                    "languageTag": "en",
+                    "streamType": 3,
+                    "title": "ENG NON UDENTI - SRT"
+                  },
+                  {
+                    "bitrate": 36,
+                    "canAutoSync": false,
+                    "codec": "pgs",
+                    "displayTitle": "English",
+                    "extendedDisplayTitle": "ENG NON UDENTI - PGS (English)",
+                    "id": 644609,
+                    "index": 10,
+                    "language": "English",
+                    "languageCode": "eng",
+                    "languageTag": "en",
+                    "streamType": 3,
+                    "title": "ENG NON UDENTI - PGS"
+                  }
+                ],
+                "container": "mkv",
+                "duration": 7673540,
+                "file": "/data/movies/The-Accountant_(2016)_[tmdb-302946]/The-Accountant_(2016)_[Bluray-1080p]_[x264 | AC3].mkv",
+                "id": 283871,
+                "indexes": "sd",
+                "key": "/library/parts/283871/1484006400/file.mkv",
+                "size": 3274110702,
+                "videoProfile": "high"
+              }
+            ],
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "bitrate": 3411,
+            "container": "mkv",
+            "duration": 7673540,
+            "hasVoiceActivity": true,
+            "height": 800,
+            "id": 274694,
+            "videoCodec": "h264",
+            "videoFrameRate": "24p",
+            "videoProfile": "high",
+            "videoResolution": "1080",
+            "width": 1920
+          }
+        ],
+        "Producer": [
+          {
+            "filter": "producer=83974",
+            "id": 83974,
+            "tag": "Lynette Howell Taylor",
+            "tagKey": "5d7768437e9a3c0020c6f845",
+            "thumb": "https://metadata-static.plex.tv/d/people/de3c67e8255635fac28ca30b36df2039.jpg"
+          },
+          {
+            "filter": "producer=83975",
+            "id": 83975,
+            "tag": "Mark Williams",
+            "tagKey": "5d776b417a53e9001e71f73d",
+            "thumb": "https://metadata-static.plex.tv/3/people/36cf313e4c1f1de21b8444376f4fd8fe.jpg"
+          }
+        ],
+        "Rating": [
+          {
+            "image": "imdb://image.rating",
+            "type": "audience",
+            "value": 7.3
+          },
+          {
+            "image": "rottentomatoes://image.rating.rotten",
+            "type": "critic",
+            "value": 5.3
+          },
+          {
+            "image": "rottentomatoes://image.rating.upright",
+            "type": "audience",
+            "value": 7.7
+          },
+          {
+            "image": "themoviedb://image.rating",
+            "type": "audience",
+            "value": 7.1
+          }
+        ],
+        "Role": [
+          {
+            "filter": "actor=4295",
+            "id": 4295,
+            "role": "Christian Wolff",
+            "tag": "Ben Affleck",
+            "tagKey": "5d776825151a60001f24a3e2",
+            "thumb": "https://metadata-static.plex.tv/2/people/2b57fa809b8a2395ff3619762c4e483e.jpg"
+          },
+          {
+            "filter": "actor=7581",
+            "id": 7581,
+            "role": "Marybeth Medina",
+            "tag": "Cynthia Addai-Robinson",
+            "tagKey": "5d77689533f255001e85a26a",
+            "thumb": "https://metadata-static.plex.tv/8/people/8ae26eaba6c513dbfe83edc6af829489.jpg"
+          },
+          {
+            "filter": "actor=5417",
+            "id": 5417,
+            "role": "Dana Cummings",
+            "tag": "Anna Kendrick",
+            "tagKey": "5d776833eb5d26001f1e0245",
+            "thumb": "https://metadata-static.plex.tv/6/people/69b160a97e0e221cd809d6af1e6e3f10.jpg"
+          },
+          {
+            "filter": "actor=3482",
+            "id": 3482,
+            "role": "Ray King",
+            "tag": "J.K. Simmons",
+            "tagKey": "5d7768268718ba001e311bec",
+            "thumb": "https://metadata-static.plex.tv/7/people/7ec7f7673ef9ae2dccd4e3a3fd98c34e.jpg"
+          },
+          {
+            "filter": "actor=10801",
+            "id": 10801,
+            "role": "Brax",
+            "tag": "Jon Bernthal",
+            "tagKey": "5d77682a2ec6b5001f6baa1c",
+            "thumb": "https://metadata-static.plex.tv/d/people/dd29d8217f54a807036ca26f5f315668.jpg"
+          },
+          {
+            "filter": "actor=4601",
+            "id": 4601,
+            "role": "Lamar Blackburn",
+            "tag": "John Lithgow",
+            "tagKey": "5d77682861141d001fb13808",
+            "thumb": "https://metadata-static.plex.tv/6/people/6137d3e2415810767f94d21fe6301a9b.jpg"
+          },
+          {
+            "filter": "actor=3356",
+            "id": 3356,
+            "role": "Francis Silverberg",
+            "tag": "Jeffrey Tambor",
+            "tagKey": "5d7768258718ba001e311902",
+            "thumb": "https://metadata-static.plex.tv/e/people/e2c66261db408ac5ee649154e27d76fb.jpg"
+          },
+          {
+            "filter": "actor=18161",
+            "id": 18161,
+            "role": "Rita Blackburn",
+            "tag": "Jean Smart",
+            "tagKey": "5d7768266f4521001ea98d3b",
+            "thumb": "https://metadata-static.plex.tv/b/people/b44267ed7a17db286268977d19ef8fc9.jpg"
+          },
+          {
+            "filter": "actor=21932",
+            "id": 21932,
+            "role": "Ed Chilton",
+            "tag": "Andy Umberger",
+            "tagKey": "5d7768317e9a3c0020c6bfbf",
+            "thumb": "https://metadata-static.plex.tv/a/people/a074cd9cf1a0ccda43d828861a5f9c60.jpg"
+          },
+          {
+            "filter": "actor=83938",
+            "id": 83938,
+            "role": "Justine",
+            "tag": "Alison Wright",
+            "tagKey": "5d776b417a53e9001e71f73e",
+            "thumb": "https://metadata-static.plex.tv/d/people/da8f8bc86bfef56de8e1bb0a8dfeef28.jpg"
+          },
+          {
+            "filter": "actor=27831",
+            "id": 27831,
+            "role": "Neurologist",
+            "tag": "Jason Davis",
+            "tagKey": "5d77682b7e9a3c0020c6b73f",
+            "thumb": "https://metadata-static.plex.tv/f/people/fcd4874f374d4dbca0cc7faf3dfc2bae.jpg"
+          },
+          {
+            "filter": "actor=83940",
+            "id": 83940,
+            "role": "Young Chris' Father",
+            "tag": "Robert C. Treveiler",
+            "tagKey": "5d7768307e9a3c0020c6bd66",
+            "thumb": "https://metadata-static.plex.tv/people/5d7768307e9a3c0020c6bd66.jpg"
+          },
+          {
+            "filter": "actor=83941",
+            "id": 83941,
+            "role": "Young Chris' Mother",
+            "tag": "Mary Kraft",
+            "tagKey": "5d776a339ab54400214fc162",
+            "thumb": "https://metadata-static.plex.tv/people/5d776a339ab54400214fc162.jpg"
+          },
+          {
+            "filter": "actor=83942",
+            "id": 83942,
+            "role": "Young Chris",
+            "tag": "Seth Lee",
+            "tagKey": "5d7769edad5437001f76c34b",
+            "thumb": "https://metadata-static.plex.tv/people/5d7769edad5437001f76c34b.jpg"
+          },
+          {
+            "filter": "actor=83943",
+            "id": 83943,
+            "role": "Young Brax",
+            "tag": "Jake Presley",
+            "tagKey": "600702d87b4acc002c68c56b",
+            "thumb": "https://metadata-static.plex.tv/7/people/75937c109964878f688bbf07dda674e4.jpg"
+          },
+          {
+            "filter": "actor=83944",
+            "id": 83944,
+            "role": "Young Justine",
+            "tag": "Izzy Fenech",
+            "tagKey": "66cc91cd4cc1c014a12dd4ee"
+          },
+          {
+            "filter": "actor=83945",
+            "id": 83945,
+            "role": "Dolores Rice",
+            "tag": "Susan Williams",
+            "tagKey": "5dce6beee6c91100208242ad",
+            "thumb": "https://metadata-static.plex.tv/b/people/b1e7a3fa2286d53857ef5ff4137b3453.jpg"
+          },
+          {
+            "filter": "actor=83946",
+            "id": 83946,
+            "role": "Don",
+            "tag": "Gary Basaraba",
+            "tagKey": "5d7768294de0ee001fcc9338",
+            "thumb": "https://metadata-static.plex.tv/3/people/372044656e23df4de910632607974c3c.jpg"
+          },
+          {
+            "filter": "actor=7611",
+            "id": 7611,
+            "role": "Sorkis",
+            "tag": "Fernando Chien",
+            "tagKey": "5d776840103a2d001f56a80a",
+            "thumb": "https://metadata-static.plex.tv/8/people/85a049f888fb659fa4c495eecae51eaf.jpg"
+          },
+          {
+            "filter": "actor=83947",
+            "id": 83947,
+            "role": "Simon Dewey",
+            "tag": "Alex Collins",
+            "tagKey": "5d776a64594b2b001e6bb922",
+            "thumb": "https://metadata-static.plex.tv/people/5d776a64594b2b001e6bb922.jpg"
+          },
+          {
+            "filter": "actor=10990",
+            "id": 10990,
+            "role": "Thug #1",
+            "tag": "Tait Fletcher",
+            "tagKey": "5d77689a96b655001fdbcae7",
+            "thumb": "https://metadata-static.plex.tv/4/people/4cb7c294c8fda2875e2b84ee12ecec49.jpg"
+          },
+          {
+            "filter": "actor=83948",
+            "id": 83948,
+            "role": "Thug #2",
+            "tag": "Curtis Lyons",
+            "tagKey": "5d776cbd594b2b001e6fc41e",
+            "thumb": "https://metadata-static.plex.tv/people/5d776cbd594b2b001e6fc41e.jpg"
+          },
+          {
+            "filter": "actor=3251",
+            "id": 3251,
+            "role": "Alpha Merc",
+            "tag": "Buster Reeves",
+            "tagKey": "5d7768267e9a3c0020c6aa8d",
+            "thumb": "https://metadata-static.plex.tv/4/people/49a670e0efa0346232743cd17d95b1a4.jpg"
+          },
+          {
+            "filter": "actor=5896",
+            "id": 5896,
+            "role": "Pencak Silat Master",
+            "tag": "Ron Yuan",
+            "tagKey": "5d776834151a60001f24da01",
+            "thumb": "https://metadata-static.plex.tv/7/people/74f90d44fa49946b7e88aaaf6c5e19c2.jpg"
+          },
+          {
+            "filter": "actor=83949",
+            "id": 83949,
+            "role": "ZZZ Receptionist",
+            "tag": "Sheila Maddox",
+            "tagKey": "5f4019bafea1a1003f9e199f"
+          },
+          {
+            "filter": "actor=83950",
+            "id": 83950,
+            "role": "Detention Center Guard",
+            "tag": "Malachi Malik",
+            "tagKey": "5d776b3e51dd69001fe2defb",
+            "thumb": "https://metadata-static.plex.tv/d/people/dc30f7753a324c8be395503c846ef5a9.jpg"
+          },
+          {
+            "filter": "actor=9390",
+            "id": 9390,
+            "role": "Treasury Secretary",
+            "tag": "Gregory Alan Williams",
+            "tagKey": "5d77682e85719b001f3a240e",
+            "thumb": "https://metadata-static.plex.tv/iva/person/54213/57392e482797881a4e1789e283fa794e.jpg"
+          },
+          {
+            "filter": "actor=68797",
+            "id": 68797,
+            "role": "Helen/Reporter #1",
+            "tag": "Kelly Collins Lintz",
+            "tagKey": "5d7768307e9a3c0020c6bd70",
+            "thumb": "https://metadata-static.plex.tv/1/people/135b41607a7fc1f43d9267489f9514ef.jpg"
+          },
+          {
+            "filter": "actor=83951",
+            "id": 83951,
+            "role": "Reporter #2",
+            "tag": "Jason MacDonald",
+            "tagKey": "5f3fe6e704a86500409a060f",
+            "thumb": "https://metadata-static.plex.tv/e/people/e5f8f5ce4fa46fc7243616b0eb21c17f.jpg"
+          },
+          {
+            "filter": "actor=9171",
+            "id": 9171,
+            "role": "IRS Agent",
+            "tag": "Victor McCay",
+            "tagKey": "5d7768ad431c830024c12ce4",
+            "thumb": "https://metadata-static.plex.tv/5/people/58da0a367ef33273796ce3f14f792f17.jpg"
+          },
+          {
+            "filter": "actor=2649",
+            "id": 2649,
+            "role": "FBI Agent In Charge",
+            "tag": "Michael Beasley",
+            "tagKey": "5d77683b151a60001f24f20b",
+            "thumb": "https://metadata-static.plex.tv/d/people/d7472ce69382c83611a1003326f05dac.jpg"
+          },
+          {
+            "filter": "actor=57326",
+            "id": 57326,
+            "role": "FBI Agent #1",
+            "tag": "Viviana Chavez",
+            "tagKey": "5d77691e7a53e9001e6e216c",
+            "thumb": "https://metadata-static.plex.tv/b/people/bd7cc735203f0111e0b286f5c543385f.jpg"
+          },
+          {
+            "filter": "actor=83952",
+            "id": 83952,
+            "role": "Sniper #1",
+            "tag": "Greg Sproles",
+            "tagKey": "5d776902fb0d55001f51f87d",
+            "thumb": "https://metadata-static.plex.tv/f/people/f65f61a1a58e9b3c3f615e034f0c4a2c.jpg"
+          },
+          {
+            "filter": "actor=83953",
+            "id": 83953,
+            "role": "Bobby/Sniper #2",
+            "tag": "Alex Huynh",
+            "tagKey": "5d776896fb0d55001f514b53",
+            "thumb": "https://metadata-static.plex.tv/people/5d776896fb0d55001f514b53.jpg"
+          },
+          {
+            "filter": "actor=83954",
+            "id": 83954,
+            "role": "Harbor Neuroscience Nurse",
+            "tag": "Jade Halley Bartlett",
+            "tagKey": "5dfc0b631bc84b001d7ecaea",
+            "thumb": "https://metadata-static.plex.tv/people/5dfc0b631bc84b001d7ecaea.jpg"
+          },
+          {
+            "filter": "actor=83955",
+            "id": 83955,
+            "role": "Autistic Boy's Father",
+            "tag": "Joe Hardy Jr.",
+            "tagKey": "5d776c17fb0d55001f57c655"
+          },
+          {
+            "filter": "actor=83956",
+            "id": 83956,
+            "role": "Autistic Boy's Mother",
+            "tag": "Carrie Walrond Hood",
+            "tagKey": "5d77689851dd69001fe0e86d",
+            "thumb": "https://metadata-static.plex.tv/3/people/301c593ac4a1d369014bcae6a1a8ac5d.jpg"
+          },
+          {
+            "filter": "actor=83957",
+            "id": 83957,
+            "role": "6 Year Old Boy",
+            "tag": "Roman Spink",
+            "tagKey": "5dcfc8d4eb43ea001f4a96fc",
+            "thumb": "https://metadata-static.plex.tv/b/people/be608f4b025ee5fcd844d2def9199032.jpg"
+          },
+          {
+            "filter": "actor=83958",
+            "id": 83958,
+            "role": "Little Tony Bazzano",
+            "tag": "David Anthony Buglione",
+            "tagKey": "5d776a96fb0d55001f54ac5c",
+            "thumb": "https://metadata-static.plex.tv/people/5d776a96fb0d55001f54ac5c.jpg"
+          },
+          {
+            "filter": "actor=83959",
+            "id": 83959,
+            "role": "Tech #1 Homeland Security",
+            "tag": "Nick Arapoglou",
+            "tagKey": "5d776bc923d5a3001f514157",
+            "thumb": "https://metadata-static.plex.tv/b/people/bfe64aefe530aeb328de09b571bfa37c.jpg"
+          },
+          {
+            "filter": "actor=9184",
+            "id": 9184,
+            "role": "Reporter #3",
+            "tag": "Angela Davis",
+            "tagKey": "5d776b577a53e9001e7228a1",
+            "thumb": "https://metadata-static.plex.tv/e/people/e155165fd80a0d35dab9e134b382077b.jpg"
+          },
+          {
+            "filter": "actor=83960",
+            "id": 83960,
+            "role": "FBI Agent #3",
+            "tag": "Johnny Giacalone",
+            "tagKey": "5d776db97a53e9001e76107d",
+            "thumb": "https://metadata-static.plex.tv/e/people/e28d47fd36a731f10f83a0b143a12451.jpg"
+          },
+          {
+            "filter": "actor=83961",
+            "id": 83961,
+            "role": "Gordon Amundson (FBI Language Services)",
+            "tag": "Richard Pearson",
+            "tagKey": "66cc91cec969f71338121e80"
+          },
+          {
+            "filter": "actor=83962",
+            "id": 83962,
+            "role": "UPS Delivery Man",
+            "tag": "Eric Goins",
+            "tagKey": "5d7769e5ad5437001f76b093",
+            "thumb": "https://metadata-static.plex.tv/people/5d7769e5ad5437001f76b093.jpg"
+          },
+          {
+            "filter": "actor=81432",
+            "id": 81432,
+            "role": "Widower",
+            "tag": "David de Vries",
+            "tagKey": "5d77682eeb5d26001f1df58d",
+            "thumb": "https://metadata-static.plex.tv/people/5d77682eeb5d26001f1df58d.jpg"
+          },
+          {
+            "filter": "actor=83963",
+            "id": 83963,
+            "role": "Funeral Director",
+            "tag": "Randall Taylor",
+            "tagKey": "5d77685285719b001f3a8b5c",
+            "thumb": "https://metadata-static.plex.tv/people/5d77685285719b001f3a8b5c.jpg"
+          },
+          {
+            "filter": "actor=83964",
+            "id": 83964,
+            "role": "Deputy",
+            "tag": "Scott Poythress",
+            "tagKey": "5d77683b880197001ec948d3",
+            "thumb": "https://metadata-static.plex.tv/4/people/424704eab6552705bd069ddb7aadb1dd.jpg"
+          },
+          {
+            "filter": "actor=83965",
+            "id": 83965,
+            "role": "French Teen Bully",
+            "tag": "Nicholas Martin",
+            "tagKey": "5f62573825ce3e0040ef26d2"
+          },
+          {
+            "filter": "actor=83966",
+            "id": 83966,
+            "role": "Reporter #4",
+            "tag": "Samantha Janco",
+            "tagKey": "66cc91cdf2b5b78c53ac4fa9"
+          },
+          {
+            "filter": "actor=83967",
+            "id": 83967,
+            "role": "Mafia Enforcer #3",
+            "tag": "Joseph Levine",
+            "tagKey": "5f4046d03e5306003e5bad42"
+          },
+          {
+            "filter": "actor=83968",
+            "id": 83968,
+            "role": "Maintenance Worker",
+            "tag": "Christian Mendoza",
+            "tagKey": "66cc91d04cc1c014a12dd503"
+          },
+          {
+            "filter": "actor=70596",
+            "id": 70596,
+            "role": "Robotics Lab Patient",
+            "tag": "Zachary James Rukavina",
+            "tagKey": "5d7769b77a53e9001e6ee6f5",
+            "thumb": "https://metadata-static.plex.tv/people/5d7769b77a53e9001e6ee6f5.jpg"
+          },
+          {
+            "filter": "actor=83969",
+            "id": 83969,
+            "role": "Robotics Lab Patient #2",
+            "tag": "Robert T. McKnight II",
+            "tagKey": "66cc91cfb539c4c2f9918146"
+          },
+          {
+            "filter": "actor=83970",
+            "id": 83970,
+            "role": "Robotics Lab Patient #3",
+            "tag": "Angel Giuffria",
+            "tagKey": "5d776bbd51dd69001fe3394b",
+            "thumb": "https://metadata-static.plex.tv/0/people/06f33c831f2b6a0970766978aaa53a5d.jpg"
+          },
+          {
+            "filter": "actor=83971",
+            "id": 83971,
+            "role": "Robotics Lab Tech",
+            "tag": "Robert Kistenberg",
+            "tagKey": "66cc91cdf2b5b78c53ac4faf"
+          },
+          {
+            "filter": "actor=83972",
+            "id": 83972,
+            "role": "Funeral Home Attendee",
+            "tag": "Robert Hatch",
+            "tagKey": "5d776bf9f617c9002017c47a",
+            "thumb": "https://metadata-static.plex.tv/people/5d776bf9f617c9002017c47a.jpg"
+          },
+          {
+            "filter": "actor=12237",
+            "id": 12237,
+            "role": "French Bully (uncredited)",
+            "tag": "Daeg Faerch",
+            "tagKey": "5d77682ba091de001f2e6b47",
+            "thumb": "https://metadata-static.plex.tv/8/people/885bd1e933c924fd3d426146bda36ad4.jpg"
+          },
+          {
+            "filter": "actor=83973",
+            "id": 83973,
+            "role": "Prisoner #64 (uncredited)",
+            "tag": "Inder Kumar",
+            "tagKey": "5d776a3cad5437001f776a8b",
+            "thumb": "https://metadata-static.plex.tv/2/people/234c74580711c59a16b5a650eff44e52.jpg"
+          },
+          {
+            "filter": "actor=9843",
+            "id": 9843,
+            "role": "Tactical Mercenary (uncredited)",
+            "tag": "Dennis Keiffer",
+            "tagKey": "5d77683554f42c001f8c4708",
+            "thumb": "https://metadata-static.plex.tv/6/people/648e9a7ea1d537bccfcd7615134b78ce.jpg"
+          },
+          {
+            "filter": "actor=63064",
+            "id": 63064,
+            "role": "Delivery Man #1 (uncredited)",
+            "tag": "Scott Hunter",
+            "tagKey": "5d776ba1ad5437001f7a57cd",
+            "thumb": "https://metadata-static.plex.tv/5/people/529ea1377415c8ee2b8969ecf19af52f.jpg"
+          },
+          {
+            "filter": "actor=9173",
+            "id": 9173,
+            "role": "Frank Rice",
+            "tag": "Ron Prather",
+            "tagKey": "5d77683c7228e5001f1dfd3c",
+            "thumb": "https://metadata-static.plex.tv/people/5d77683c7228e5001f1dfd3c.jpg"
+          }
+        ],
+        "UltraBlurColors": {
+          "bottomLeft": "12343c",
+          "bottomRight": "020f10",
+          "topLeft": "08252b",
+          "topRight": "0f2f37"
+        },
+        "Writer": [
+          {
+            "filter": "writer=83937",
+            "id": 83937,
+            "tag": "Bill Dubuque",
+            "tagKey": "5d776a35ad5437001f775a04",
+            "thumb": "https://metadata-static.plex.tv/a/people/adf0bfd28c35ba56b1b7014a266f4ee0.jpg"
+          }
+        ],
+        "addedAt": 1739657186,
+        "art": "/library/metadata/120683/art/1752142375",
+        "audienceRating": 7.1,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "chapterSource": "media",
+        "contentRating": "nz/R16",
+        "duration": 7673540,
+        "guid": "plex://movie/5d776b417a53e9001e71f6d1",
+        "key": "/library/metadata/120683",
+        "librarySectionID": 1,
+        "librarySectionKey": "/library/sections/1",
+        "librarySectionTitle": "Movies",
+        "originallyAvailableAt": "2016-10-13",
+        "ratingKey": "120683",
+        "slug": "the-accountant-2016",
+        "studio": "Zero Gravity Management",
+        "summary": "As a math savant uncooks the books for a new client, the Treasury Department closes in on his activities, and the body count starts to rise.",
+        "tagline": "Calculate your choices.",
+        "thumb": "/library/metadata/120683/thumb/1752142375",
+        "title": "The Accountant",
+        "titleSort": "Accountant",
+        "type": "movie",
+        "updatedAt": 1752142375,
+        "year": 2016
+      }
+    ],
+    "allowSync": true,
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 1,
+    "librarySectionTitle": "Movies",
+    "librarySectionUUID": "09dd5d64-2d11-476f-9064-d2b4f776a3bb",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1751534299,
+    "size": 1
+  }
+}
