@@ -1,20 +1,21 @@
-__all__ = ["BaseCollection", "BaseEpisode", "BaseMovie", "BaseSeason", "BaseService", "BaseShow"]
+__all__ = ["BaseCollection", "BaseEpisode", "BaseMovie", "BaseSeason", "BaseShow"]
 
-from abc import ABC, abstractmethod
-from pathlib import Path
-from typing import ClassVar, Generic, TypeVar
+from datetime import date
 
 from pydantic import Field
 
-from mediux_posters.utils import BaseModel, MediaType
+from mediux_posters.utils import BaseModel
 
 
 class BaseEpisode(BaseModel):
-    mediatype: ClassVar[MediaType] = MediaType.EPISODE
-    id: str | int
+    id: int | str
+    imdb_id: str | None = None
+    name: str
     number: int
+    premiere_date: date | None = None
+    tmdb_id: int | None = None
+    tvdb_id: int | None = None
 
-    title_card: Path | None = None
     title_card_uploaded: bool = False
 
     @property
@@ -23,12 +24,15 @@ class BaseEpisode(BaseModel):
 
 
 class BaseSeason(BaseModel):
-    mediatype: ClassVar[MediaType] = MediaType.SEASON
-    id: str | int
+    id: int | str
+    imdb_id: str | None = None
+    name: str
     number: int
-    episodes: list[BaseEpisode] = Field(default_factory=list)
+    premiere_date: date | None = None
+    tmdb_id: int | None = None
+    tvdb_id: int | None = None
 
-    poster: Path | None = None
+    episodes: list[BaseEpisode] = Field(default_factory=list)
     poster_uploaded: bool = False
 
     @property
@@ -37,16 +41,16 @@ class BaseSeason(BaseModel):
 
 
 class BaseShow(BaseModel):
-    mediatype: ClassVar[MediaType] = MediaType.SHOW
-    id: str | int
+    id: int | str
+    imdb_id: str | None = None
     name: str
-    year: int
+    premiere_date: date | None = None
     tmdb_id: int
-    seasons: list[BaseSeason] = Field(default_factory=list)
+    tvdb_id: int | None = None
+    year: int
 
-    poster: Path | None = None
+    seasons: list[BaseSeason] = Field(default_factory=list)
     poster_uploaded: bool = False
-    backdrop: Path | None = None
     backdrop_uploaded: bool = False
 
     @property
@@ -67,15 +71,15 @@ class BaseShow(BaseModel):
 
 
 class BaseMovie(BaseModel):
-    mediatype: ClassVar[MediaType] = MediaType.MOVIE
     id: str | int
+    imdb_id: str | None = None
     name: str
-    year: int
+    premiere_date: date | None = None
     tmdb_id: int
+    tvdb_id: int | None = None
+    year: int
 
-    poster: Path | None = None
     poster_uploaded: bool = False
-    backdrop: Path | None = None
     backdrop_uploaded: bool = False
 
     @property
@@ -92,15 +96,12 @@ class BaseMovie(BaseModel):
 
 
 class BaseCollection(BaseModel):
-    mediatype: ClassVar[MediaType] = MediaType.COLLECTION
     id: str | int
     name: str
     tmdb_id: int
-    movies: list[BaseMovie] = Field(default_factory=list)
 
-    poster: Path | None = None
+    movies: list[BaseMovie] = Field(default_factory=list)
     poster_uploaded: bool = False
-    backdrop: Path | None = None
     backdrop_uploaded: bool = False
 
     @property
@@ -114,33 +115,3 @@ class BaseCollection(BaseModel):
             and self.backdrop_uploaded
             and all(x.all_posters_uploaded for x in self.movies)
         )
-
-
-T = TypeVar("T", bound=BaseShow)
-S = TypeVar("S", bound=BaseSeason)
-E = TypeVar("E", bound=BaseEpisode)
-C = TypeVar("C", bound=BaseCollection)
-M = TypeVar("M", bound=BaseMovie)
-
-
-class BaseService(ABC, Generic[T, S, E, C, M]):
-    @abstractmethod
-    def list_shows(self, skip_libraries: list[str] | None = None) -> list[T]: ...
-
-    @abstractmethod
-    def get_show(self, tmdb_id: int) -> T | None: ...
-
-    @abstractmethod
-    def list_collections(self, skip_libraries: list[str] | None = None) -> list[C]: ...
-
-    @abstractmethod
-    def get_collection(self, tmdb_id: int) -> C | None: ...
-
-    @abstractmethod
-    def list_movies(self, skip_libraries: list[str] | None = None) -> list[M]: ...
-
-    @abstractmethod
-    def get_movie(self, tmdb_id: int) -> M | None: ...
-
-    @abstractmethod
-    def upload_posters(self, obj: T | S | E | M | C, kometa_integration: bool) -> None: ...
