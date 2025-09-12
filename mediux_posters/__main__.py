@@ -1,5 +1,4 @@
 import logging
-from collections import defaultdict
 from collections.abc import Generator
 from enum import Enum
 from platform import python_version
@@ -86,32 +85,36 @@ class MediuxSet(Protocol):
 
 
 def filter_sets(
-    set_list: list[T], priority_usernames: list[str], only_priority_usernames: bool
+    set_list: list[T],
+    priority_usernames: list[str],
+    only_priority_usernames: bool,
+    interactive: bool = False,
 ) -> Generator[T]:
     if not set_list:
         return
 
-    sets_by_user: dict[str, list[T]] = defaultdict(list)
-    for x in set_list:
-        sets_by_user[x.username].append(x)
-
     # Priority usernames first
     for username in priority_usernames:
-        user_sets = sets_by_user.get(username, [])
-        if not user_sets:
-            continue
+        if interactive:
+            user_sets = [x for x in set_list if x.username == username]
+            if not user_sets:
+                continue
 
-        while user_sets:
-            if len(user_sets) == 1:
-                yield user_sets.pop(0)
-            else:
-                choices = [Choice(title=x.set_title, value=x) for x in user_sets]
-                selected = select(f"Multiple sets found from '{username}'", choices=choices).ask()
-                if selected:
-                    yield selected
-                    user_sets = [x for x in user_sets if x != selected]
+            while user_sets:
+                if len(user_sets) == 1:
+                    yield user_sets.pop(0)
                 else:
-                    raise Abort
+                    choices = [Choice(title=x.set_title, value=x) for x in user_sets]
+                    selected = select(
+                        f"Multiple sets found from '{username}'", choices=choices
+                    ).ask()
+                    if selected:
+                        yield selected
+                        user_sets = [x for x in user_sets if x != selected]
+                    else:
+                        raise Abort
+        else:
+            yield from [x for x in set_list if x.username == username]
 
     if not only_priority_usernames:
         # Remaining sets
@@ -353,6 +356,15 @@ def sync_posters(
             "Specify this option multiple times for skipping multiple libraries. ",
         ),
     ],
+    interactive: Annotated[
+        bool,
+        Option(
+            "--interactive",
+            "-i",
+            show_default=False,
+            help="Pause script to allow user selection of set.",
+        ),
+    ] = False,
     start: Annotated[
         int, Option("--start", "-s", help="The starting index for processing media.")
     ] = 0,
@@ -410,6 +422,7 @@ def sync_posters(
                         set_list=set_list,
                         priority_usernames=settings.priority_usernames,
                         only_priority_usernames=settings.only_priority_usernames,
+                        interactive=interactive,
                     )
                 for set_data in filtered_sets:
                     if not process_set_data(
@@ -440,6 +453,15 @@ def media_posters(
             "Specify this option multiple times for skipping multiple services.",
         ),
     ],
+    interactive: Annotated[
+        bool,
+        Option(
+            "--interactive",
+            "-i",
+            show_default=False,
+            help="Pause script to allow user selection of set.",
+        ),
+    ] = False,
     clean: Annotated[
         bool,
         Option("--clean", "-c", show_default=False, help="Delete the whole cache before starting."),
@@ -504,6 +526,7 @@ def media_posters(
                     set_list=set_list,
                     priority_usernames=settings.priority_usernames,
                     only_priority_usernames=settings.only_priority_usernames,
+                    interactive=interactive,
                 )
             for set_data in filtered_sets:
                 if not process_set_data(
