@@ -4,6 +4,7 @@ from enum import Enum
 from platform import python_version
 from typing import Annotated, Final, Protocol, TypeVar
 
+from prompt_toolkit.styles import Style
 from questionary import Choice, select
 from typer import Abort, Argument, Context, Exit, Option, Typer
 
@@ -80,6 +81,7 @@ T = TypeVar("T", bound="MediuxSet")
 
 
 class MediuxSet(Protocol):
+    id: int
     set_title: str
     username: str
 
@@ -104,9 +106,18 @@ def filter_sets(
                 if len(user_sets) == 1:
                     yield user_sets.pop(0)
                 else:
-                    choices = [Choice(title=x.set_title, value=x) for x in user_sets]
+                    choices = [
+                        Choice(
+                            title=[("class:dim", f"{x.id} | "), ("class:title", x.set_title)],
+                            description=f"{Mediux.WEB_URL}/sets/{x.id}",
+                            value=x,
+                        )
+                        for x in user_sets
+                    ]
                     selected = select(
-                        f"Multiple sets found from '{username}'", choices=choices
+                        f"Multiple sets found from '{username}'",
+                        choices=choices,
+                        style=Style([("dim", "dim")]),
                     ).ask()
                     if selected:
                         yield selected
@@ -129,10 +140,8 @@ def process_set_data(
     priority_usernames: list[str],
     force: bool = False,
     kometa_integration: bool = False,
-) -> bool:
+) -> None:
     should_log = True
-    if entry.all_posters_uploaded:
-        return False
 
     def get_creator_rank(creator: str | None) -> int:
         if creator and creator in priority_usernames:
@@ -300,7 +309,6 @@ def process_set_data(
                 parent=slugify(value=movie.display_name),
                 filename="backdrop.jpg",
             )
-    return True
 
 
 @app.callback(invoke_without_command=True)
@@ -425,14 +433,15 @@ def sync_posters(
                         interactive=interactive,
                     )
                 for set_data in filtered_sets:
-                    if not process_set_data(
+                    process_set_data(
                         entry=entry,
                         set_data=set_data,
                         mediux=mediux,
                         service=service,
                         priority_usernames=settings.priority_usernames,
                         kometa_integration=settings.kometa_integration,
-                    ):
+                    )
+                    if entry.all_posters_uploaded:
                         break
 
 
@@ -529,14 +538,15 @@ def media_posters(
                     interactive=interactive,
                 )
             for set_data in filtered_sets:
-                if not process_set_data(
+                process_set_data(
                     entry=entry,
                     set_data=set_data,
                     mediux=mediux,
                     service=service,
                     priority_usernames=settings.priority_usernames,
                     kometa_integration=settings.kometa_integration,
-                ):
+                )
+                if entry.all_posters_uploaded:
                     break
 
 
