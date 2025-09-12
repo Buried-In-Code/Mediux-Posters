@@ -1,9 +1,11 @@
 import logging
+from collections import defaultdict
 from collections.abc import Generator
 from enum import Enum
 from platform import python_version
 from typing import Annotated, Final, Protocol, TypeVar
 
+from questionary import Choice, select
 from typer import Abort, Argument, Context, Exit, Option, Typer
 
 from mediux_posters import __project__, __version__, get_cache_root, setup_logging
@@ -79,6 +81,7 @@ T = TypeVar("T", bound="MediuxSet")
 
 
 class MediuxSet(Protocol):
+    set_title: str
     username: str
 
 
@@ -87,9 +90,29 @@ def filter_sets(
 ) -> Generator[T]:
     if not set_list:
         return
+
+    sets_by_user: dict[str, list[T]] = defaultdict(list)
+    for x in set_list:
+        sets_by_user[x.username].append(x)
+
     # Priority usernames first
     for username in priority_usernames:
-        yield from [x for x in set_list if x.username == username]
+        user_sets = sets_by_user.get(username, [])
+        if not user_sets:
+            continue
+
+        while user_sets:
+            if len(user_sets) == 1:
+                yield user_sets.pop(0)
+            else:
+                choices = [Choice(title=x.set_title, value=x) for x in user_sets]
+                selected = select(f"Multiple sets found from '{username}'", choices=choices).ask()
+                if selected:
+                    yield selected
+                    user_sets = [x for x in user_sets if x != selected]
+                else:
+                    raise Abort
+
     if not only_priority_usernames:
         # Remaining sets
         yield from [x for x in set_list if x.username not in priority_usernames]
