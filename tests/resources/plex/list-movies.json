@@ -1,0 +1,395 @@
+{
+  "MediaContainer": {
+    "Metadata": [
+      {
+        "Collection": [
+          {
+            "tag": "Makoto Shinkai"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Japan"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Makoto Shinkai"
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Guid": [
+          {
+            "id": "imdb://tt0983213"
+          },
+          {
+            "id": "tmdb://38142"
+          },
+          {
+            "id": "tvdb://3000"
+          }
+        ],
+        "Image": [
+          {
+            "alt": "5 Centimeters per Second",
+            "type": "coverPoster",
+            "url": "/library/metadata/102969/thumb/1744674504"
+          },
+          {
+            "alt": "5 Centimeters per Second",
+            "type": "background",
+            "url": "/library/metadata/102969/art/1744674504"
+          },
+          {
+            "alt": "5 Centimeters per Second",
+            "type": "clearLogo",
+            "url": "/library/metadata/102969/clearLogo/1744674504"
+          }
+        ],
+        "Media": [
+          {
+            "Part": [
+              {
+                "audioProfile": "lc",
+                "container": "mp4",
+                "duration": 3766069,
+                "file": "/data/movies/5-Centimeters-per-Second_(2007)_[tmdb-38142]/5-Centimeters-per-Second_(2007).mp4",
+                "has64bitOffsets": false,
+                "id": 272873,
+                "indexes": "sd",
+                "key": "/library/parts/272873/1274054400/file.mp4",
+                "optimizedForStreaming": true,
+                "size": 1074917943,
+                "videoProfile": "high"
+              }
+            ],
+            "aspectRatio": 1.78,
+            "audioChannels": 2,
+            "audioCodec": "aac",
+            "audioProfile": "lc",
+            "bitrate": 2283,
+            "container": "mp4",
+            "duration": 3766069,
+            "has64bitOffsets": false,
+            "hasVoiceActivity": true,
+            "height": 1072,
+            "id": 255958,
+            "optimizedForStreaming": 1,
+            "videoCodec": "h264",
+            "videoFrameRate": "24p",
+            "videoProfile": "high",
+            "videoResolution": "1080",
+            "width": 1920
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Kenji Mizuhashi"
+          },
+          {
+            "tag": "Yoshimi Kondou"
+          },
+          {
+            "tag": "Satomi Hanamura"
+          }
+        ],
+        "UltraBlurColors": {
+          "bottomLeft": "3c5a9d",
+          "bottomRight": "652b26",
+          "topLeft": "1a2b56",
+          "topRight": "3a5b9d"
+        },
+        "Writer": [
+          {
+            "tag": "Makoto Shinkai"
+          }
+        ],
+        "addedAt": 1718833568,
+        "art": "/library/metadata/102969/art/1744674504",
+        "audienceRating": 7.3,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "contentRating": "nz/G",
+        "duration": 3766069,
+        "guid": "plex://movie/5d77686c103a2d001f571373",
+        "key": "/library/metadata/102969",
+        "originalTitle": "\u79d2\u901f5\u30bb\u30f3\u30c1\u30e1\u30fc\u30c8\u30eb",
+        "originallyAvailableAt": "2007-03-03",
+        "ratingKey": "102969",
+        "slug": "5-centimeters-per-second",
+        "studio": "CoMix Wave Films",
+        "summary": "Told in three interconnected segments, Takaki tells the story of his life as cruel winters, cold technology, and finally, adult obligations and responsibility converge to test the delicate petals of love.",
+        "tagline": "At what speed must I live to see you again?",
+        "thumb": "/library/metadata/102969/thumb/1744674504",
+        "title": "5 Centimeters per Second",
+        "type": "movie",
+        "updatedAt": 1744674504,
+        "year": 2007
+      },
+      {
+        "Country": [
+          {
+            "tag": "China"
+          },
+          {
+            "tag": "Japan"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Jill Culton"
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Guid": [
+          {
+            "id": "imdb://tt6324278"
+          },
+          {
+            "id": "tmdb://431580"
+          },
+          {
+            "id": "tvdb://12176"
+          }
+        ],
+        "Image": [
+          {
+            "alt": "Abominable",
+            "type": "coverPoster",
+            "url": "/library/metadata/102210/thumb/1744674505"
+          },
+          {
+            "alt": "Abominable",
+            "type": "background",
+            "url": "/library/metadata/102210/art/1744674505"
+          },
+          {
+            "alt": "Abominable",
+            "type": "clearLogo",
+            "url": "/library/metadata/102210/clearLogo/1744674505"
+          }
+        ],
+        "Media": [
+          {
+            "Part": [
+              {
+                "container": "mkv",
+                "duration": 5832910,
+                "file": "/data/movies/Abominable_(2019)_[tmdb-431580]/Abominable_(2019).mkv",
+                "id": 272883,
+                "indexes": "sd",
+                "key": "/library/parts/272883/1576540800/file.mkv",
+                "size": 12633929309,
+                "videoProfile": "high"
+              }
+            ],
+            "aspectRatio": 1.85,
+            "audioChannels": 8,
+            "audioCodec": "truehd",
+            "bitrate": 17328,
+            "container": "mkv",
+            "duration": 5832910,
+            "hasVoiceActivity": true,
+            "height": 1040,
+            "id": 254622,
+            "videoCodec": "h264",
+            "videoFrameRate": "24p",
+            "videoProfile": "high",
+            "videoResolution": "1080",
+            "width": 1920
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Chloe Bennet"
+          },
+          {
+            "tag": "Albert Tsai"
+          },
+          {
+            "tag": "Eddie Izzard"
+          }
+        ],
+        "UltraBlurColors": {
+          "bottomLeft": "0e0313",
+          "bottomRight": "275297",
+          "topLeft": "212857",
+          "topRight": "2c3a73"
+        },
+        "Writer": [
+          {
+            "tag": "Jill Culton"
+          }
+        ],
+        "addedAt": 1709549891,
+        "art": "/library/metadata/102210/art/1744674505",
+        "audienceRating": 7.5,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "chapterSource": "media",
+        "contentRating": "nz/G",
+        "duration": 5832910,
+        "guid": "plex://movie/5d776c9b47dd6e001f6ed31c",
+        "key": "/library/metadata/102210",
+        "originallyAvailableAt": "2019-09-19",
+        "ratingKey": "102210",
+        "slug": "abominable-2019",
+        "studio": "DreamWorks Animation",
+        "summary": "Three teenagers must help a Yeti return to his family while avoiding a wealthy man and a zoologist who want him for their own needs.",
+        "tagline": "Find your way home.",
+        "thumb": "/library/metadata/102210/thumb/1744674505",
+        "title": "Abominable",
+        "type": "movie",
+        "updatedAt": 1744674505,
+        "year": 2019
+      },
+      {
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Gavin O'Connor"
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Crime"
+          }
+        ],
+        "Guid": [
+          {
+            "id": "imdb://tt2140479"
+          },
+          {
+            "id": "tmdb://302946"
+          },
+          {
+            "id": "tvdb://940"
+          }
+        ],
+        "Image": [
+          {
+            "alt": "The Accountant",
+            "type": "coverPoster",
+            "url": "/library/metadata/120683/thumb/1742310908"
+          },
+          {
+            "alt": "The Accountant",
+            "type": "background",
+            "url": "/library/metadata/120683/art/1742310908"
+          },
+          {
+            "alt": "The Accountant",
+            "type": "clearLogo",
+            "url": "/library/metadata/120683/clearLogo/1742310908"
+          }
+        ],
+        "Media": [
+          {
+            "Part": [
+              {
+                "container": "mkv",
+                "duration": 7673540,
+                "file": "/data/movies/The-Accountant_(2016)_[tmdb-302946]/The-Accountant_(2016).mkv",
+                "id": 283871,
+                "indexes": "sd",
+                "key": "/library/parts/283871/1484006400/file.mkv",
+                "size": 3274110702,
+                "videoProfile": "high"
+              }
+            ],
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "bitrate": 3411,
+            "container": "mkv",
+            "duration": 7673540,
+            "hasVoiceActivity": true,
+            "height": 800,
+            "id": 274694,
+            "videoCodec": "h264",
+            "videoFrameRate": "24p",
+            "videoProfile": "high",
+            "videoResolution": "1080",
+            "width": 1920
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Ben Affleck"
+          },
+          {
+            "tag": "Cynthia Addai-Robinson"
+          },
+          {
+            "tag": "Anna Kendrick"
+          }
+        ],
+        "UltraBlurColors": {
+          "bottomLeft": "050606",
+          "bottomRight": "1f1f22",
+          "topLeft": "020c0b",
+          "topRight": "0c0f10"
+        },
+        "Writer": [
+          {
+            "tag": "Bill Dubuque"
+          }
+        ],
+        "addedAt": 1739657186,
+        "art": "/library/metadata/120683/art/1742310908",
+        "audienceRating": 7.1,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "chapterSource": "media",
+        "contentRating": "nz/R16",
+        "duration": 7673540,
+        "guid": "plex://movie/5d776b417a53e9001e71f6d1",
+        "key": "/library/metadata/120683",
+        "originallyAvailableAt": "2016-10-13",
+        "ratingKey": "120683",
+        "slug": "the-accountant-2016",
+        "studio": "Zero Gravity Management",
+        "summary": "As a math savant uncooks the books for a new client, the Treasury Department closes in on his activities, and the body count starts to rise.",
+        "tagline": "Calculate your choices.",
+        "thumb": "/library/metadata/120683/thumb/1742310908",
+        "title": "The Accountant",
+        "titleSort": "Accountant",
+        "type": "movie",
+        "updatedAt": 1742310908,
+        "year": 2016
+      }
+    ],
+    "allowSync": true,
+    "art": "/:/resources/movie-fanart.jpg",
+    "content": "secondary",
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 1,
+    "librarySectionTitle": "Movies",
+    "librarySectionUUID": "09dd5d64-2d11-476f-9064-d2b4f776a3bb",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1744189307,
+    "size": 3,
+    "thumb": "/:/resources/movie.png",
+    "title1": "Movies",
+    "title2": "All Movies",
+    "viewGroup": "movie"
+  }
+}

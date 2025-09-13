@@ -13,6 +13,7 @@ logs/
 *.iml
 *.log
 *.txt
+.coverage
 .envrc
 .pdm-python
 .python-version
