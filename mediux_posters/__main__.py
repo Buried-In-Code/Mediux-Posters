@@ -4,6 +4,8 @@ from enum import Enum
 from platform import python_version
 from typing import Annotated, Final, Protocol, TypeVar
 
+from prompt_toolkit.styles import Style
+from questionary import Choice, select
 from typer import Abort, Argument, Context, Exit, Option, Typer
 
 from mediux_posters import __project__, __version__, get_cache_root, setup_logging
@@ -79,17 +81,52 @@ T = TypeVar("T", bound="MediuxSet")
 
 
 class MediuxSet(Protocol):
+    id: int
+    set_title: str
     username: str
 
 
 def filter_sets(
-    set_list: list[T], priority_usernames: list[str], only_priority_usernames: bool
+    set_list: list[T],
+    priority_usernames: list[str],
+    only_priority_usernames: bool,
+    interactive: bool = False,
 ) -> Generator[T]:
     if not set_list:
         return
+
     # Priority usernames first
     for username in priority_usernames:
-        yield from [x for x in set_list if x.username == username]
+        if interactive:
+            user_sets = [x for x in set_list if x.username == username]
+            if not user_sets:
+                continue
+
+            while user_sets:
+                if len(user_sets) == 1:
+                    yield user_sets.pop(0)
+                else:
+                    choices = [
+                        Choice(
+                            title=[("class:dim", f"{x.id} | "), ("class:title", x.set_title)],
+                            description=f"{Mediux.WEB_URL}/sets/{x.id}",
+                            value=x,
+                        )
+                        for x in user_sets
+                    ]
+                    selected = select(
+                        f"Multiple sets found from '{username}'",
+                        choices=choices,
+                        style=Style([("dim", "dim")]),
+                    ).ask()
+                    if selected:
+                        yield selected
+                        user_sets = [x for x in user_sets if x != selected]
+                    else:
+                        raise Abort
+        else:
+            yield from [x for x in set_list if x.username == username]
+
     if not only_priority_usernames:
         # Remaining sets
         yield from [x for x in set_list if x.username not in priority_usernames]
@@ -103,10 +140,8 @@ def process_set_data(
     priority_usernames: list[str],
     force: bool = False,
     kometa_integration: bool = False,
-) -> bool:
+) -> None:
     should_log = True
-    if entry.all_posters_uploaded:
-        return False
 
     def get_creator_rank(creator: str | None) -> int:
         if creator and creator in priority_usernames:
@@ -274,7 +309,6 @@ def process_set_data(
                 parent=slugify(value=movie.display_name),
                 filename="backdrop.jpg",
             )
-    return True
 
 
 @app.callback(invoke_without_command=True)
@@ -330,6 +364,15 @@ def sync_posters(
             "Specify this option multiple times for skipping multiple libraries. ",
         ),
     ],
+    interactive: Annotated[
+        bool,
+        Option(
+            "--interactive",
+            "-i",
+            show_default=False,
+            help="Pause script to allow user selection of set.",
+        ),
+    ] = False,
     start: Annotated[
         int, Option("--start", "-s", help="The starting index for processing media.")
     ] = 0,
@@ -387,16 +430,18 @@ def sync_posters(
                         set_list=set_list,
                         priority_usernames=settings.priority_usernames,
                         only_priority_usernames=settings.only_priority_usernames,
+                        interactive=interactive,
                     )
                 for set_data in filtered_sets:
-                    if not process_set_data(
+                    process_set_data(
                         entry=entry,
                         set_data=set_data,
                         mediux=mediux,
                         service=service,
                         priority_usernames=settings.priority_usernames,
                         kometa_integration=settings.kometa_integration,
-                    ):
+                    )
+                    if entry.all_posters_uploaded:
                         break
 
 
@@ -417,6 +462,15 @@ def media_posters(
             "Specify this option multiple times for skipping multiple services.",
         ),
     ],
+    interactive: Annotated[
+        bool,
+        Option(
+            "--interactive",
+            "-i",
+            show_default=False,
+            help="Pause script to allow user selection of set.",
+        ),
+    ] = False,
     clean: Annotated[
         bool,
         Option("--clean", "-c", show_default=False, help="Delete the whole cache before starting."),
@@ -481,16 +535,18 @@ def media_posters(
                     set_list=set_list,
                     priority_usernames=settings.priority_usernames,
                     only_priority_usernames=settings.only_priority_usernames,
+                    interactive=interactive,
                 )
             for set_data in filtered_sets:
-                if not process_set_data(
+                process_set_data(
                     entry=entry,
                     set_data=set_data,
                     mediux=mediux,
                     service=service,
                     priority_usernames=settings.priority_usernames,
                     kometa_integration=settings.kometa_integration,
-                ):
+                )
+                if entry.all_posters_uploaded:
                     break
 
 

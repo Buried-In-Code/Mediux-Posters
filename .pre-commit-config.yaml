@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.3
+    rev: v0.13.0
     hooks:
       - id: ruff-format
       - id: ruff-check
@@ -16,7 +16,7 @@ repos:
           - --wrap=keep
         exclude: ".github\/ISSUE_TEMPLATE\/.*.md"
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-ast
       - id: check-builtin-literals
@@ -49,7 +49,7 @@ repos:
         exclude_types:
           - svg
   - repo: https://github.com/pappasam/toml-sort
-    rev: v0.24.2
+    rev: v0.24.3
     hooks:
       - id: toml-sort
         args:
