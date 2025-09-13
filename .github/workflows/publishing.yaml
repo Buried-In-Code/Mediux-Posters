@@ -25,7 +25,7 @@ jobs:
     name: Validate dist
     needs:
       - build
-    permissions: []
+    permissions: {}
     runs-on: ubuntu-latest
 
     steps:
