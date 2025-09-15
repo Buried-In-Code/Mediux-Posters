@@ -23,15 +23,33 @@ jobs:
           name: python-package-distributions
           path: dist/
 
-  publish-to-pypi:
-    if: startsWith(github.ref, 'refs/tags/')
+  validate:
+    name: Validate dist
     needs:
       - build
+    permissions: {}
+    runs-on: ubuntu-latest
 
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          name: python-package-distributions
+          path: dist/
+      - uses: astral-sh/setup-uv@v5
+      - name: Setup Python
+        run: uv python install 3.13
+      - name: Validate dist
+        run: uv run --with twine twine check dist/*
+
+  publish:
     environment:
       name: pypi
       url: https://pypi.org/p/Mediux-Posters
+    if: startsWith(github.ref, 'refs/tags/')
     name: Publish to PyPI
+    needs:
+      - build
+      - validate
     permissions:
       id-token: write
     runs-on: ubuntu-latest
