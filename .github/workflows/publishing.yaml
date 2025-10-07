@@ -37,7 +37,7 @@ jobs:
           path: dist/
       - uses: astral-sh/setup-uv@v5
       - name: Setup Python
-        run: uv python install 3.13
+        run: uv python install 3.14
       - name: Validate dist
         run: uv run --with twine twine check dist/*
 
