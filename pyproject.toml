@@ -36,7 +36,7 @@ dependencies = [
   "questionary >= 2.1.0",
   "ratelimit >= 2.2.0",
   "rich >= 14.1.0",
-  "tomli >= 2.2.0 ; python_version < '3.11'",
+  "tomli >= 2.3.0 ; python_version < '3.11'",
   "tomli-w >= 1.2.0",
   "typer >= 0.19.0"
 ]
@@ -147,3 +147,4 @@ min_version = "4.22"
 [tool.tox.env_run_base]
 commands = [["pytest"]]
 dependency_groups = ["tests"]
+passenv = ["JELLYFIN__BASE_URL", "JELLYFIN__TOKEN", "MEDIUX__BASE_URL", "MEDIUX__TOKEN", "PLEX__BASE_URL", "PLEX__TOKEN"]

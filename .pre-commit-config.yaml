@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.13.0
+    rev: v0.14.0
     hooks:
       - id: ruff-format
       - id: ruff-check
@@ -18,17 +18,25 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
+      - id: check-added-large-files
       - id: check-ast
       - id: check-builtin-literals
       - id: check-case-conflict
       - id: check-docstring-first
+#      - id: check-executables-have-shebangs
+      - id: check-illegal-windows-names
+      - id: check-json
       - id: check-merge-conflict
         args:
           - --assume-in-merge
+      - id: check-shebang-scripts-are-executable
       - id: check-toml
+      - id: check-vcs-permalinks
+      - id: check-xml
       - id: check-yaml
         args:
           - --allow-multiple-documents
+      - id: debug-statements
       - id: end-of-file-fixer
         exclude_types:
           - json
