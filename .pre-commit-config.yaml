@@ -1,9 +1,9 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.2
+    rev: v0.14.0
     hooks:
       - id: ruff-format
-      - id: ruff
+      - id: ruff-check
   - repo: https://github.com/executablebooks/mdformat
     rev: 0.7.22
     hooks:
@@ -16,19 +16,27 @@ repos:
           - --wrap=keep
         exclude: ".github\/ISSUE_TEMPLATE\/.*.md"
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
+      - id: check-added-large-files
       - id: check-ast
       - id: check-builtin-literals
       - id: check-case-conflict
       - id: check-docstring-first
+#      - id: check-executables-have-shebangs
+      - id: check-illegal-windows-names
+      - id: check-json
       - id: check-merge-conflict
         args:
           - --assume-in-merge
+      - id: check-shebang-scripts-are-executable
       - id: check-toml
+      - id: check-vcs-permalinks
+      - id: check-xml
       - id: check-yaml
         args:
           - --allow-multiple-documents
+      - id: debug-statements
       - id: end-of-file-fixer
         exclude_types:
           - json
@@ -38,14 +46,18 @@ repos:
       - id: mixed-line-ending
         args:
           - --fix=auto
-#      - id: name-tests-test
+      - id: name-tests-test
+      - id: pretty-format-json
+        args:
+          - --autofix
+          - --indent=2
       - id: trailing-whitespace
         args:
           - --markdown-linebreak-ext=md
         exclude_types:
           - svg
   - repo: https://github.com/pappasam/toml-sort
-    rev: v0.24.2
+    rev: v0.24.3
     hooks:
       - id: toml-sort
         args:

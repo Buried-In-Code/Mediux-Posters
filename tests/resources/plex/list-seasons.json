@@ -1,0 +1,82 @@
+{
+  "MediaContainer": {
+    "Metadata": [
+      {
+        "Guid": [
+          {
+            "id": "tmdb://206322"
+          },
+          {
+            "id": "tvdb://1950683"
+          }
+        ],
+        "Image": [
+          {
+            "alt": "Season 1",
+            "type": "coverPoster",
+            "url": "/library/metadata/109437/thumb/1744674399"
+          },
+          {
+            "alt": "Season 1",
+            "type": "background",
+            "url": "/library/metadata/109436/art/1744674399"
+          },
+          {
+            "alt": "Season 1",
+            "type": "clearLogo",
+            "url": "/library/metadata/109436/clearLogo/1744674399"
+          }
+        ],
+        "UltraBlurColors": {
+          "bottomLeft": "961553",
+          "bottomRight": "a9065f",
+          "topLeft": "053245",
+          "topRight": "933e46"
+        },
+        "addedAt": 1732362269,
+        "art": "/library/metadata/109436/art/1744674399",
+        "guid": "plex://season/6120ccb1898ddd002ca9ed52",
+        "index": 1,
+        "key": "/library/metadata/109437/children",
+        "leafCount": 10,
+        "parentGuid": "plex://show/611cdc357032b6002cb92e97",
+        "parentIndex": 1,
+        "parentKey": "/library/metadata/109436",
+        "parentRatingKey": "109436",
+        "parentSlug": "adventure-time-fionna-and-cake",
+        "parentStudio": "Cartoon Network Studios",
+        "parentTheme": "/library/metadata/109436/theme/1744674399",
+        "parentThumb": "/library/metadata/109436/thumb/1744674399",
+        "parentTitle": "Adventure Time: Fionna & Cake",
+        "ratingKey": "109437",
+        "summary": "Alongside former Ice King Simon Petrikov, Fionna and Cake embark on a multiverse-hopping journey of self-discovery while avoiding a powerful new foe.",
+        "thumb": "/library/metadata/109437/thumb/1744674399",
+        "title": "Season 1",
+        "type": "season",
+        "updatedAt": 1744674399,
+        "viewedLeafCount": 10,
+        "year": 2023
+      }
+    ],
+    "allowSync": true,
+    "art": "/library/metadata/109436/art/1744674399",
+    "identifier": "com.plexapp.plugins.library",
+    "key": "109436",
+    "librarySectionID": 2,
+    "librarySectionTitle": "TV shows",
+    "librarySectionUUID": "ba066eda-f6c7-4410-8dc6-c12e8585acce",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1744189307,
+    "nocache": true,
+    "parentIndex": 1,
+    "parentTitle": "Adventure Time: Fionna & Cake",
+    "parentYear": 2023,
+    "size": 1,
+    "summary": "Fionna and Cake--with help from the former Ice King, Simon Petrikov--embark on a multiverse-hopping adventure and journey of self-discovery. All the while, lurking in the shadows is a powerful new antagonist determined to track them down and erase them from existence.",
+    "theme": "/library/metadata/109436/theme/1744674399",
+    "thumb": "/library/metadata/109436/thumb/1744674399",
+    "title1": "TV shows",
+    "title2": "Adventure Time: Fionna & Cake",
+    "viewGroup": "season"
+  }
+}

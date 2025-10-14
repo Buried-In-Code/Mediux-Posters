@@ -9,6 +9,7 @@
 [![Ruff](https://img.shields.io/badge/ruff-enabled-brightgreen?logo=ruff&style=flat-square)](https://github.com/astral-sh/ruff)
 
 [![Github - Contributors](https://img.shields.io/github/contributors/Buried-In-Code/Mediux-Posters.svg?logo=Github&label=Contributors&style=flat-square)](https://github.com/Buried-In-Code/Mediux-Posters/graphs/contributors)
+[![Github Action - Testing](https://img.shields.io/github/actions/workflow/status/Buried-In-Code/Mediux-Posters/testing.yaml?branch=main&logo=Github&label=Testing&style=flat-square)](https://github.com/Buried-In-Code/Mediux-Posters/actions/workflows/testing.yaml)
 
 Fetches Show, Movie, and Collection cover art from Mediux and updates Plex/Jellyfin using TMDB IDs.
 
@@ -23,46 +24,49 @@ _Jellyfin Collections are not yet supported._
 
 ## Usage
 
-<details><summary>Mediux-Posters Commands</summary>
+<details><summary>mediux-posters Commands</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters --help`](docs/img/mediux-posters_commands.svg)
+  ![`uv run mediux-posters --help`](docs/img/mediux-posters.svg)
 
 </details>
-<details><summary>Mediux-Posters sync</summary>
+<details><summary>mediux-posters sync</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters sync --help`](docs/img/mediux-posters_sync.svg)
+  ![`uv run mediux-posters sync --help`](docs/img/mediux-posters_sync.svg)
 
 </details>
-<details><summary>Mediux-Posters show</summary>
+<details><summary>mediux-posters media</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters show --help`](docs/img/mediux-posters_show.svg)
+  ![`uv run mediux-posters media --help`](docs/img/mediux-posters_media.svg)
 
 </details>
-<details><summary>Mediux-Posters collection</summary>
+<details><summary>mediux-posters set</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters collection --help`](docs/img/mediux-posters_collection.svg)
+  ![`uv run mediux-posters set --help`](docs/img/mediux-posters_set.svg)
 
 </details>
-<details><summary>Mediux-Posters movie</summary>
+
+### mediux-posters settings Commands
+
+<details><summary>mediux-posters settings Commands</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters movie --help`](docs/img/mediux-posters_movie.svg)
+  ![`uv run mediux-posters settings --help`](docs/img/mediux-posters_settings.svg)
 
 </details>
-<details><summary>Mediux-Posters set</summary>
+<details><summary>mediux-posters settings view</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters set --help`](docs/img/mediux-posters_set.svg)
+  ![`uv run mediux-posters settings view --help`](docs/img/mediux-posters_settings_view.svg)
 
 </details>
-<details><summary>Mediux-Posters settings</summary>
+<details><summary>mediux-posters settings locate</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run Mediux-Posters settings --help`](docs/img/mediux-posters_settings.svg)
+  ![`uv run mediux-posters settings locate --help`](docs/img/mediux-posters_settings_locate.svg)
 
 </details>
 
@@ -92,6 +96,10 @@ priority_usernames = []
 
 [jellyfin]
 base_url = "http://127.0.0.1:8096"
+token = "<Token>"
+
+[mediux]
+base_url = "https://api.mediux.pro"
 token = "<Token>"
 
 [plex]

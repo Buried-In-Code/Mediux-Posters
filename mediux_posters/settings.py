@@ -1,4 +1,4 @@
-__all__ = ["Jellyfin", "Plex", "Settings"]
+__all__ = ["Settings"]
 
 from pathlib import Path
 from typing import Annotated, Any, ClassVar
@@ -22,12 +22,20 @@ except ModuleNotFoundError:
     import tomli as tomlreader  # Python < 3.11
 
 
-class Jellyfin(BaseModel):
+class SettingsModel(BaseModel, extra="ignore"): ...
+
+
+class Jellyfin(SettingsModel):
     base_url: str = "http://127.0.0.1:8096"
     token: Annotated[str | None, BeforeValidator(blank_is_none)] = None
 
 
-class Plex(BaseModel):
+class Mediux(SettingsModel):
+    base_url: str = "https://api.mediux.pro"
+    token: Annotated[str | None, BeforeValidator(blank_is_none)] = None
+
+
+class Plex(SettingsModel):
     base_url: str = "http://127.0.0.1:32400"
     token: Annotated[str | None, BeforeValidator(blank_is_none)] = None
 
@@ -49,7 +57,7 @@ def _stringify_values(content: dict[str, Any]) -> dict[str, Any]:
     return output
 
 
-class Settings(BaseModel):
+class Settings(SettingsModel):
     _file: ClassVar[Path] = get_config_root() / "settings.toml"
 
     exclude_usernames: list[str] = Field(default_factory=list)
@@ -57,6 +65,7 @@ class Settings(BaseModel):
     only_priority_usernames: bool = False
     priority_usernames: list[str] = Field(default_factory=list)
     jellyfin: Jellyfin = Jellyfin()
+    mediux: Mediux = Mediux()
     plex: Plex = Plex()
 
     @classmethod
@@ -67,11 +76,12 @@ class Settings(BaseModel):
             content = tomlreader.load(stream)
         return cls(**content)
 
-    def save(self) -> None:
+    def save(self) -> Self:
         with self._file.open("wb") as stream:
             content = self.model_dump(by_alias=False)
             content = _stringify_values(content=content)
             tomlwriter.dump(content, stream)
+        return self
 
     @classmethod
     def display(cls) -> None:

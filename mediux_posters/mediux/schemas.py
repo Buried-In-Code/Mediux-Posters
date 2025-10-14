@@ -1,0 +1,103 @@
+__all__ = [
+    "Collection",
+    "CollectionSet",
+    "Episode",
+    "FileType",
+    "Movie",
+    "MovieSet",
+    "Season",
+    "Show",
+    "ShowSet",
+]
+
+from datetime import date, datetime
+from enum import Enum
+
+from pydantic import AliasPath, Field
+
+from mediux_posters.utils import BaseModel
+
+
+class MediuxModel(BaseModel, extra="ignore"): ...
+
+
+class FileType(str, Enum):
+    ALBUM = "album"
+    BACKDROP = "backdrop"
+    LOGO = "logo"
+    MISC = "misc"
+    POSTER = "poster"
+    TITLE_CARD = "titlecard"
+
+    def __str__(self) -> str:
+        return self.value
+
+
+class File(MediuxModel):
+    id: str
+    file_type: FileType
+    last_updated: datetime = Field(alias="modified_on")
+    show_id: int | None = Field(validation_alias=AliasPath("show", "id"), default=None)
+    season_id: int | None = Field(validation_alias=AliasPath("season", "id"), default=None)
+    episode_id: int | None = Field(validation_alias=AliasPath("episode", "id"), default=None)
+    collection_id: int | None = Field(validation_alias=AliasPath("collection", "id"), default=None)
+    movie_id: int | None = Field(validation_alias=AliasPath("movie", "id"), default=None)
+
+
+class Episode(MediuxModel):
+    id: int
+    number: int = Field(alias="episode_number")
+    title: str = Field(alias="episode_title")
+
+
+class Season(MediuxModel):
+    episodes: list[Episode]
+    id: int
+    number: int = Field(alias="season_number")
+    title: str | None = Field(alias="season_name", default=None)
+
+
+class Show(MediuxModel):
+    id: int
+    release_date: date | None = Field(alias="first_air_date")
+    seasons: list[Season]
+    title: str
+
+
+class ShowSet(MediuxModel):
+    last_updated: datetime | None = Field(alias="date_updated")
+    files: list[File]
+    id: int
+    set_title: str
+    show: Show = Field(alias="show_id")
+    username: str = Field(validation_alias=AliasPath("user_created", "username"))
+
+
+class Movie(MediuxModel):
+    id: int
+    release_date: date | None
+    title: str
+
+
+class MovieSet(MediuxModel):
+    last_updated: datetime | None = Field(alias="date_updated")
+    files: list[File]
+    id: int
+    movie: Movie = Field(alias="movie_id")
+    set_title: str
+    username: str = Field(validation_alias=AliasPath("user_created", "username"))
+
+
+class Collection(MediuxModel):
+    id: int
+    movies: list[Movie]
+    title: str = Field(alias="collection_name")
+
+
+class CollectionSet(MediuxModel):
+    collection: Collection = Field(alias="collection_id")
+    last_updated: datetime | None = Field(alias="date_updated")
+    files: list[File]
+    id: int
+    set_title: str
+    username: str = Field(validation_alias=AliasPath("user_created", "username"))
