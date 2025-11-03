@@ -333,7 +333,11 @@ class Mediux:
         output.parent.mkdir(parents=True, exist_ok=True)
         output.unlink(missing_ok=True)
         with self.client.stream("GET", f"/assets/{file_id}") as response:
-            total = int(response.headers["Content-Length"])
+            if not response.is_success:
+                if response.status_code in (401, 403):
+                    raise AuthenticationError(f"{response.status_code}: {response.reason_phrase}")
+                raise ServiceError(f"{response.status_code}: {response.reason_phrase}")
+            total = int(response.headers.get("Content-Length", 0))
 
             with Progress(console=CONSOLE, expand=True) as progress:
                 download_task = progress.add_task(

@@ -35,7 +35,7 @@ class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
             base_url=base_url,
             headers={
                 "Accept": "application/json",
-                "X-Emby-Token": token,
+                "Authorization": f'MediaBrowser Token="{token}"',
                 "User-Agent": f"{__project__.title()}/{__version__}/{system()}: {release()}",
             },
         )
@@ -45,7 +45,7 @@ class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
         return entry.get("ProviderIds", {}).get(prefix)
 
     def _perform_get_request(
-        self, endpoint: str, params: dict[str, str | list[str]] | None = None
+        self, endpoint: str, params: dict[str, bool | str | list[str | None]] | None = None
     ) -> dict:
         if params is None:
             params = {}
