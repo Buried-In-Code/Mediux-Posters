@@ -14,7 +14,7 @@ jobs:
   rich_codex:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v7
       - name: Setup Python
         run: uv python install '3.13'
