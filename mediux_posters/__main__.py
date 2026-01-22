@@ -209,7 +209,7 @@ def process_set_data(
                 "[%s] Image file '%s' is larger than %d MB, skipping upload",
                 type(service).__name__,
                 image_file,
-                MAX_IMAGE_SIZE,
+                MAX_IMAGE_SIZE / 1000 / 1000,
             )
             return
         try:
