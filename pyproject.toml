@@ -4,13 +4,13 @@ requires = ["hatchling"]
 
 [dependency-groups]
 dev = [
-  "pre-commit >= 4.3.0"
+  "pre-commit >= 4.5.0"
 ]
 tests = [
-  "pytest >= 8.4.0",
+  "pytest >= 9.0.0",
   "pytest-cov >= 7.0.0",
-  "pytest-httpx >= 0.35.0",
-  "tox >= 4.32.0",
+  "pytest-httpx >= 0.36.0",
+  "tox >= 4.34.0",
   "tox-uv >= 1.29.0"
 ]
 
@@ -36,9 +36,9 @@ dependencies = [
   "questionary >= 2.1.0",
   "ratelimit >= 2.2.0",
   "rich >= 14.2.0",
-  "tomli >= 2.3.0 ; python_version < '3.11'",
+  "tomli >= 2.4.0 ; python_version < '3.11'",
   "tomli-w >= 1.2.0",
-  "typer >= 0.20.0"
+  "typer >= 0.21.0"
 ]
 description = "Fetches Show, Movie, and Collection cover art from Mediux and updates Plex/Jellyfin using TMDB IDs."
 dynamic = ["version"]
