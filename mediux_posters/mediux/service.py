@@ -332,18 +332,25 @@ class Mediux:
     def download_image(self, file_id: str, output: Path) -> None:
         output.parent.mkdir(parents=True, exist_ok=True)
         output.unlink(missing_ok=True)
-        with self.client.stream("GET", f"/assets/{file_id}") as response:
-            if not response.is_success:
-                if response.status_code in (401, 403):
-                    raise AuthenticationError(f"{response.status_code}: {response.reason_phrase}")
-                raise ServiceError(f"{response.status_code}: {response.reason_phrase}")
-            total = int(response.headers.get("Content-Length", 0))
+        try:
+            with self.client.stream("GET", f"/assets/{file_id}") as response:
+                if not response.is_success:
+                    if response.status_code in (401, 403):
+                        raise AuthenticationError(
+                            f"{response.status_code}: {response.reason_phrase}"
+                        )
+                    raise ServiceError(f"{response.status_code}: {response.reason_phrase}")
+                total = int(response.headers.get("Content-Length", 0))
 
-            with Progress(console=CONSOLE, expand=True) as progress:
-                download_task = progress.add_task(
-                    f"Downloading {output.parent.name}/{output.name}", total=total
-                )
-                with output.open("wb") as stream:
-                    for chunk in response.iter_bytes():
-                        stream.write(chunk)
-                        progress.update(download_task, completed=response.num_bytes_downloaded)
+                with Progress(console=CONSOLE, expand=True) as progress:
+                    download_task = progress.add_task(
+                        f"Downloading {output.parent.name}/{output.name}", total=total
+                    )
+                    with output.open("wb") as stream:
+                        for chunk in response.iter_bytes():
+                            stream.write(chunk)
+                            progress.update(download_task, completed=response.num_bytes_downloaded)
+        except RequestError as err:
+            raise ServiceError(f"Unable to connect to '{err.request.url.path}'") from err
+        except TimeoutException as err:
+            raise ServiceError("Service took too long to respond") from err
