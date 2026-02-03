@@ -31,7 +31,7 @@ from mediux_posters.services import (
     Season,
     Show,
 )
-from mediux_posters.services.service_cache import CacheKey, ServiceCache
+from mediux_posters.services.service_cache import CacheData, CacheKey, ServiceCache
 from mediux_posters.settings import Settings
 from mediux_posters.utils import delete_folder, get_cached_image, slugify
 
@@ -155,6 +155,25 @@ def find_matching_file(
     return None
 
 
+def is_better_source(
+    existing: CacheData,
+    set_data: ShowSet | CollectionSet | MovieSet,
+    new_last_updated: datetime,
+    priority_usernames: list[str],
+) -> bool:
+    existing_rank = get_creator_rank(
+        priority_usernames=priority_usernames, creator=existing.creator
+    )
+    new_rank = get_creator_rank(priority_usernames=priority_usernames, creator=set_data.username)
+    if new_rank < existing_rank:
+        return True
+    if new_rank > existing_rank:
+        return False
+    if not isinstance(set_data, CollectionSet):
+        return new_last_updated > existing.last_updated
+    return False
+
+
 def process_image(
     obj: Show | Season | Episode | Collection | Movie,
     cache_key: CacheKey,
@@ -182,15 +201,12 @@ def process_image(
     should_replace = False
     if force or not existing:
         should_replace = True
-    elif set_data.id != existing.set_id or file.last_updated > existing.last_updated:
-        existing_rank = get_creator_rank(
-            priority_usernames=priority_usernames, creator=existing.creator
-        )
-        new_rank = get_creator_rank(
-            priority_usernames=priority_usernames, creator=set_data.username
-        )
-        should_replace = new_rank < existing_rank or (
-            new_rank == existing_rank and file.last_updated > existing.last_updated
+    else:
+        should_replace = is_better_source(
+            existing=existing,
+            set_data=set_data,
+            new_last_updated=file.last_updated,
+            priority_usernames=priority_usernames,
         )
 
     needs_download = (
