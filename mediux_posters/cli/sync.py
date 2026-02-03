@@ -31,7 +31,8 @@ def sync_posters(
             show_default=False,
             case_sensitive=False,
             default_factory=list,
-            help="List of Services to skip. Specify this option multiple times for skipping multiple services.",
+            help="List of Services to skip. "
+            "Specify this option multiple times for skipping multiple services.",
         ),
     ],
     skip_media_types: Annotated[
@@ -42,7 +43,8 @@ def sync_posters(
             show_default=False,
             case_sensitive=False,
             default_factory=list,
-            help="List of MediaTypes to skip. Specify this option multiple times for skipping multiple types.",
+            help="List of MediaTypes to skip. "
+            "Specify this option multiple times for skipping multiple types.",
         ),
     ],
     skip_libraries: Annotated[
@@ -52,7 +54,8 @@ def sync_posters(
             "-L",
             show_default=False,
             default_factory=list,
-            help="List of libraries to skip. Specify this option multiple times for skipping multiple libraries.",
+            help="List of libraries to skip. "
+            "Specify this option multiple times for skipping multiple libraries.",
         ),
     ],
     interactive: Annotated[

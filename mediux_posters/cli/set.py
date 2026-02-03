@@ -34,7 +34,8 @@ def set_posters(
             show_default=False,
             case_sensitive=False,
             default_factory=list,
-            help="List of Services to skip. Specify this option multiple times for skipping multiple services.",
+            help="List of Services to skip. "
+            "Specify this option multiple times for skipping multiple services.",
         ),
     ],
     clean: Annotated[

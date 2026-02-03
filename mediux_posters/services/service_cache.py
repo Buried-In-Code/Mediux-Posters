@@ -56,8 +56,8 @@ class ServiceCache:
                 """
                 CREATE TABLE IF NOT EXISTS cache (
                     tmdb_id INTEGER NOT NULL,
-                    season_num INTEGER NULL,
-                    episode_num INTEGER NULL,
+                    season_num INTEGER NOT NULL DEFAULT 0,
+                    episode_num INTEGER NOT NULL DEFAULT 0,
                     type TEXT NOT NULL,
                     creator TEXT NOT NULL,
                     set_id INTEGER NOT NULL,
@@ -114,7 +114,8 @@ class ServiceCache:
             conn.execute(
                 """
                 INSERT INTO cache (
-                    tmdb_id, season_num, episode_num, type, creator, set_id, last_updated, plex_uploaded, jellyfin_uploaded
+                    tmdb_id, season_num, episode_num, type, creator,
+                    set_id, last_updated, plex_uploaded, jellyfin_uploaded
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
                 """,
                 (*key.as_tuple(), creator, set_id, last_updated.isoformat(), None, None),
