@@ -238,7 +238,7 @@ def process_image(
             set_data.username,
         )
         should_log = False
-    if action is Action.DOWNLOAD:
+    if action is Action.DOWNLOAD or not image_file.exists():
         image_file.unlink(missing_ok=True)
         try:
             mediux.download_image(file_id=file.id, output=image_file)
