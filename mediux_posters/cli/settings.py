@@ -1,19 +1,10 @@
-__all__ = ["app"]
+__all__ = ["settings"]
 
-from typer import Typer
-
-from mediux_posters.console import CONSOLE
+from mediux_posters.cli._typer import app
 from mediux_posters.settings import Settings
 
-app = Typer(help="Commands for application settings.")
 
-
-@app.command(name="view", help="Display the current and default settings.")
-def view_settings() -> None:
+@app.command(help="Display app settings and defaults.")
+def settings() -> None:
     settings = Settings.load()
     settings.display()
-
-
-@app.command(name="locate", help="Display the path to the settings file.")
-def locate_settings() -> None:
-    CONSOLE.print(Settings._file)  # noqa: SLF001
