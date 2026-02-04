@@ -27,7 +27,7 @@ _Jellyfin Collections are not yet supported._
 <details><summary>mediux-posters Commands</summary>
 
   <!-- RICH-CODEX hide_command: true -->
-  ![`uv run mediux-posters --help`](docs/img/mediux-posters.svg)
+  ![`uv run mediux-posters`](docs/img/mediux-posters.svg)
 
 </details>
 <details><summary>mediux-posters sync</summary>
@@ -48,25 +48,10 @@ _Jellyfin Collections are not yet supported._
   ![`uv run mediux-posters set --help`](docs/img/mediux-posters_set.svg)
 
 </details>
-
-### mediux-posters settings Commands
-
-<details><summary>mediux-posters settings Commands</summary>
+<details><summary>mediux-posters settings</summary>
 
   <!-- RICH-CODEX hide_command: true -->
   ![`uv run mediux-posters settings --help`](docs/img/mediux-posters_settings.svg)
-
-</details>
-<details><summary>mediux-posters settings view</summary>
-
-  <!-- RICH-CODEX hide_command: true -->
-  ![`uv run mediux-posters settings view --help`](docs/img/mediux-posters_settings_view.svg)
-
-</details>
-<details><summary>mediux-posters settings locate</summary>
-
-  <!-- RICH-CODEX hide_command: true -->
-  ![`uv run mediux-posters settings locate --help`](docs/img/mediux-posters_settings_locate.svg)
 
 </details>
 

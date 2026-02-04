@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - README.md
-      - mediux_posters/__main__.py
+      - mediux_posters/cli/**
   workflow_dispatch:
 
 permissions:
@@ -25,4 +25,4 @@ jobs:
         uses: ewels/rich-codex@v1
         with:
           commit_changes: true
-          clean_img_paths: true
+          clean_img_paths: docs/img/*.svg
