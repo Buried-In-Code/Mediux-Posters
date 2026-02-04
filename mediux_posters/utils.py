@@ -50,7 +50,7 @@ class MediaType(str, Enum):
 
 
 def blank_is_none(value: str) -> str | None:
-    return value if value else None
+    return value or None
 
 
 def delete_folder(folder: Path) -> None:

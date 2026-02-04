@@ -48,6 +48,15 @@ class ServiceOption(str, Enum):
         return self.value
 
 
+class Action(str, Enum):
+    SKIP = "Skip"
+    DOWNLOAD = "Download"
+    UPLOAD = "Upload"
+
+    def __str__(self) -> str:
+        return self.value
+
+
 def setup_services(
     skip_services: list[ServiceOption], clean: bool, debug: bool = False
 ) -> tuple[Settings, Mediux, list[BaseService]]:
@@ -155,23 +164,35 @@ def find_matching_file(
     return None
 
 
-def is_better_source(
-    existing: CacheData,
+def determine_action(  # noqa: PLR0911
+    existing: CacheData | None,
+    service_timestamp: datetime | None,
     set_data: ShowSet | CollectionSet | MovieSet,
-    new_last_updated: datetime,
+    file: File,
     priority_usernames: list[str],
-) -> bool:
+    force: bool,
+) -> Action:
+    if force:
+        return Action.DOWNLOAD
+    if not existing:
+        return Action.DOWNLOAD
+
     existing_rank = get_creator_rank(
         priority_usernames=priority_usernames, creator=existing.creator
     )
     new_rank = get_creator_rank(priority_usernames=priority_usernames, creator=set_data.username)
-    if new_rank < existing_rank:
-        return True
+
     if new_rank > existing_rank:
-        return False
-    if not isinstance(set_data, CollectionSet):
-        return new_last_updated > existing.last_updated
-    return False
+        return Action.SKIP
+    if new_rank < existing_rank:
+        return Action.DOWNLOAD
+    if existing.set_id != set_data.id:
+        return Action.SKIP
+    if file.last_updated > existing.last_updated:
+        return Action.DOWNLOAD
+    if service_timestamp is None or service_timestamp < existing.last_updated:
+        return Action.UPLOAD
+    return Action.SKIP
 
 
 def process_image(
@@ -184,33 +205,40 @@ def process_image(
     mediux: Mediux,
     service: BaseService,
     priority_usernames: list[str],
+    should_log: bool,
     kometa_integration: bool = False,
     force: bool = False,
-) -> None:
+) -> bool:
     uploaded_attr = f"{cache_key.type.name.lower()}_uploaded"
     if getattr(obj, uploaded_attr):
-        return
+        return should_log
     file = find_matching_file(set_data=set_data, file_type=cache_key.type, id_value=id_value)
     if not file:
-        return
+        return should_log
 
     image_file = get_cached_image(parent, filename)
     existing = service.cache.select(key=cache_key)
     service_timestamp = service.cache.get_timestamp(key=cache_key, service=type(service).__name__)
 
-    should_replace = False
-    if force or not existing:
-        should_replace = True
-    else:
-        should_replace = is_better_source(
-            existing=existing,
-            set_data=set_data,
-            new_last_updated=file.last_updated,
-            priority_usernames=priority_usernames,
+    action = determine_action(
+        existing=existing,
+        service_timestamp=service_timestamp,
+        set_data=set_data,
+        file=file,
+        priority_usernames=priority_usernames,
+        force=force,
+    )
+    if action is Action.SKIP:
+        return should_log
+    if should_log:
+        LOGGER.info(
+            "[Mediux] %sing '%s' by '%s'",
+            action,
+            set_data.set_title.replace("'", "'"),
+            set_data.username,
         )
-
-    needs_download = force or not image_file.exists() or not existing or should_replace
-    if needs_download:
+        should_log = False
+    if action is Action.DOWNLOAD:
         image_file.unlink(missing_ok=True)
         try:
             mediux.download_image(file_id=file.id, output=image_file)
@@ -218,46 +246,31 @@ def process_image(
             LOGGER.error("[Mediux] %s", err)
             service.cache.delete(key=cache_key)
             setattr(obj, uploaded_attr, False)
-            return
-
-    needs_upload = (
-        force
-        or service_timestamp is None
-        or file.last_updated > service_timestamp
-        or should_replace
-    )
-    uploaded = False
-    if needs_upload:
-        try:
-            uploaded = service.upload_image(
-                object_id=obj.id, image_file=image_file, kometa_integration=kometa_integration
+            return should_log
+        if not existing:
+            service.cache.insert(
+                key=cache_key,
+                creator=set_data.username,
+                set_id=set_data.id,
+                last_updated=file.last_updated,
             )
-        except ServiceError as err:
-            LOGGER.error("[%s] %s", type(service).__name__, err)
-            service.cache.update_service(
-                key=cache_key, service=type(service).__name__, timestamp=None
+        else:
+            service.cache.update(
+                key=cache_key,
+                creator=set_data.username,
+                set_id=set_data.id,
+                last_updated=file.last_updated,
             )
-            setattr(obj, uploaded_attr, False)
-
-    if not existing:
-        service.cache.insert(
-            key=cache_key,
-            creator=set_data.username,
-            set_id=set_data.id,
-            last_updated=file.last_updated,
-        )
-    elif should_replace:
-        service.cache.update(
-            key=cache_key,
-            creator=set_data.username,
-            set_id=set_data.id,
-            last_updated=file.last_updated,
-        )
-    if uploaded:
-        service.cache.update_service(
-            key=cache_key, service=type(service).__name__, timestamp=datetime.now(tz=timezone.utc)
-        )
-        setattr(obj, uploaded_attr, True)
+    if not service.upload_image(
+        object_id=obj.id, image_file=image_file, kometa_integration=kometa_integration
+    ):
+        service.cache.update_service(key=cache_key, service=type(service).__name__, timestamp=None)
+        setattr(obj, uploaded_attr, False)
+        return should_log
+    now = datetime.now(tz=timezone.utc)
+    service.cache.update_service(key=cache_key, service=type(service).__name__, timestamp=now)
+    setattr(obj, uploaded_attr, True)
+    return should_log
 
 
 def process_entry_images(
@@ -266,13 +279,14 @@ def process_entry_images(
     mediux: Mediux,
     service: BaseService,
     priority_usernames: list[str],
+    should_log: bool,
     kometa_integration: bool = False,
     force: bool = False,
-) -> None:
+) -> bool:
     parent = slugify(value=entry.display_name)
     file_map = {FileType.POSTER: "poster.jpg", FileType.BACKDROP: "backdrop.jpg"}
     for file_type, filename in file_map.items():
-        process_image(
+        should_log = process_image(
             obj=entry,
             cache_key=CacheKey(tmdb_id=entry.tmdb_id, type=file_type),
             id_value=entry.tmdb_id,
@@ -284,7 +298,9 @@ def process_entry_images(
             priority_usernames=priority_usernames,
             kometa_integration=kometa_integration,
             force=force,
+            should_log=should_log,
         )
+    return should_log
 
 
 def process_show_data(
@@ -296,7 +312,8 @@ def process_show_data(
     force: bool = False,
     kometa_integration: bool = False,
 ) -> None:
-    process_entry_images(
+    should_log = True
+    should_log = process_entry_images(
         entry=entry,
         set_data=set_data,
         mediux=mediux,
@@ -304,6 +321,7 @@ def process_show_data(
         priority_usernames=priority_usernames,
         kometa_integration=kometa_integration,
         force=force,
+        should_log=should_log,
     )
     try:
         seasons = service.list_seasons(show_id=entry.id)
@@ -315,7 +333,7 @@ def process_show_data(
         mediux_season = next((x for x in set_data.show.seasons if x.number == season.number), None)
         if not mediux_season:
             continue
-        process_image(
+        should_log = process_image(
             obj=season,
             cache_key=CacheKey(
                 tmdb_id=entry.tmdb_id, season_num=season.number, type=FileType.POSTER
@@ -329,6 +347,7 @@ def process_show_data(
             priority_usernames=priority_usernames,
             kometa_integration=kometa_integration,
             force=force,
+            should_log=should_log,
         )
         try:
             episodes = service.list_episodes(show_id=entry.id, season_id=season.id)
@@ -342,7 +361,7 @@ def process_show_data(
             )
             if not mediux_episode:
                 continue
-            process_image(
+            should_log = process_image(
                 obj=episode,
                 cache_key=CacheKey(
                     tmdb_id=entry.tmdb_id,
@@ -359,6 +378,7 @@ def process_show_data(
                 priority_usernames=priority_usernames,
                 kometa_integration=kometa_integration,
                 force=force,
+                should_log=should_log,
             )
 
 
@@ -371,7 +391,8 @@ def process_collection_data(
     force: bool = False,
     kometa_integration: bool = False,
 ) -> None:
-    process_entry_images(
+    should_log = True
+    should_log = process_entry_images(
         entry=entry,
         set_data=set_data,
         mediux=mediux,
@@ -379,6 +400,7 @@ def process_collection_data(
         priority_usernames=priority_usernames,
         kometa_integration=kometa_integration,
         force=force,
+        should_log=should_log,
     )
     try:
         movies = service.list_collection_movies(collection_id=entry.id)
@@ -393,7 +415,7 @@ def process_collection_data(
         parent = slugify(value=movie.display_name)
         file_map = {FileType.POSTER: "poster.jpg", FileType.BACKDROP: "backdrop.jpg"}
         for file_type, filename in file_map.items():
-            process_image(
+            should_log = process_image(
                 obj=movie,
                 cache_key=CacheKey(tmdb_id=movie.tmdb_id, type=file_type),
                 id_value=mediux_movie.id,
@@ -405,6 +427,7 @@ def process_collection_data(
                 priority_usernames=priority_usernames,
                 kometa_integration=kometa_integration,
                 force=force,
+                should_log=should_log,
             )
 
 
@@ -417,7 +440,8 @@ def process_movie_data(
     force: bool = False,
     kometa_integration: bool = False,
 ) -> None:
-    process_entry_images(
+    should_log = True
+    should_log = process_entry_images(
         entry=entry,
         set_data=set_data,
         mediux=mediux,
@@ -425,4 +449,5 @@ def process_movie_data(
         priority_usernames=priority_usernames,
         kometa_integration=kometa_integration,
         force=force,
+        should_log=should_log,
     )
