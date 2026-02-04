@@ -209,13 +209,7 @@ def process_image(
             priority_usernames=priority_usernames,
         )
 
-    needs_download = (
-        force
-        or not image_file.exists()
-        or not existing
-        or file.last_updated > existing.last_updated
-        or should_replace
-    )
+    needs_download = force or not image_file.exists() or not existing or should_replace
     if needs_download:
         image_file.unlink(missing_ok=True)
         try:
@@ -235,21 +229,24 @@ def process_image(
     uploaded = False
     if needs_upload:
         try:
-            service.upload_image(
+            uploaded = service.upload_image(
                 object_id=obj.id, image_file=image_file, kometa_integration=kometa_integration
             )
-            uploaded = True
         except ServiceError as err:
             LOGGER.error("[%s] %s", type(service).__name__, err)
+            service.cache.update_service(
+                key=cache_key, service=type(service).__name__, timestamp=None
+            )
+            setattr(obj, uploaded_attr, False)
 
-    if should_replace and not existing:
+    if not existing:
         service.cache.insert(
             key=cache_key,
             creator=set_data.username,
             set_id=set_data.id,
             last_updated=file.last_updated,
         )
-    else:
+    elif should_replace:
         service.cache.update(
             key=cache_key,
             creator=set_data.username,
@@ -261,9 +258,6 @@ def process_image(
             key=cache_key, service=type(service).__name__, timestamp=datetime.now(tz=timezone.utc)
         )
         setattr(obj, uploaded_attr, True)
-    else:
-        service.cache.update_service(key=cache_key, service=type(service).__name__, timestamp=None)
-        setattr(obj, uploaded_attr, False)
 
 
 def process_entry_images(
