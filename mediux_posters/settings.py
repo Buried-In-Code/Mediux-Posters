@@ -31,7 +31,7 @@ class Jellyfin(SettingsModel):
 
 
 class Mediux(SettingsModel):
-    base_url: str = "https://api.mediux.pro"
+    base_url: str = "https://images.mediux.io"
     token: Annotated[str | None, BeforeValidator(blank_is_none)] = None
 
 

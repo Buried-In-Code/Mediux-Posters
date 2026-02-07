@@ -96,11 +96,7 @@ def media_posters(
                 except ServiceError as err:
                     LOGGER.error("[%s] %s", type(service).__name__, err)
                     continue
-            CONSOLE.rule(
-                rf"[{idx}/{url_count}] {entry.display_name} \[tmdb-{tmdb_id}]",
-                align="left",
-                style="subtitle",
-            )
+            CONSOLE.print(rf"[{idx}/{url_count}] {entry.display_name} \[tmdb-{tmdb_id}]")
             with CONSOLE.status(r"\[Mediux] Searching for new Sets"):
                 try:
                     set_list = mediux.list_sets(
