@@ -84,7 +84,7 @@ base_url = "http://127.0.0.1:8096"
 token = "<Token>"
 
 [mediux]
-base_url = "https://api.mediux.pro"
+base_url = "https://images.mediux.io"
 token = "<Token>"
 
 [plex]
