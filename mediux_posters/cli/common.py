@@ -195,7 +195,7 @@ def determine_action(  # noqa: PLR0911
     return Action.SKIP
 
 
-def process_image(
+def process_image(  # noqa: PLR0911
     obj: Show | Season | Episode | Collection | Movie,
     cache_key: CacheKey,
     id_value: int,
@@ -261,6 +261,15 @@ def process_image(
                 set_id=set_data.id,
                 last_updated=file.last_updated,
             )
+
+    if image_file.stat().st_size >= MAX_IMAGE_SIZE:
+        LOGGER.warning(
+            "[%s] Image file '%s' is larger than %d MB, skipping upload",
+            type(service).__name__,
+            image_file,
+            MAX_IMAGE_SIZE / 1000 / 1000,
+        )
+        return should_log
     if not service.upload_image(
         object_id=obj.id, image_file=image_file, kometa_integration=kometa_integration
     ):
