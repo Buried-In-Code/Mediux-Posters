@@ -94,11 +94,7 @@ def set_posters(
                 if not media_type or not tmdb_id:
                     LOGGER.warning("[Mediux] Unable to determine media type for set id: %d", set_id)
                     continue
-            CONSOLE.rule(
-                rf"[{idx}/{url_count}] {set_data.set_title} \[tmdb-{tmdb_id}]",
-                align="left",
-                style="subtitle",
-            )
+            CONSOLE.print(rf"[{idx}/{url_count}] {set_data.set_title} \[tmdb-{tmdb_id}]")
             with CONSOLE.status(rf"\[{type(service).__name__}] Searching for TMDB id: {tmdb_id}"):
                 try:
                     entry = service.get(media_type=media_type, tmdb_id=tmdb_id)

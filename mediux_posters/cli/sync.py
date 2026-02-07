@@ -108,10 +108,8 @@ def sync_posters(
                     continue
             entry_count = len(entries)
             for idx, entry in enumerate(entries, start=1):
-                CONSOLE.rule(
-                    rf"[{idx}/{entry_count}] {entry.display_name} \[tmdb-{entry.tmdb_id}]",
-                    align="left",
-                    style="subtitle",
+                CONSOLE.print(
+                    rf"[{idx}/{entry_count}] {entry.display_name} \[tmdb-{entry.tmdb_id}]"
                 )
                 with CONSOLE.status(r"\[Mediux] Searching for new Sets"):
                     try:
