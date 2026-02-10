@@ -12,10 +12,18 @@ __all__ = [
 
 from datetime import date, datetime
 from enum import Enum
+from typing import Annotated
 
-from pydantic import AliasPath, Field
+from pydantic import AliasPath, BeforeValidator, Field, TypeAdapter, ValidationError
 
 from mediux_posters.utils import BaseModel
+
+
+def int_or_str(val: int | str | None) -> int | str | None:
+    try:
+        return TypeAdapter(int).validate_python(val)
+    except ValidationError:
+        return val
 
 
 class MediuxModel(BaseModel, extra="ignore"): ...
@@ -37,11 +45,17 @@ class File(MediuxModel):
     id: str
     file_type: FileType
     last_updated: datetime = Field(alias="modified_on")
-    show_id: int | None = Field(validation_alias=AliasPath("show", "id"), default=None)
-    season_id: int | None = Field(validation_alias=AliasPath("season", "id"), default=None)
-    episode_id: int | None = Field(validation_alias=AliasPath("episode", "id"), default=None)
-    collection_id: int | None = Field(validation_alias=AliasPath("collection", "id"), default=None)
-    movie_id: int | None = Field(validation_alias=AliasPath("movie", "id"), default=None)
+    show_id: Annotated[int | None, Field(validation_alias=AliasPath("show", "id"))] = None
+    season_id: Annotated[
+        int | str | None,
+        BeforeValidator(int_or_str),
+        Field(validation_alias=AliasPath("season", "id")),
+    ] = None
+    episode_id: Annotated[int | None, Field(validation_alias=AliasPath("episode", "id"))] = None
+    collection_id: Annotated[int | None, Field(validation_alias=AliasPath("collection", "id"))] = (
+        None
+    )
+    movie_id: Annotated[int | None, Field(validation_alias=AliasPath("movie", "id"))] = None
 
 
 class Episode(MediuxModel):
@@ -52,7 +66,7 @@ class Episode(MediuxModel):
 
 class Season(MediuxModel):
     episodes: list[Episode]
-    id: int
+    id: Annotated[int | str, BeforeValidator(int_or_str)]
     number: int = Field(alias="season_number")
     title: str | None = Field(alias="season_name", default=None)
 

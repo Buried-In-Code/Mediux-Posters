@@ -60,6 +60,16 @@ def test_get_show_set_invalid(mediux_session: Mediux) -> None:
     assert result is None
 
 
+def test_show_set_season_id_typing(mediux_session: Mediux) -> None:
+    result = mediux_session.get_show_set(set_id=6578)
+    assert result is not None
+
+    assert isinstance(result.files[0].season_id, str)
+    assert result.files[0].season_id == "ALT15773"
+    assert isinstance(result.show.seasons[1].id, str)
+    assert result.show.seasons[1].id == "ALT26311"
+
+
 def test_list_collection_sets(mediux_session: Mediux) -> None:
     results = mediux_session.list_collection_sets(tmdb_id=573436)
     assert len(results) != 0
@@ -81,7 +91,7 @@ def test_list_collection_sets(mediux_session: Mediux) -> None:
     assert result.files[0].movie_id == 324857
     assert result.files[0].collection_id is None
     assert result.id == 24404
-    assert result.set_title == "Spider-Man: Spider-Verse Collection"
+    assert result.set_title == "Spider-Man: Spider-Verse Collection Set"
     assert result.username == "willtong93"
 
 
