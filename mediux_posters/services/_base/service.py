@@ -22,7 +22,7 @@ M = TypeVar("M", bound=BaseMovie)
 
 
 class BaseService(ABC, Generic[T, S, E, C, M]):
-    def __init__(self, cache: ServiceCache) -> None:
+    def __init__(self, cache: ServiceCache | None = None) -> None:
         self.cache = cache
 
     @abstractmethod
