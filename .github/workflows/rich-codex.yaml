@@ -7,22 +7,24 @@ on:
       - mediux_posters/cli/**
   workflow_dispatch:
 
-permissions:
-  contents: write
+env:
+  PY_VERSION: 3.14
 
 jobs:
   rich_codex:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v7
-      - name: Setup Python
-        run: uv python install 3.14
+        with:
+          python-version: ${{ env.PY_VERSION }}
       - name: Install project
-        run: uv sync --dev
-
+        run: uv sync --locked --no-dev
       - name: Generate terminal images with rich-codex
-        uses: ewels/rich-codex@v1
+        uses: ewels/rich-codex@v1.2.11
         with:
           commit_changes: true
           clean_img_paths: docs/img/*.svg

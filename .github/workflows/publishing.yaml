@@ -2,6 +2,9 @@ name: Publishing
 
 on: push
 
+env:
+  PY_VERSION: 3.14
+
 jobs:
   build:
     name: Build
@@ -11,7 +14,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.13'
       - name: Install pypa/build
@@ -35,9 +38,9 @@ jobs:
         with:
           name: python-package-distributions
           path: dist/
-      - uses: astral-sh/setup-uv@v5
-      - name: Setup Python
-        run: uv python install 3.14
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ env.PY_VERSION }}
       - name: Validate dist
         run: uv run --with twine twine check dist/*
 
@@ -59,4 +62,4 @@ jobs:
         with:
           name: python-package-distributions
           path: dist/
-      - uses: pypa/gh-action-pypi-publish@release/v1
+      - uses: pypa/gh-action-pypi-publish@v1.13.0

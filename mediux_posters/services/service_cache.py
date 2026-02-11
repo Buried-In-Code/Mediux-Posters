@@ -16,8 +16,8 @@ CACHE_QUERY: Final[str] = "tmdb_id = ? AND season_num = ? AND episode_num = ? AN
 @dataclass(kw_only=True)
 class CacheKey:
     tmdb_id: int
-    season_num: int = 0
-    episode_num: int = 0
+    season_num: int = -1
+    episode_num: int = -1
     type: FileType
 
     def as_tuple(self) -> tuple[int, int, int, str]:
@@ -56,8 +56,8 @@ class ServiceCache:
                 """
                 CREATE TABLE IF NOT EXISTS cache (
                     tmdb_id INTEGER NOT NULL,
-                    season_num INTEGER NOT NULL DEFAULT 0,
-                    episode_num INTEGER NOT NULL DEFAULT 0,
+                    season_num INTEGER NOT NULL DEFAULT -1,
+                    episode_num INTEGER NOT NULL DEFAULT -1,
                     type TEXT NOT NULL,
                     creator TEXT NOT NULL,
                     set_id INTEGER NOT NULL,

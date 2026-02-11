@@ -37,27 +37,27 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
-      - name: Setup Python
-        run: uv python install ${{ matrix.python-version }}
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ matrix.python-version }}
       - name: Install project
-        run: uv sync --group tests
+        run: uv sync --locked --no-dev --group tests
       - name: Run tests
         env:
           MEDIUX__BASE_URL: ${{ secrets.MEDIUX__BASE_URL }}
           MEDIUX__TOKEN: ${{ secrets.MEDIUX__TOKEN }}
         run: uv run pytest
 
-  collector:
+  check:
     if: always()
     needs:
       - pytest
-
     permissions: {}
     runs-on: ubuntu-latest
 
     steps:
       - name: Check for failures
-        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
-        run: echo job failed && exit 1
+        uses: re-actors/all-green@v1.2.2
+        with:
+          jobs: ${{ toJSON(needs) }}

@@ -1,0 +1,47 @@
+name: Linting
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - docs/**
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - docs/**
+
+env:
+  PY_VERSION: 3.14
+
+jobs:
+  pre-commit:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ env.PY_VERSION }}
+      - name: Install project
+        run: uv sync --locked --no-dev
+      - name: Run pre-commit
+        run: uv run --with pre-commit pre-commit run -a
+
+  ty:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ env.PY_VERSION }}
+      - name: Install project
+        run: uv sync --locked --no-dev
+      - name: Run ty
+        run: uv run --with ty ty check .
