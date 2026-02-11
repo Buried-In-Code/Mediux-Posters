@@ -58,6 +58,6 @@ jobs:
 
     steps:
       - name: Check for failures
-        uses: re-actors/all-green@v1.2.2
+        uses: re-actors/alls-green@v1.2.2
         with:
           jobs: ${{ toJSON(needs) }}
