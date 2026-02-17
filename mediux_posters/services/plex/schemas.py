@@ -2,6 +2,7 @@ __all__ = ["Collection", "Episode", "Library", "Movie", "Season", "Show"]
 
 from datetime import date
 from enum import Enum
+from typing import Any
 
 from pydantic import Field, model_validator
 from pydantic.alias_generators import to_camel
@@ -39,7 +40,7 @@ class Episode(BaseEpisode, PlexModel):
     premiere_date: date | None = Field(alias="originallyAvailableAt", default=None)
 
     @model_validator(mode="before")
-    def extract_guids(cls, data: object) -> object:
+    def extract_guids(cls, data: Any) -> Any:  # noqa: ANN401
         if isinstance(data, dict) and "Guid" in data:
             services = {
                 f"{x['id'].split('://')[0]}_id": x["id"].split("://")[1]
@@ -57,7 +58,7 @@ class Season(BaseSeason, PlexModel):
     number: int = Field(alias="index")
 
     @model_validator(mode="before")
-    def extract_guids(cls, data: object) -> object:
+    def extract_guids(cls, data: Any) -> Any:  # noqa: ANN401
         if isinstance(data, dict) and "Guid" in data:
             services = {
                 f"{x['id'].split('://')[0]}_id": x["id"].split("://")[1]
@@ -75,7 +76,7 @@ class Show(BaseShow, PlexModel):
     premiere_date: date = Field(alias="originallyAvailableAt")
 
     @model_validator(mode="before")
-    def extract_guids(cls, data: object) -> object:
+    def extract_guids(cls, data: Any) -> Any:  # noqa: ANN401
         if isinstance(data, dict) and "Guid" in data:
             services = {
                 f"{x['id'].split('://')[0]}_id": x["id"].split("://")[1]
@@ -93,7 +94,7 @@ class Movie(BaseMovie, PlexModel):
     premiere_date: date = Field(alias="originallyAvailableAt")
 
     @model_validator(mode="before")
-    def extract_guids(cls, data: object) -> object:
+    def extract_guids(cls, data: Any) -> Any:  # noqa: ANN401
         if isinstance(data, dict) and "Guid" in data:
             services = {
                 f"{x['id'].split('://')[0]}_id": x["id"].split("://")[1]
@@ -110,7 +111,7 @@ class Collection(BaseCollection, PlexModel):
     name: str = Field(alias="title")
 
     @model_validator(mode="before")
-    def extract_guids(cls, data: object) -> object:
+    def extract_guids(cls, data: Any) -> Any:  # noqa: ANN401
         if isinstance(data, dict) and "Label" in data:
             if tag := next(iter(x for x in data["Label"] if x["tag"].startswith("Tmdb-")), {}).get(
                 "tag"

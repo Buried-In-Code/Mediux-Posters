@@ -21,7 +21,7 @@ class CacheKey:
     type: FileType
 
     def as_tuple(self) -> tuple[int, int, int, str]:
-        return (self.tmdb_id, self.season_num, self.episode_num, str(self.type))
+        return self.tmdb_id, self.season_num, self.episode_num, str(self.type)
 
 
 @dataclass(kw_only=True)
@@ -95,19 +95,19 @@ class ServiceCache:
             )
 
     def get_timestamp(self, key: CacheKey, service: Literal["Plex", "Jellyfin"]) -> datetime | None:
-        service = service.lower()
+        service_name = service.lower()
         with self._connect() as conn:
             row = conn.execute(
                 f"""
-                SELECT {service}_uploaded
+                SELECT {service_name}_uploaded
                 FROM cache
                 WHERE {CACHE_QUERY};
                 """,  # noqa: S608
                 key.as_tuple(),
             ).fetchone()
-            if not row or not row[f"{service}_uploaded"]:
+            if not row or not row[f"{service_name}_uploaded"]:
                 return None
-            return datetime.fromisoformat(row[f"{service}_uploaded"])
+            return datetime.fromisoformat(row[f"{service_name}_uploaded"])
 
     def insert(self, key: CacheKey, creator: str, set_id: int, last_updated: datetime) -> None:
         with self._connect() as conn:
@@ -137,18 +137,15 @@ class ServiceCache:
     def update_service(
         self, key: CacheKey, service: Literal["Plex", "Jellyfin"], timestamp: datetime | None
     ) -> None:
-        service = service.lower()
+        service_name = service.lower()
         with self._connect() as conn:
-            set_clause = f"{service}_uploaded = ?"
-            value = timestamp.isoformat() if timestamp else None
-
             conn.execute(
                 f"""
                 UPDATE cache
-                SET {set_clause}
+                SET {service_name}_uploaded = ?
                 WHERE {CACHE_QUERY};
                 """,  # noqa: S608
-                (value, *key.as_tuple()),
+                (timestamp.isoformat() if timestamp else None, *key.as_tuple()),
             )
             conn.commit()
 

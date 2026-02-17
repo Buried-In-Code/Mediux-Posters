@@ -14,6 +14,7 @@ from mediux_posters.cli.common import (
 )
 from mediux_posters.console import CONSOLE
 from mediux_posters.errors import ServiceError
+from mediux_posters.mediux import CollectionSet, MovieSet, ShowSet
 from mediux_posters.utils import MediaType
 
 LOGGER = logging.getLogger(__name__)
@@ -129,30 +130,36 @@ def sync_posters(
                     )
                 for set_data in filtered_sets:
                     if media_type is MediaType.SHOW:
+                        set_data: ShowSet
                         process_show_data(
                             entry=entry,
                             set_data=set_data,
                             mediux=mediux,
                             service=service,
                             priority_usernames=settings.priority_usernames,
+                            excluded_usernames=settings.exclude_usernames,
                             kometa_integration=settings.kometa_integration,
                         )
                     elif media_type is MediaType.COLLECTION:
+                        set_data: CollectionSet
                         process_collection_data(
                             entry=entry,
                             set_data=set_data,
                             mediux=mediux,
                             service=service,
                             priority_usernames=settings.priority_usernames,
+                            excluded_usernames=settings.exclude_usernames,
                             kometa_integration=settings.kometa_integration,
                         )
                     elif media_type is MediaType.MOVIE:
+                        set_data: MovieSet
                         process_movie_data(
                             entry=entry,
                             set_data=set_data,
                             mediux=mediux,
                             service=service,
                             priority_usernames=settings.priority_usernames,
+                            excluded_usernames=settings.exclude_usernames,
                             kometa_integration=settings.kometa_integration,
                         )
                     if entry.all_posters_uploaded:

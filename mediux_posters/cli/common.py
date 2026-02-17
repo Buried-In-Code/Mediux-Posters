@@ -146,14 +146,18 @@ def filter_sets(
         yield from [x for x in set_list if x.username not in priority_usernames]
 
 
-def get_creator_rank(priority_usernames: list[str], creator: str | None) -> int:
+def get_creator_rank(
+    priority_usernames: list[str], excluded_usernames: list[str], creator: str | None
+) -> int:
     if creator and creator in priority_usernames:
         return priority_usernames.index(creator)
+    if creator and creator in excluded_usernames:
+        return DEFAULT_CREATOR_RANK * 2
     return DEFAULT_CREATOR_RANK
 
 
 def find_matching_file(
-    set_data: ShowSet | CollectionSet | MovieSet, file_type: FileType, id_value: int
+    set_data: ShowSet | CollectionSet | MovieSet, file_type: FileType, id_value: int | str
 ) -> File | None:
     for f in set_data.files:
         if f.file_type == file_type and any(
@@ -170,6 +174,7 @@ def determine_action(  # noqa: PLR0911
     set_data: ShowSet | CollectionSet | MovieSet,
     file: File,
     priority_usernames: list[str],
+    excluded_usernames: list[str],
     force: bool,
 ) -> Action:
     if force:
@@ -178,9 +183,15 @@ def determine_action(  # noqa: PLR0911
         return Action.DOWNLOAD
 
     existing_rank = get_creator_rank(
-        priority_usernames=priority_usernames, creator=existing.creator
+        priority_usernames=priority_usernames,
+        excluded_usernames=excluded_usernames,
+        creator=existing.creator,
     )
-    new_rank = get_creator_rank(priority_usernames=priority_usernames, creator=set_data.username)
+    new_rank = get_creator_rank(
+        priority_usernames=priority_usernames,
+        excluded_usernames=excluded_usernames,
+        creator=set_data.username,
+    )
 
     if new_rank > existing_rank:
         return Action.SKIP
@@ -198,13 +209,14 @@ def determine_action(  # noqa: PLR0911
 def process_image(  # noqa: PLR0911
     obj: Show | Season | Episode | Collection | Movie,
     cache_key: CacheKey,
-    id_value: int,
+    id_value: int | str,
     parent: str,
     filename: str,
     set_data: ShowSet | CollectionSet | MovieSet,
     mediux: Mediux,
     service: BaseService,
     priority_usernames: list[str],
+    excluded_usernames: list[str],
     should_log: bool,
     kometa_integration: bool = False,
     force: bool = False,
@@ -226,6 +238,7 @@ def process_image(  # noqa: PLR0911
         set_data=set_data,
         file=file,
         priority_usernames=priority_usernames,
+        excluded_usernames=excluded_usernames,
         force=force,
     )
     if action is Action.SKIP:
@@ -288,6 +301,7 @@ def process_entry_images(
     mediux: Mediux,
     service: BaseService,
     priority_usernames: list[str],
+    excluded_usernames: list[str],
     should_log: bool,
     kometa_integration: bool = False,
     force: bool = False,
@@ -305,6 +319,7 @@ def process_entry_images(
             mediux=mediux,
             service=service,
             priority_usernames=priority_usernames,
+            excluded_usernames=excluded_usernames,
             kometa_integration=kometa_integration,
             force=force,
             should_log=should_log,
@@ -318,6 +333,7 @@ def process_show_data(
     mediux: Mediux,
     service: BaseService,
     priority_usernames: list[str],
+    excluded_usernames: list[str],
     force: bool = False,
     kometa_integration: bool = False,
 ) -> None:
@@ -328,6 +344,7 @@ def process_show_data(
         mediux=mediux,
         service=service,
         priority_usernames=priority_usernames,
+        excluded_usernames=excluded_usernames,
         kometa_integration=kometa_integration,
         force=force,
         should_log=should_log,
@@ -354,6 +371,7 @@ def process_show_data(
             mediux=mediux,
             service=service,
             priority_usernames=priority_usernames,
+            excluded_usernames=excluded_usernames,
             kometa_integration=kometa_integration,
             force=force,
             should_log=should_log,
@@ -385,6 +403,7 @@ def process_show_data(
                 mediux=mediux,
                 service=service,
                 priority_usernames=priority_usernames,
+                excluded_usernames=excluded_usernames,
                 kometa_integration=kometa_integration,
                 force=force,
                 should_log=should_log,
@@ -397,6 +416,7 @@ def process_collection_data(
     mediux: Mediux,
     service: BaseService,
     priority_usernames: list[str],
+    excluded_usernames: list[str],
     force: bool = False,
     kometa_integration: bool = False,
 ) -> None:
@@ -407,6 +427,7 @@ def process_collection_data(
         mediux=mediux,
         service=service,
         priority_usernames=priority_usernames,
+        excluded_usernames=excluded_usernames,
         kometa_integration=kometa_integration,
         force=force,
         should_log=should_log,
@@ -434,6 +455,7 @@ def process_collection_data(
                 mediux=mediux,
                 service=service,
                 priority_usernames=priority_usernames,
+                excluded_usernames=excluded_usernames,
                 kometa_integration=kometa_integration,
                 force=force,
                 should_log=should_log,
@@ -446,6 +468,7 @@ def process_movie_data(
     mediux: Mediux,
     service: BaseService,
     priority_usernames: list[str],
+    excluded_usernames: list[str],
     force: bool = False,
     kometa_integration: bool = False,
 ) -> None:
@@ -456,6 +479,7 @@ def process_movie_data(
         mediux=mediux,
         service=service,
         priority_usernames=priority_usernames,
+        excluded_usernames=excluded_usernames,
         kometa_integration=kometa_integration,
         force=force,
         should_log=should_log,

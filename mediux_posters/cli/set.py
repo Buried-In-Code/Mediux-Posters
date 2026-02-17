@@ -71,7 +71,7 @@ def set_posters(
                 continue
             with CONSOLE.status(rf"\[Mediux] Searching for Set id: {set_id}"):
                 try:
-                    set_data = (
+                    set_data: ShowSet | CollectionSet | MovieSet | None = (
                         mediux.get_show_set(set_id=set_id)
                         or mediux.get_collection_set(set_id=set_id)
                         or mediux.get_movie_set(set_id=set_id)
@@ -116,6 +116,7 @@ def set_posters(
                     service=service,
                     force=True,
                     priority_usernames=settings.priority_usernames,
+                    excluded_usernames=settings.exclude_usernames,
                     kometa_integration=settings.kometa_integration,
                 )
             elif media_type is MediaType.COLLECTION:
@@ -126,6 +127,7 @@ def set_posters(
                     service=service,
                     force=True,
                     priority_usernames=settings.priority_usernames,
+                    excluded_usernames=settings.exclude_usernames,
                     kometa_integration=settings.kometa_integration,
                 )
             elif media_type is MediaType.MOVIE:
@@ -136,5 +138,6 @@ def set_posters(
                     service=service,
                     force=True,
                     priority_usernames=settings.priority_usernames,
+                    excluded_usernames=settings.exclude_usernames,
                     kometa_integration=settings.kometa_integration,
                 )

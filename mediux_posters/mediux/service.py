@@ -4,9 +4,9 @@ import logging
 from json import JSONDecodeError
 from pathlib import Path
 from platform import release, system
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Final
 
-from graphql_query import Argument, Field, Operation, Query
+from graphql_query import Argument, Field, Fragment, InlineFragment, Operation, Query
 from httpx import Client, HTTPStatusError, RequestError, TimeoutException
 from pydantic import TypeAdapter, ValidationError
 from ratelimit import limits, sleep_and_retry
@@ -20,81 +20,80 @@ from mediux_posters.utils import MediaType
 
 LOGGER = logging.getLogger(__name__)
 # 60 Calls per Minute
-CALLS = 60
-PERIOD = 60
+CALLS: Final[int] = 60
+PERIOD: Final[int] = 60
+SHOW_FIELDS: list[str | Field | InlineFragment | Fragment] = [
+    "date_updated",
+    Field(
+        name="files",
+        fields=[
+            "id",
+            "file_type",
+            "modified_on",
+            Field(name="show", fields=["id"]),
+            Field(name="season", fields=["id"]),
+            Field(name="episode", fields=["id"]),
+        ],
+    ),
+    "id",
+    "set_title",
+    Field(
+        name="show_id",
+        fields=[
+            "first_air_date",
+            "id",
+            Field(
+                name="seasons",
+                fields=[
+                    Field(name="episodes", fields=["episode_number", "episode_title", "id"]),
+                    "id",
+                    "season_name",
+                    "season_number",
+                ],
+            ),
+            "title",
+        ],
+    ),
+    Field(name="user_created", fields=["username"]),
+]
+COLLECTION_FIELDS: list[str | Field | InlineFragment | Fragment] = [
+    "date_updated",
+    Field(
+        name="files",
+        fields=[
+            "id",
+            "file_type",
+            "modified_on",
+            Field(name="movie", fields=["id"]),
+            Field(name="collection", fields=["id"]),
+        ],
+    ),
+    "id",
+    "set_title",
+    Field(
+        name="collection_id",
+        fields=[
+            "collection_name",
+            "id",
+            Field(name="movies", fields=["id", "release_date", "title"]),
+        ],
+    ),
+    Field(name="user_created", fields=["username"]),
+]
+MOVIE_FIELDS: list[str | Field | InlineFragment | Fragment] = [
+    "date_updated",
+    Field(
+        name="files", fields=["id", "file_type", "modified_on", Field(name="movie", fields=["id"])]
+    ),
+    "id",
+    Field(name="movie_id", fields=["id", "release_date", "title"]),
+    "set_title",
+    Field(name="user_created", fields=["username"]),
+]
 
 
 class Mediux:
     WEB_URL: ClassVar[str] = "https://mediux.pro"
-    SHOW_FIELDS: ClassVar[list[str | Field]] = [
-        "date_updated",
-        Field(
-            name="files",
-            fields=[
-                "id",
-                "file_type",
-                "modified_on",
-                Field(name="show", fields=["id"]),
-                Field(name="season", fields=["id"]),
-                Field(name="episode", fields=["id"]),
-            ],
-        ),
-        "id",
-        "set_title",
-        Field(
-            name="show_id",
-            fields=[
-                "first_air_date",
-                "id",
-                Field(
-                    name="seasons",
-                    fields=[
-                        Field(name="episodes", fields=["episode_number", "episode_title", "id"]),
-                        "id",
-                        "season_name",
-                        "season_number",
-                    ],
-                ),
-                "title",
-            ],
-        ),
-        Field(name="user_created", fields=["username"]),
-    ]
-    COLLECTION_FIELDS: ClassVar[list[str | Field]] = [
-        "date_updated",
-        Field(
-            name="files",
-            fields=[
-                "id",
-                "file_type",
-                "modified_on",
-                Field(name="movie", fields=["id"]),
-                Field(name="collection", fields=["id"]),
-            ],
-        ),
-        "id",
-        "set_title",
-        Field(
-            name="collection_id",
-            fields=[
-                "collection_name",
-                "id",
-                Field(name="movies", fields=["id", "release_date", "title"]),
-            ],
-        ),
-        Field(name="user_created", fields=["username"]),
-    ]
-    MOVIE_FIELDS: ClassVar[list[str | Field]] = [
-        "date_updated",
-        Field(
-            name="files",
-            fields=["id", "file_type", "modified_on", Field(name="movie", fields=["id"])],
-        ),
-        "id",
-        Field(name="movie_id", fields=["id", "release_date", "title"]),
-        "set_title",
-        Field(name="user_created", fields=["username"]),
-    ]
 
     def __init__(self, base_url: str, token: str):
         self.client = Client(
@@ -156,9 +155,7 @@ class Mediux:
                 )
             )
         query = Query(
-            name="show_sets",
-            arguments=[Argument(name="filter", value=filters)],
-            fields=self.SHOW_FIELDS,
+            name="show_sets", arguments=[Argument(name="filter", value=filters)], fields=SHOW_FIELDS
         )
         operation = Operation(type="query", queries=[query])
 
@@ -176,7 +173,7 @@ class Mediux:
         query = Query(
             name="show_sets_by_id",
             arguments=[Argument(name="id", value=set_id)],
-            fields=self.SHOW_FIELDS,
+            fields=SHOW_FIELDS,
         )
         operation = Operation(type="query", queries=[query])
 
@@ -213,7 +210,7 @@ class Mediux:
         query = Query(
             name="collection_sets",
             arguments=[Argument(name="filter", value=filters)],
-            fields=self.COLLECTION_FIELDS,
+            fields=COLLECTION_FIELDS,
         )
         operation = Operation(type="query", queries=[query])
 
@@ -231,7 +228,7 @@ class Mediux:
         query = Query(
             name="collection_sets_by_id",
             arguments=[Argument(name="id", value=set_id)],
-            fields=self.COLLECTION_FIELDS,
+            fields=COLLECTION_FIELDS,
         )
         operation = Operation(type="query", queries=[query])
 
@@ -268,7 +265,7 @@ class Mediux:
         query = Query(
             name="movie_sets",
             arguments=[Argument(name="filter", value=filters)],
-            fields=self.MOVIE_FIELDS,
+            fields=MOVIE_FIELDS,
         )
         operation = Operation(type="query", queries=[query])
 
@@ -286,7 +283,7 @@ class Mediux:
         query = Query(
             name="movie_sets_by_id",
             arguments=[Argument(name="id", value=set_id)],
-            fields=self.MOVIE_FIELDS,
+            fields=MOVIE_FIELDS,
         )
         operation = Operation(type="query", queries=[query])
 

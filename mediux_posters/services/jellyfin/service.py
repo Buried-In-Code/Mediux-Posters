@@ -28,8 +28,8 @@ from mediux_posters.services.service_cache import ServiceCache
 LOGGER = logging.getLogger(__name__)
 
 
-class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
-    def __init__(self, base_url: str, token: str, cache: ServiceCache | None = None):
+class Jellyfin(BaseService[str, Show, Season, Episode, Collection, Movie]):
+    def __init__(self, base_url: str, token: str, cache: ServiceCache):
         super().__init__(cache=cache)
         self.client = Client(
             base_url=base_url,
@@ -41,7 +41,9 @@ class Jellyfin(BaseService[Show, Season, Episode, Collection, Movie]):
         )
 
     @classmethod
-    def extract_id(cls, entry: dict, prefix: str = "Tmdb") -> str | None:
+    def extract_id(
+        cls, entry: dict[str, dict[str, str | None]], prefix: str = "Tmdb"
+    ) -> str | None:
         return entry.get("ProviderIds", {}).get(prefix)
 
     def _perform_get_request(

@@ -27,8 +27,8 @@ from mediux_posters.services.service_cache import ServiceCache
 LOGGER = logging.getLogger(__name__)
 
 
-class Plex(BaseService[Show, Season, Episode, Collection, Movie]):
-    def __init__(self, base_url: str, token: str, cache: ServiceCache | None = None):
+class Plex(BaseService[int, Show, Season, Episode, Collection, Movie]):
+    def __init__(self, base_url: str, token: str, cache: ServiceCache):
         super().__init__(cache=cache)
         self.client = Client(
             base_url=base_url,
@@ -40,7 +40,7 @@ class Plex(BaseService[Show, Season, Episode, Collection, Movie]):
         )
 
     @classmethod
-    def extract_id(cls, entry: dict, prefix: str = "tmdb") -> str | None:
+    def extract_id(cls, entry: dict[str, list[dict[str, str]]], prefix: str = "tmdb") -> str | None:
         if "Label" in entry:
             return next(
                 iter(
@@ -243,6 +243,8 @@ class Plex(BaseService[Show, Season, Episode, Collection, Movie]):
                 )
             ]
             for result in results:
+                if not result:
+                    continue
                 tmdb = self.extract_id(entry=result)
                 if not tmdb or (tmdb_id is not None and int(tmdb) != tmdb_id):
                     continue

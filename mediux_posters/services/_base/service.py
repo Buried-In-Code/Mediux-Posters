@@ -14,6 +14,7 @@ from mediux_posters.services._base.schemas import (
 from mediux_posters.services.service_cache import ServiceCache
 from mediux_posters.utils import MediaType
 
+K = TypeVar("K", bound=int | str)
 T = TypeVar("T", bound=BaseShow)
 S = TypeVar("S", bound=BaseSeason)
 E = TypeVar("E", bound=BaseEpisode)
@@ -21,15 +22,15 @@ C = TypeVar("C", bound=BaseCollection)
 M = TypeVar("M", bound=BaseMovie)
 
 
-class BaseService(ABC, Generic[T, S, E, C, M]):
-    def __init__(self, cache: ServiceCache | None = None) -> None:
+class BaseService(ABC, Generic[K, T, S, E, C, M]):
+    def __init__(self, cache: ServiceCache) -> None:
         self.cache = cache
 
     @abstractmethod
-    def list_episodes(self, show_id: int | str, season_id: int | str) -> list[E]: ...
+    def list_episodes(self, show_id: K, season_id: K) -> list[E]: ...
 
     @abstractmethod
-    def list_seasons(self, show_id: int | str) -> list[S]: ...
+    def list_seasons(self, show_id: K) -> list[S]: ...
 
     @abstractmethod
     def list_shows(self, skip_libraries: list[str] | None = None) -> list[T]: ...
@@ -44,7 +45,7 @@ class BaseService(ABC, Generic[T, S, E, C, M]):
     def get_collection(self, tmdb_id: int) -> C | None: ...
 
     @abstractmethod
-    def list_collection_movies(self, collection_id: int | str) -> list[M]: ...
+    def list_collection_movies(self, collection_id: K) -> list[M]: ...
 
     @abstractmethod
     def list_movies(self, skip_libraries: list[str] | None = None) -> list[M]: ...
