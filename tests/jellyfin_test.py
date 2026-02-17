@@ -6,16 +6,14 @@ from pathlib import Path
 import pytest
 from pytest_httpx import HTTPXMock
 
-from mediux_posters.services.jellyfin import Jellyfin
+from mediux_posters.services import Jellyfin
 
 
 @pytest.mark.httpx_mock(
     should_mock=lambda request: request.url.host == "localhost",
     assert_all_responses_were_requested=False,
 )
-def test_list_shows(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock) -> None:
-    if jellyfin_session is None:
-        jellyfin_session = Jellyfin(base_url="http://localhost", token="INVALID")  # noqa: S106
+def test_list_shows(jellyfin_session: Jellyfin, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         url="http://localhost/Library/MediaFolders",
         json=json.loads(
@@ -42,9 +40,7 @@ def test_list_shows(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock) ->
     should_mock=lambda request: request.url.host == "localhost",
     assert_all_responses_were_requested=False,
 )
-def test_get_series(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock) -> None:
-    if jellyfin_session is None:
-        jellyfin_session = Jellyfin(base_url="http://localhost", token="INVALID")  # noqa: S106
+def test_get_series(jellyfin_session: Jellyfin, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         url="http://localhost/Library/MediaFolders",
         json=json.loads(
@@ -76,9 +72,7 @@ def test_get_series(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock) ->
     should_mock=lambda request: request.url.host == "localhost",
     assert_all_responses_were_requested=False,
 )
-def test_list_seasons(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock) -> None:
-    if jellyfin_session is None:
-        jellyfin_session = Jellyfin(base_url="http://localhost", token="INVALID")  # noqa: S106
+def test_list_seasons(jellyfin_session: Jellyfin, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         url=re.compile("http://localhost/Shows/.*/Seasons.*"),
         json=json.loads(
@@ -105,9 +99,7 @@ def test_list_seasons(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock) 
     should_mock=lambda request: request.url.host == "localhost",
     assert_all_responses_were_requested=False,
 )
-def test_list_episodes(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock) -> None:
-    if jellyfin_session is None:
-        jellyfin_session = Jellyfin(base_url="http://localhost", token="INVALID")  # noqa: S106
+def test_list_episodes(jellyfin_session: Jellyfin, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         url=re.compile("http://localhost/Shows/.*/Episodes.*"),
         json=json.loads(
@@ -136,9 +128,7 @@ def test_list_episodes(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock)
     should_mock=lambda request: request.url.host == "localhost",
     assert_all_responses_were_requested=False,
 )
-def test_list_movies(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock) -> None:
-    if jellyfin_session is None:
-        jellyfin_session = Jellyfin(base_url="http://localhost", token="INVALID")  # noqa: S106
+def test_list_movies(jellyfin_session: Jellyfin, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         url="http://localhost/Library/MediaFolders",
         json=json.loads(
@@ -164,9 +154,7 @@ def test_list_movies(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock) -
     should_mock=lambda request: request.url.host == "localhost",
     assert_all_responses_were_requested=False,
 )
-def test_get_movie(jellyfin_session: Jellyfin | None, httpx_mock: HTTPXMock) -> None:
-    if jellyfin_session is None:
-        jellyfin_session = Jellyfin(base_url="http://localhost", token="INVALID")  # noqa: S106
+def test_get_movie(jellyfin_session: Jellyfin, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         url="http://localhost/Library/MediaFolders",
         json=json.loads(

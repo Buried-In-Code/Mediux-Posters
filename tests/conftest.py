@@ -3,21 +3,25 @@ from datetime import date, datetime
 
 import pytest
 
-from mediux_posters.mediux import FileType, Mediux
-from mediux_posters.mediux.schemas import File, Movie as MediuxMedia, MovieSet as SetData
-from mediux_posters.services._base.schemas import BaseMovie as Media
-from mediux_posters.services.jellyfin import Jellyfin
-from mediux_posters.services.plex import Plex
+from mediux_posters.mediux import File, FileType, Mediux, MovieSet as SetData
+from mediux_posters.mediux.schemas import Movie as MediuxMedia
+from mediux_posters.services import Jellyfin, Movie as Media, Plex
+from mediux_posters.services.service_cache import ServiceCache
+
+
+@pytest.fixture(scope="session")
+def cache() -> ServiceCache:
+    return ServiceCache()
 
 
 @pytest.fixture(scope="session")
 def mediux_base_url() -> str:
-    return os.getenv("MEDIUX__BASE_URL", default="https://api.mediux.pro")
+    return os.getenv("MEDIUX__BASE_URL", default="https://images.mediux.io")
 
 
 @pytest.fixture(scope="session")
 def mediux_token() -> str:
-    return os.getenv("MEDIUX__TOKEN", default="IGNORED")
+    return os.getenv("MEDIUX__TOKEN", default="UNSET")
 
 
 @pytest.fixture(scope="session")
@@ -28,41 +32,39 @@ def mediux_session(mediux_base_url: str, mediux_token: str) -> Mediux:
 
 
 @pytest.fixture(scope="session")
-def jellyfin_base_url() -> str | None:
-    return os.getenv("JELLYFIN__BASE_URL", default=None)
+def jellyfin_base_url() -> str:
+    return os.getenv("JELLYFIN__BASE_URL", default="http://localhost")
 
 
 @pytest.fixture(scope="session")
-def jellyfin_token() -> str | None:
-    return os.getenv("JELLYFIN__TOKEN", default=None)
+def jellyfin_token() -> str:
+    return os.getenv("JELLYFIN__TOKEN", default="UNSET")
 
 
 @pytest.fixture(scope="session")
-def jellyfin_session(jellyfin_base_url: str | None, jellyfin_token: str | None) -> Jellyfin | None:
-    if jellyfin_base_url and jellyfin_token:
-        jellyfin = Jellyfin(base_url=jellyfin_base_url, token=jellyfin_token)
-        assert jellyfin.validate() is True
-        return jellyfin
-    return None
+def jellyfin_session(jellyfin_base_url: str, jellyfin_token: str, cache: ServiceCache) -> Jellyfin:
+    session = Jellyfin(base_url=jellyfin_base_url, token=jellyfin_token, cache=cache)
+    if jellyfin_base_url != "http://localhost":
+        assert session.validate() is True
+    return session
 
 
 @pytest.fixture(scope="session")
-def plex_base_url() -> str | None:
-    return os.getenv("PLEX__BASE_URL", default=None)
+def plex_base_url() -> str:
+    return os.getenv("PLEX__BASE_URL", default="http://localhost")
 
 
 @pytest.fixture(scope="session")
-def plex_token() -> str | None:
-    return os.getenv("PLEX__TOKEN", default=None)
+def plex_token() -> str:
+    return os.getenv("PLEX__TOKEN", default="UNSET")
 
 
 @pytest.fixture(scope="session")
-def plex_session(plex_base_url: str | None, plex_token: str | None) -> Plex | None:
-    if plex_base_url and plex_token:
-        plex = Plex(base_url=plex_base_url, token=plex_token)
-        assert plex.validate() is True
-        return plex
-    return None
+def plex_session(plex_base_url: str, plex_token: str, cache: ServiceCache) -> Plex:
+    session = Plex(base_url=plex_base_url, token=plex_token, cache=cache)
+    if plex_base_url != "http://localhost":
+        assert session.validate() is True
+    return session
 
 
 @pytest.fixture
