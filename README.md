@@ -5,11 +5,13 @@
 [![PyPI - Version](https://img.shields.io/pypi/v/Mediux-Posters.svg?logo=PyPI&label=Version&style=flat-square)](https://pypi.python.org/pypi/Mediux-Posters/)
 [![PyPI - License](https://img.shields.io/pypi/l/Mediux-Posters.svg?logo=PyPI&label=License&style=flat-square)](https://opensource.org/licenses/MIT)
 
-[![Pre-Commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&style=flat-square)](https://github.com/pre-commit/pre-commit)
-[![Ruff](https://img.shields.io/badge/ruff-enabled-brightgreen?logo=ruff&style=flat-square)](https://github.com/astral-sh/ruff)
+[![prek](https://img.shields.io/badge/prek-enabled-informational?logo=prek&style=flat-square)](https://github.com/j178/prek)
+[![Ruff](https://img.shields.io/badge/ruff-enabled-informational?logo=ruff&style=flat-square)](https://github.com/astral-sh/ruff)
+[![Ty](https://img.shields.io/badge/ty-enabled-informational?logo=ruff&style=flat-square)](https://github.com/astral-sh/ty)
 
-[![Github - Contributors](https://img.shields.io/github/contributors/Buried-In-Code/Mediux-Posters.svg?logo=Github&label=Contributors&style=flat-square)](https://github.com/Buried-In-Code/Mediux-Posters/graphs/contributors)
-[![Github Action - Testing](https://img.shields.io/github/actions/workflow/status/Buried-In-Code/Mediux-Posters/testing.yaml?branch=main&logo=Github&label=Testing&style=flat-square)](https://github.com/Buried-In-Code/Mediux-Posters/actions/workflows/testing.yaml)
+[![Linting](https://github.com/Buried-In-Code/Mediux-Posters/actions/workflows/linting.yaml/badge.svg)](https://github.com/Buried-In-Code/Mediux-Posters/actions/workflows/linting.yaml)
+[![Testing](https://github.com/Buried-In-Code/Mediux-Posters/actions/workflows/testing.yaml/badge.svg)](https://github.com/Buried-In-Code/Mediux-Posters/actions/workflows/testing.yaml)
+[![Publishing](https://github.com/Buried-In-Code/Mediux-Posters/actions/workflows/publishing.yaml/badge.svg)](https://github.com/Buried-In-Code/Mediux-Posters/actions/workflows/publishing.yaml)
 
 Fetches Show, Movie, and Collection cover art from Mediux and updates Plex/Jellyfin using TMDB IDs.
 
