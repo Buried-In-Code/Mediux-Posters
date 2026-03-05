@@ -28,9 +28,9 @@ def test_list_show_sets(mediux_session: Mediux) -> None:
     assert result.show.release_date == date(2010, 9, 26)
     assert len(result.show.seasons) != 0
     assert len(result.show.seasons[0].episodes) != 0
-    assert result.show.seasons[0].episodes[0].id == 779832
-    assert result.show.seasons[0].episodes[0].number == 2
-    assert result.show.seasons[0].episodes[0].title == "Christmas at Downton Abbey"
+    assert result.show.seasons[0].episodes[1].id == 779832
+    assert result.show.seasons[0].episodes[1].number == 2
+    assert result.show.seasons[0].episodes[1].title == "Christmas at Downton Abbey"
     assert result.show.seasons[0].id == 44727
     assert result.show.seasons[0].title == "Specials"
     assert result.show.seasons[0].number == 0

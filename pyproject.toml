@@ -17,7 +17,7 @@ tests = [
   "pytest-cov >= 7.0.0",
   "pytest-httpx >= 0.36.0",
   "tox >= 4.36.0",
-  "tox-uv >= 1.29.0"
+  "tox-uv >= 1.29.0",
 ]
 
 [project]
@@ -33,7 +33,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
-  "Typing :: Typed"
+  "Typing :: Typed",
 ]
 dependencies = [
   "graphql-query >= 1.4.0",
@@ -44,7 +44,7 @@ dependencies = [
   "rich >= 14.3.0",
   "tomli >= 2.4.0 ; python_version < '3.11'",
   "tomli-w >= 1.2.0",
-  "typer >= 0.24.0"
+  "typer >= 0.24.0",
 ]
 description = "Fetches Show, Movie, and Collection cover art from Mediux and updates Plex/Jellyfin using TMDB IDs."
 dynamic = ["version"]
@@ -106,7 +106,7 @@ ignore = [
   "TCH",
   "TRY003",
   "TRY300",
-  "TRY400"
+  "TRY400",
 ]
 select = ["ALL"]
 
@@ -128,7 +128,7 @@ split-on-trailing-comma = false
 classmethod-decorators = [
   "classmethod",
   "pydantic.field_validator",
-  "pydantic.model_validator"
+  "pydantic.model_validator",
 ]
 
 [tool.ruff.lint.per-file-ignores]
