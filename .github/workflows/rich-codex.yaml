@@ -2,13 +2,23 @@ name: Rich Codex
 
 on:
   push:
+    branches:
+      - main
     paths:
+      - .github/workflows/rich-codex.yaml
+      - README.md
+      - mediux_posters/cli/**
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/rich-codex.yaml
       - README.md
       - mediux_posters/cli/**
   workflow_dispatch:
 
 env:
-  PY_VERSION: 3.14
+  PY_VERSION: "3.10"
 
 jobs:
   rich_codex:
@@ -22,7 +32,7 @@ jobs:
         with:
           python-version: ${{ env.PY_VERSION }}
       - name: Install project
-        run: uv sync --locked --no-dev
+        run: uv sync --locked --dev --all-extras --managed-python
       - name: Generate terminal images with rich-codex
         uses: ewels/rich-codex@v1.2.11
         with:

@@ -4,7 +4,13 @@ requires = ["hatchling"]
 
 [dependency-groups]
 dev = [
-  "pre-commit >= 4.5.0"
+  "mdformat >= 1.0.0",
+  "mdformat-gfm >= 1.0.0",
+  "mdformat-ruff >= 0.1.0",
+  "prek >= 0.3.0",
+  "ruff >= 0.15.0",
+  "toml-sort >= 0.24.0",
+  "ty >= 0.0.20",
 ]
 tests = [
   "pytest >= 9.0.0",
@@ -92,14 +98,12 @@ ignore = [
   "D",
   "EM",
   "FBT",
-  "FIX",
   "PLR0912",
   "PLR0913",
   "PLR0915",
   "PLR2004",
   "PLW2901",
   "TCH",
-  "TD",
   "TRY003",
   "TRY300",
   "TRY400"
@@ -138,6 +142,8 @@ keep-runtime-typing = true
 
 [tool.tomlsort]
 all = true
+ignore_case = true
+trailing_comma_inline_array = true
 overrides."tool.tox.env_list".inline_arrays = false
 overrides."tool.tox.testenv.commands".inline_arrays = false
 
@@ -149,3 +155,7 @@ min_version = "4.22"
 commands = [["pytest"]]
 dependency_groups = ["tests"]
 passenv = ["JELLYFIN__BASE_URL", "JELLYFIN__TOKEN", "MEDIUX__BASE_URL", "MEDIUX__TOKEN", "PLEX__BASE_URL", "PLEX__TOKEN"]
+
+[tool.ty.src]
+exclude = ["**/tests/"]
+include = ["**/mediux_posters"]

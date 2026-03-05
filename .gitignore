@@ -3,11 +3,12 @@ __pycache__/
 __pypackages__/
 .idea/
 .ruff_cache/
+.tox/
 .venv/
 build/
-covers/
 dist/
 logs/
+site/
 
 # =====Files=====
 *.iml
