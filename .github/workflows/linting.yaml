@@ -1,0 +1,32 @@
+name: Linting
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - docs/**
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - docs/**
+
+env:
+  PY_VERSION: '3.10'
+
+jobs:
+  prek:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ env.PY_VERSION }}
+      - name: Install project
+        run: uv sync --locked --dev --all-extras --managed-python
+      - name: Run prek
+        run: uv run prek run -a --skip ty

@@ -3,16 +3,18 @@ __pycache__/
 __pypackages__/
 .idea/
 .ruff_cache/
+.tox/
 .venv/
 build/
-covers/
 dist/
 logs/
+site/
 
 # =====Files=====
 *.iml
 *.log
 *.txt
+.coverage
 .envrc
 .pdm-python
 .python-version
