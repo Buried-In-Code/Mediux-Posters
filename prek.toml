@@ -1,6 +1,6 @@
 [[repos]]
 hooks = [
-  {args = ["--all", "--in-place"], entry = "toml-sort", id = "toml-sort", language = "system", name = "toml sort", types = ["toml"]},
+  {args = ["--all", "--in-place"], entry = "toml-sort", exclude = ".*.lock", id = "toml-sort", language = "system", name = "toml sort", types = ["toml"]},
   {args = ["--number", "--wrap=keep"], entry = "mdformat", exclude = "(.github/ISSUE_TEMPLATE/.*|README).md", id = "mdformat", language = "system", name = "mdformat", types = ["markdown"]},
   {entry = "ruff check .", id = "ruff-check", language = "system", name = "ruff check", pass_filenames = false, types = ["python"]},
   {entry = "ruff format .", id = "ruff-format", language = "system", name = "ruff format", pass_filenames = false, types = ["python"]},
