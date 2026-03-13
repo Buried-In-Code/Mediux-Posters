@@ -65,53 +65,53 @@ class Episode(MediuxModel):
 
 
 class Season(MediuxModel):
-    episodes: list[Episode]
     id: Annotated[int | str, BeforeValidator(int_or_str)]
     number: int = Field(alias="season_number")
     title: str | None = Field(alias="season_name", default=None)
+    episodes: list[Episode]
 
 
 class Show(MediuxModel):
     id: int
+    title: str
     release_date: date | None = Field(alias="first_air_date")
     seasons: list[Season]
-    title: str
 
 
 class ShowSet(MediuxModel):
-    last_updated: datetime | None = Field(alias="date_updated")
-    files: list[File]
     id: int
+    last_updated: datetime | None = Field(alias="date_updated")
     set_title: str
+    files: list[File]
     show: Show = Field(alias="show_id")
     username: str = Field(validation_alias=AliasPath("user_created", "username"))
 
 
 class Movie(MediuxModel):
     id: int
-    release_date: date | None
     title: str
+    release_date: date | None
 
 
 class MovieSet(MediuxModel):
-    last_updated: datetime | None = Field(alias="date_updated")
-    files: list[File]
     id: int
-    movie: Movie = Field(alias="movie_id")
+    last_updated: datetime | None = Field(alias="date_updated")
     set_title: str
+    files: list[File]
+    movie: Movie = Field(alias="movie_id")
     username: str = Field(validation_alias=AliasPath("user_created", "username"))
 
 
 class Collection(MediuxModel):
     id: int
-    movies: list[Movie]
     title: str = Field(alias="collection_name")
+    movies: list[Movie]
 
 
 class CollectionSet(MediuxModel):
-    collection: Collection = Field(alias="collection_id")
-    last_updated: datetime | None = Field(alias="date_updated")
-    files: list[File]
     id: int
+    last_updated: datetime | None = Field(alias="date_updated")
     set_title: str
+    files: list[File]
+    collection: Collection = Field(alias="collection_id")
     username: str = Field(validation_alias=AliasPath("user_created", "username"))

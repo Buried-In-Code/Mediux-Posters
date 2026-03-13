@@ -1,6 +1,5 @@
 __all__ = ["Collection", "Episode", "Library", "Movie", "Season", "Show"]
 
-from datetime import date
 from enum import Enum
 from typing import Any
 
@@ -35,45 +34,15 @@ class Library(PlexModel):
 
 class Episode(BaseEpisode, PlexModel):
     id: int = Field(alias="ratingKey")
-    name: str = Field(alias="title")
-    number: int = Field(alias="index")
-    premiere_date: date | None = Field(alias="originallyAvailableAt", default=None)
-
-    @model_validator(mode="before")
-    def extract_guids(cls, data: Any) -> Any:  # noqa: ANN401
-        if isinstance(data, dict) and "Guid" in data:
-            services = {
-                f"{x['id'].split('://')[0]}_id": x["id"].split("://")[1]
-                for x in data["Guid"]
-                if "id" in x
-            }
-            data.update(services)
-            del data["Guid"]
-        return data
 
 
 class Season(BaseSeason, PlexModel):
     id: int = Field(alias="ratingKey")
-    name: str = Field(alias="title")
-    number: int = Field(alias="index")
-
-    @model_validator(mode="before")
-    def extract_guids(cls, data: Any) -> Any:  # noqa: ANN401
-        if isinstance(data, dict) and "Guid" in data:
-            services = {
-                f"{x['id'].split('://')[0]}_id": x["id"].split("://")[1]
-                for x in data["Guid"]
-                if "id" in x
-            }
-            data.update(services)
-            del data["Guid"]
-        return data
 
 
 class Show(BaseShow, PlexModel):
     id: int = Field(alias="ratingKey")
     name: str = Field(alias="title")
-    premiere_date: date = Field(alias="originallyAvailableAt")
 
     @model_validator(mode="before")
     def extract_guids(cls, data: Any) -> Any:  # noqa: ANN401
@@ -91,7 +60,6 @@ class Show(BaseShow, PlexModel):
 class Movie(BaseMovie, PlexModel):
     id: int = Field(alias="ratingKey")
     name: str = Field(alias="title")
-    premiere_date: date = Field(alias="originallyAvailableAt")
 
     @model_validator(mode="before")
     def extract_guids(cls, data: Any) -> Any:  # noqa: ANN401

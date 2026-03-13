@@ -1,131 +1,44 @@
 __all__ = ["Mediux"]
 
 import logging
-from json import JSONDecodeError
+import platform
 from pathlib import Path
-from platform import release, system
-from typing import Any, ClassVar, Final
+from typing import ClassVar
 
-from graphql_query import Argument, Field, Fragment, InlineFragment, Operation, Query
-from httpx import Client, HTTPStatusError, RequestError, TimeoutException
+from gql import Client
+from gql.dsl import DSLField, DSLQuery, DSLSchema, dsl_gql
+from gql.transport.exceptions import TransportQueryError
+from gql.transport.httpx import HTTPXTransport
+from httpx import RequestError, TimeoutException, stream
 from pydantic import TypeAdapter, ValidationError
-from ratelimit import limits, sleep_and_retry
 from rich.progress import Progress
 
-from mediux_posters import __project__, __version__
+from mediux_posters import __version__
 from mediux_posters.console import CONSOLE
 from mediux_posters.errors import AuthenticationError, ServiceError
 from mediux_posters.mediux.schemas import CollectionSet, MovieSet, ShowSet
 from mediux_posters.utils import MediaType
 
 LOGGER = logging.getLogger(__name__)
-# 60 Calls per Minute
-CALLS: Final[int] = 60
-PERIOD: Final[int] = 60
-SHOW_FIELDS: list[str | Field | InlineFragment | Fragment] = [
-    "date_updated",
-    Field(
-        name="files",
-        fields=[
-            "id",
-            "file_type",
-            "modified_on",
-            Field(name="show", fields=["id"]),
-            Field(name="season", fields=["id"]),
-            Field(name="episode", fields=["id"]),
-        ],
-    ),
-    "id",
-    "set_title",
-    Field(
-        name="show_id",
-        fields=[
-            "first_air_date",
-            "id",
-            Field(
-                name="seasons",
-                fields=[
-                    Field(name="episodes", fields=["episode_number", "episode_title", "id"]),
-                    "id",
-                    "season_name",
-                    "season_number",
-                ],
-            ),
-            "title",
-        ],
-    ),
-    Field(name="user_created", fields=["username"]),
-]
-COLLECTION_FIELDS: list[str | Field | InlineFragment | Fragment] = [
-    "date_updated",
-    Field(
-        name="files",
-        fields=[
-            "id",
-            "file_type",
-            "modified_on",
-            Field(name="movie", fields=["id"]),
-            Field(name="collection", fields=["id"]),
-        ],
-    ),
-    "id",
-    "set_title",
-    Field(
-        name="collection_id",
-        fields=[
-            "collection_name",
-            "id",
-            Field(name="movies", fields=["id", "release_date", "title"]),
-        ],
-    ),
-    Field(name="user_created", fields=["username"]),
-]
-MOVIE_FIELDS: list[str | Field | InlineFragment | Fragment] = [
-    "date_updated",
-    Field(
-        name="files", fields=["id", "file_type", "modified_on", Field(name="movie", fields=["id"])]
-    ),
-    "id",
-    Field(name="movie_id", fields=["id", "release_date", "title"]),
-    "set_title",
-    Field(name="user_created", fields=["username"]),
-]
 
 
 class Mediux:
     WEB_URL: ClassVar[str] = "https://mediux.pro"
 
     def __init__(self, base_url: str, token: str):
-        self.client = Client(
-            base_url=base_url,
+        self.base_url = base_url
+        self.token = token
+        transport = HTTPXTransport(
+            url=self.base_url + "/graphql",
             headers={
-                "Accept": "application/json",
-                "Authorization": f"Bearer {token}",
-                "User-Agent": f"{__project__.title()}/{__version__}/{system()}: {release()}",
+                "Authorization": f"Bearer {self.token}",
+                "User-Agent": f"Mediux-Posters/{__version__} ({platform.system()}: {platform.release()}; Python v{platform.python_version()})",  # noqa: E501
             },
         )
-
-    @sleep_and_retry
-    @limits(calls=CALLS, period=PERIOD)
-    def _perform_graphql_request(self, query: str) -> dict[str, Any]:
-        try:
-            response = self.client.post("/graphql", json={"query": query})
-            response.raise_for_status()
-            return response.json()
-        except RequestError as err:
-            raise ServiceError(f"Unable to connect to '{err.request.url.path}'") from err
-        except HTTPStatusError as err:
-            try:
-                errors = err.response.json()["errors"]
-                if err.response.status_code in (401, 403):
-                    raise AuthenticationError(f"{err.response.status_code}: {errors}")
-                raise ServiceError(f"{err.response.status_code}: {errors}")
-            except JSONDecodeError as err:
-                raise ServiceError("Unable to parse response as Json") from err
-        except JSONDecodeError as err:
-            raise ServiceError("Unable to parse response as Json") from err
-        except TimeoutException as err:
-            raise ServiceError("Service took too long to respond") from err
+        self.client = Client(transport=transport, fetch_schema_from_transport=True)
+        with self.client:
+            assert self.client.schema is not None  # noqa: S101
+            self.schema = DSLSchema(self.client.schema)
 
     def validate(self) -> bool:
         try:
@@ -135,168 +48,181 @@ class Mediux:
             LOGGER.error("[Mediux] %s", err)
         return False
 
+    def _directus_files_fields(self) -> list[DSLField]:
+        return [
+            self.schema.directus_files.id,
+            self.schema.directus_files.file_type,
+            self.schema.directus_files.modified_on,
+            self.schema.directus_files.show.select(self.schema.shows.id),
+            self.schema.directus_files.season.select(self.schema.seasons.id),
+            self.schema.directus_files.episode.select(self.schema.episodes.id),
+            self.schema.directus_files.collection.select(self.schema.collections.id),
+            self.schema.directus_files.movie.select(self.schema.movies.id),
+        ]
+
+    def _directus_users_fields(self) -> list[DSLField]:
+        return [self.schema.directus_users.username]
+
+    def _shows_fields(self) -> list[DSLField]:
+        return [
+            self.schema.shows.id,
+            self.schema.shows.first_air_date,
+            self.schema.shows.title,
+            self.schema.shows.seasons.select(
+                self.schema.seasons.id,
+                self.schema.seasons.season_name,
+                self.schema.seasons.season_number,
+                self.schema.seasons.episodes.select(
+                    self.schema.episodes.id,
+                    self.schema.episodes.episode_number,
+                    self.schema.episodes.episode_title,
+                ),
+            ),
+        ]
+
+    def _show_sets_fields(self) -> list[DSLField]:
+        return [
+            self.schema.show_sets.id,
+            self.schema.show_sets.date_updated,
+            self.schema.show_sets.set_title,
+            self.schema.show_sets.files.select(*self._directus_files_fields()),
+            self.schema.show_sets.show_id.select(*self._shows_fields()),
+            self.schema.show_sets.user_created.select(*self._directus_users_fields()),
+        ]
+
     def list_show_sets(
         self, tmdb_id: int, exclude_usernames: list[str] | None = None
     ) -> list[ShowSet]:
         exclude_usernames = exclude_usernames or []
-        filters = [
-            Argument(
-                name="show_id",
-                value=Argument(name="id", value=Argument(name="_eq", value=f'"{tmdb_id}"')),
-            )
-        ]
+        filters: dict[str, dict] = {"show_id": {"id": {"_eq": tmdb_id}}}
         if exclude_usernames:
-            filters.append(
-                Argument(
-                    name="user_created",
-                    value=Argument(
-                        name="username", value=Argument(name="_nin", value=exclude_usernames)
-                    ),
-                )
-            )
-        query = Query(
-            name="show_sets", arguments=[Argument(name="filter", value=filters)], fields=SHOW_FIELDS
+            filters["user_created"] = {"username": {"_nin": exclude_usernames}}
+        query = DSLQuery(
+            self.schema.Query.show_sets.args(filter=filters).select(*self._show_sets_fields())
         )
-        operation = Operation(type="query", queries=[query])
-
-        try:
-            results = (
-                self._perform_graphql_request(query=operation.render())
-                .get("data", {})
-                .get("show_sets", [])
-            )
-            return TypeAdapter(list[ShowSet]).validate_python(results)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        with self.client as session:
+            try:
+                result = session.execute(dsl_gql(query))
+                return TypeAdapter(list[ShowSet]).validate_python(result.get("show_sets", []))
+            except TransportQueryError as err:
+                raise ServiceError from err
+            except ValidationError as err:
+                raise ServiceError from err
 
     def get_show_set(self, set_id: int) -> ShowSet | None:
-        query = Query(
-            name="show_sets_by_id",
-            arguments=[Argument(name="id", value=set_id)],
-            fields=SHOW_FIELDS,
+        query = DSLQuery(
+            self.schema.Query.show_sets_by_id.args(id=set_id).select(*self._show_sets_fields())
         )
-        operation = Operation(type="query", queries=[query])
+        with self.client as session:
+            try:
+                result = session.execute(dsl_gql(query))
+                return TypeAdapter(ShowSet).validate_python(result.get("show_sets_by_id"))
+            except TransportQueryError as err:
+                raise ServiceError from err
+            except ValidationError as err:
+                raise ServiceError from err
 
-        try:
-            if result := (
-                self._perform_graphql_request(query=operation.render())
-                .get("data", {})
-                .get("show_sets_by_id")
-            ):
-                return TypeAdapter(ShowSet).validate_python(result)
-        except ValidationError as err:
-            raise ServiceError(err) from err
-        return None
+    def _collections_fields(self) -> list[DSLField]:
+        return [
+            self.schema.collections.id,
+            self.schema.collections.collection_name,
+            self.schema.collections.movies.select(*self._movies_fields()),
+        ]
+
+    def _collection_sets_fields(self) -> list[DSLField]:
+        return [
+            self.schema.collection_sets.id,
+            self.schema.collection_sets.date_updated,
+            self.schema.collection_sets.set_title,
+            self.schema.collection_sets.files.select(*self._directus_files_fields()),
+            self.schema.collection_sets.collection_id.select(*self._collections_fields()),
+            self.schema.collection_sets.user_created.select(*self._directus_users_fields()),
+        ]
 
     def list_collection_sets(
         self, tmdb_id: int, exclude_usernames: list[str] | None = None
     ) -> list[CollectionSet]:
         exclude_usernames = exclude_usernames or []
-        filters = [
-            Argument(
-                name="collection_id",
-                value=Argument(name="id", value=Argument(name="_eq", value=f'"{tmdb_id}"')),
-            )
-        ]
+        filters: dict[str, dict] = {"collection_id": {"id": {"_eq": tmdb_id}}}
         if exclude_usernames:
-            filters.append(
-                Argument(
-                    name="user_created",
-                    value=Argument(
-                        name="username", value=Argument(name="_nin", value=exclude_usernames)
-                    ),
-                )
+            filters["user_created"] = {"username": {"_nin": exclude_usernames}}
+        query = DSLQuery(
+            self.schema.Query.collection_sets.args(filter=filters).select(
+                *self._collection_sets_fields()
             )
-        query = Query(
-            name="collection_sets",
-            arguments=[Argument(name="filter", value=filters)],
-            fields=COLLECTION_FIELDS,
         )
-        operation = Operation(type="query", queries=[query])
-
-        try:
-            results = (
-                self._perform_graphql_request(query=operation.render())
-                .get("data", {})
-                .get("collection_sets", [])
-            )
-            return TypeAdapter(list[CollectionSet]).validate_python(results)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        with self.client as session:
+            try:
+                result = session.execute(dsl_gql(query))
+                return TypeAdapter(list[CollectionSet]).validate_python(
+                    result.get("collection_sets", [])
+                )
+            except TransportQueryError as err:
+                raise ServiceError from err
+            except ValidationError as err:
+                raise ServiceError from err
 
     def get_collection_set(self, set_id: int) -> CollectionSet | None:
-        query = Query(
-            name="collection_sets_by_id",
-            arguments=[Argument(name="id", value=set_id)],
-            fields=COLLECTION_FIELDS,
+        query = DSLQuery(
+            self.schema.Query.collection_sets_by_id.args(id=set_id).select(
+                *self._collection_sets_fields()
+            )
         )
-        operation = Operation(type="query", queries=[query])
+        with self.client as session:
+            try:
+                result = session.execute(dsl_gql(query))
+                return TypeAdapter(CollectionSet).validate_python(
+                    result.get("collection_sets_by_id")
+                )
+            except TransportQueryError as err:
+                raise ServiceError from err
+            except ValidationError as err:
+                raise ServiceError from err
 
-        try:
-            if result := (
-                self._perform_graphql_request(query=operation.render())
-                .get("data", {})
-                .get("collection_sets_by_id")
-            ):
-                return TypeAdapter(CollectionSet).validate_python(result)
-        except ValidationError as err:
-            raise ServiceError(err) from err
-        return None
+    def _movies_fields(self) -> list[DSLField]:
+        return [self.schema.movies.id, self.schema.movies.release_date, self.schema.movies.title]
+
+    def _movie_sets_fields(self) -> list[DSLField]:
+        return [
+            self.schema.movie_sets.id,
+            self.schema.movie_sets.date_updated,
+            self.schema.movie_sets.set_title,
+            self.schema.movie_sets.files.select(*self._directus_files_fields()),
+            self.schema.movie_sets.movie_id.select(*self._movies_fields()),
+            self.schema.movie_sets.user_created.select(*self._directus_users_fields()),
+        ]
 
     def list_movie_sets(
         self, tmdb_id: int, exclude_usernames: list[str] | None = None
     ) -> list[MovieSet]:
         exclude_usernames = exclude_usernames or []
-        filters = [
-            Argument(
-                name="movie_id",
-                value=Argument(name="id", value=Argument(name="_eq", value=f'"{tmdb_id}"')),
-            )
-        ]
+        filters: dict[str, dict] = {"movie_id": {"id": {"_eq": tmdb_id}}}
         if exclude_usernames:
-            filters.append(
-                Argument(
-                    name="user_created",
-                    value=Argument(
-                        name="username", value=Argument(name="_nin", value=exclude_usernames)
-                    ),
-                )
-            )
-        query = Query(
-            name="movie_sets",
-            arguments=[Argument(name="filter", value=filters)],
-            fields=MOVIE_FIELDS,
+            filters["user_created"] = {"username": {"_nin": exclude_usernames}}
+        query = DSLQuery(
+            self.schema.Query.movie_sets.args(filter=filters).select(*self._movie_sets_fields())
         )
-        operation = Operation(type="query", queries=[query])
-
-        try:
-            results = (
-                self._perform_graphql_request(query=operation.render())
-                .get("data", {})
-                .get("movie_sets", [])
-            )
-            return TypeAdapter(list[MovieSet]).validate_python(results)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        with self.client as session:
+            try:
+                result = session.execute(dsl_gql(query))
+                return TypeAdapter(list[MovieSet]).validate_python(result.get("movie_sets", []))
+            except TransportQueryError as err:
+                raise ServiceError from err
+            except ValidationError as err:
+                raise ServiceError from err
 
     def get_movie_set(self, set_id: int) -> MovieSet | None:
-        query = Query(
-            name="movie_sets_by_id",
-            arguments=[Argument(name="id", value=set_id)],
-            fields=MOVIE_FIELDS,
+        query = DSLQuery(
+            self.schema.Query.movie_sets_by_id.args(id=set_id).select(*self._movie_sets_fields())
         )
-        operation = Operation(type="query", queries=[query])
-
-        try:
-            if result := (
-                self._perform_graphql_request(query=operation.render())
-                .get("data", {})
-                .get("movie_sets_by_id")
-            ):
-                return TypeAdapter(MovieSet).validate_python(result)
-        except ValidationError as err:
-            raise ServiceError(err) from err
-        return None
+        with self.client as session:
+            try:
+                result = session.execute(dsl_gql(query))
+                return TypeAdapter(MovieSet).validate_python(result.get("movie_sets_by_id"))
+            except TransportQueryError as err:
+                raise ServiceError from err
+            except ValidationError as err:
+                raise ServiceError from err
 
     def list_sets(
         self, media_type: MediaType, tmdb_id: int, exclude_usernames: list[str] | None = None
@@ -324,13 +250,15 @@ class Mediux:
             else None
         )
 
-    @sleep_and_retry
-    @limits(calls=CALLS, period=PERIOD)
     def download_image(self, file_id: str, output: Path) -> None:
         output.parent.mkdir(parents=True, exist_ok=True)
         output.unlink(missing_ok=True)
         try:
-            with self.client.stream("GET", f"/assets/{file_id}") as response:
+            with stream(
+                method="GET",
+                url=f"{self.base_url}/assets/{file_id}",
+                headers={"Authorization": f"Bearer {self.token}"},
+            ) as response:
                 if not response.is_success:
                     if response.status_code in (401, 403):
                         raise AuthenticationError(
@@ -343,9 +271,9 @@ class Mediux:
                     download_task = progress.add_task(
                         f"Downloading {output.parent.name}/{output.name}", total=total
                     )
-                    with output.open("wb") as stream:
+                    with output.open("wb") as file_stream:
                         for chunk in response.iter_bytes():
-                            stream.write(chunk)
+                            file_stream.write(chunk)
                             progress.update(download_task, completed=response.num_bytes_downloaded)
         except RequestError as err:
             raise ServiceError(f"Unable to connect to '{err.request.url.path}'") from err

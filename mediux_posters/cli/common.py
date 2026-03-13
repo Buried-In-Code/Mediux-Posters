@@ -78,7 +78,7 @@ def setup_services(
 
     cache = ServiceCache()
     services = []
-    skip_services = [x.value for x in skip_services]
+    skip_services: list[str] = [x.value for x in skip_services]
     if Plex.__name__ not in skip_services and settings.plex.token:
         plex = Plex(base_url=settings.plex.base_url, token=settings.plex.token, cache=cache)
         if plex.validate():
@@ -284,7 +284,10 @@ def process_image(  # noqa: PLR0911
         )
         return should_log
     if not service.upload_image(
-        object_id=obj.id, image_file=image_file, kometa_integration=kometa_integration
+        object_id=obj.id,
+        image_file=image_file,
+        file_type=cache_key.type,
+        kometa_integration=kometa_integration,
     ):
         service.cache.update_service(key=cache_key, service=type(service).__name__, timestamp=None)
         setattr(obj, uploaded_attr, False)
@@ -307,7 +310,12 @@ def process_entry_images(
     force: bool = False,
 ) -> bool:
     parent = slugify(value=entry.display_name)
-    file_map = {FileType.POSTER: "poster.jpg", FileType.BACKDROP: "backdrop.jpg"}
+    file_map = {
+        FileType.POSTER: "poster.jpg",
+        FileType.BACKDROP: "backdrop.jpg",
+        FileType.ALBUM: "album.jpg",
+        FileType.LOGO: "logo.jpg",
+    }
     for file_type, filename in file_map.items():
         should_log = process_image(
             obj=entry,
@@ -349,6 +357,7 @@ def process_show_data(
         force=force,
         should_log=should_log,
     )
+    show_parent = slugify(value=entry.display_name)
     try:
         seasons = service.list_seasons(show_id=entry.id)
     except ServiceError as err:
@@ -359,23 +368,24 @@ def process_show_data(
         mediux_season = next((x for x in set_data.show.seasons if x.number == season.number), None)
         if not mediux_season:
             continue
-        should_log = process_image(
-            obj=season,
-            cache_key=CacheKey(
-                tmdb_id=entry.tmdb_id, season_num=season.number, type=FileType.POSTER
-            ),
-            id_value=mediux_season.id,
-            parent=slugify(value=entry.display_name),
-            filename=f"s{season.number:02}.jpg",
-            set_data=set_data,
-            mediux=mediux,
-            service=service,
-            priority_usernames=priority_usernames,
-            excluded_usernames=excluded_usernames,
-            kometa_integration=kometa_integration,
-            force=force,
-            should_log=should_log,
-        )
+        season_parent = show_parent + f"/S{season.number:02}"
+        file_map = {FileType.POSTER: "poster.jpg", FileType.BACKDROP: "backdrop.jpg"}
+        for file_type, filename in file_map.items():
+            should_log = process_image(
+                obj=season,
+                cache_key=CacheKey(tmdb_id=entry.tmdb_id, season_num=season.number, type=file_type),
+                id_value=mediux_season.id,
+                parent=season_parent,
+                filename=filename,
+                set_data=set_data,
+                mediux=mediux,
+                service=service,
+                priority_usernames=priority_usernames,
+                excluded_usernames=excluded_usernames,
+                kometa_integration=kometa_integration,
+                force=force,
+                should_log=should_log,
+            )
         try:
             episodes = service.list_episodes(show_id=entry.id, season_id=season.id)
         except ServiceError as err:
@@ -388,26 +398,29 @@ def process_show_data(
             )
             if not mediux_episode:
                 continue
-            should_log = process_image(
-                obj=episode,
-                cache_key=CacheKey(
-                    tmdb_id=entry.tmdb_id,
-                    season_num=season.number,
-                    episode_num=episode.number,
-                    type=FileType.TITLE_CARD,
-                ),
-                id_value=mediux_episode.id,
-                parent=slugify(value=entry.display_name),
-                filename=f"s{season.number:02}e{episode.number:02}.jpg",
-                set_data=set_data,
-                mediux=mediux,
-                service=service,
-                priority_usernames=priority_usernames,
-                excluded_usernames=excluded_usernames,
-                kometa_integration=kometa_integration,
-                force=force,
-                should_log=should_log,
-            )
+            episode_parent = season_parent + f"/E{episode.number:02}"
+            file_map = {FileType.TITLE_CARD: "titlecard.jpg", FileType.BACKDROP: "backdrop.jpg"}
+            for file_type, filename in file_map.items():
+                should_log = process_image(
+                    obj=episode,
+                    cache_key=CacheKey(
+                        tmdb_id=entry.tmdb_id,
+                        season_num=season.number,
+                        episode_num=episode.number,
+                        type=file_type,
+                    ),
+                    id_value=mediux_episode.id,
+                    parent=episode_parent,
+                    filename=filename,
+                    set_data=set_data,
+                    mediux=mediux,
+                    service=service,
+                    priority_usernames=priority_usernames,
+                    excluded_usernames=excluded_usernames,
+                    kometa_integration=kometa_integration,
+                    force=force,
+                    should_log=should_log,
+                )
 
 
 def process_collection_data(
@@ -443,7 +456,12 @@ def process_collection_data(
         if not mediux_movie:
             continue
         parent = slugify(value=movie.display_name)
-        file_map = {FileType.POSTER: "poster.jpg", FileType.BACKDROP: "backdrop.jpg"}
+        file_map = {
+            FileType.POSTER: "poster.jpg",
+            FileType.BACKDROP: "backdrop.jpg",
+            FileType.ALBUM: "album.jpg",
+            FileType.LOGO: "logo.jpg",
+        }
         for file_type, filename in file_map.items():
             should_log = process_image(
                 obj=movie,

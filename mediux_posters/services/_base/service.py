@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Generic, TypeVar
 
+from mediux_posters.mediux import FileType
 from mediux_posters.services._base.schemas import (
     BaseCollection,
     BaseEpisode,
@@ -80,5 +81,5 @@ class BaseService(ABC, Generic[K, T, S, E, C, M]):
 
     @abstractmethod
     def upload_image(
-        self, object_id: int | str, image_file: Path, kometa_integration: bool
+        self, object_id: int | str, image_file: Path, file_type: FileType, kometa_integration: bool
     ) -> bool: ...
