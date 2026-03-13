@@ -70,7 +70,7 @@ def add_get_show_mock(mock: HTTPXMock) -> None:
 def add_list_seasons_mock(mock: HTTPXMock) -> None:
     mock.add_response(
         url=re.compile("http://localhost/Shows/.*/Seasons.*"),
-        json={"Items": [{"Id": "7b63c71486e0580c8154b23ef829cf99"}]},
+        json={"Items": [{"Id": "7b63c71486e0580c8154b23ef829cf99", "IndexNumber": 1}]},
         is_reusable=True,
     )
 
@@ -78,7 +78,7 @@ def add_list_seasons_mock(mock: HTTPXMock) -> None:
 def add_list_episodes_mock(mock: HTTPXMock) -> None:
     mock.add_response(
         url=re.compile("http://localhost/Shows/.*/Episodes.*"),
-        json={"Items": [{"Id": "a375ae1a31b78c063f5e20c81d1f21e4"}]},
+        json={"Items": [{"Id": "a375ae1a31b78c063f5e20c81d1f21e4", "IndexNumber": 1}]},
         is_reusable=True,
     )
 

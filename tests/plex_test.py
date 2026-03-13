@@ -68,7 +68,7 @@ def add_get_show_mock(mock: HTTPXMock) -> None:
 def add_list_seasons_mock(mock: HTTPXMock) -> None:
     mock.add_response(
         url=re.compile(r"http://localhost/library/metadata/.*/children\?includeGuids=1"),
-        json={"MediaContainer": {"Metadata": [{"ratingKey": "119056"}]}},
+        json={"MediaContainer": {"Metadata": [{"ratingKey": "119056", "index": 1}]}},
         is_reusable=True,
     )
 
@@ -76,7 +76,7 @@ def add_list_seasons_mock(mock: HTTPXMock) -> None:
 def add_list_episodes_mock(mock: HTTPXMock) -> None:
     mock.add_response(
         url=re.compile(r"http://localhost/library/metadata/.*/children\?includeGuids=1"),
-        json={"MediaContainer": {"Metadata": [{"ratingKey": "119057"}]}},
+        json={"MediaContainer": {"Metadata": [{"ratingKey": "119057", "index": 1}]}},
         is_reusable=True,
     )
 
