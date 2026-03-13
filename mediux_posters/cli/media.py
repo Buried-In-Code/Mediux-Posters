@@ -7,6 +7,7 @@ from typer import Argument, Option
 
 from mediux_posters.cli._typer import app
 from mediux_posters.cli.common import (
+    ProcessContext,
     ServiceOption,
     filter_sets,
     process_collection_data,
@@ -23,7 +24,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 @app.command(name="media", help="Manually set posters for specific Mediux media using URLs.")
-def media_posters(
+def media_posters(  # noqa: C901
     urls: Annotated[
         list[str], Argument(show_default=False, help="List of URLs from Mediux to process.")
     ],
@@ -113,39 +114,22 @@ def media_posters(
                     only_priority_usernames=settings.only_priority_usernames,
                     interactive=interactive,
                 )
+            ctx = ProcessContext(
+                mediux=mediux,
+                service=service,
+                priority_usernames=settings.priority_usernames,
+                excluded_usernames=settings.exclude_usernames,
+                kometa_integration=settings.kometa_integration,
+            )
             for set_data in filtered_sets:
-                set_data: ShowSet
                 if media_type is MediaType.SHOW:
-                    process_show_data(
-                        entry=entry,
-                        set_data=set_data,
-                        mediux=mediux,
-                        service=service,
-                        priority_usernames=settings.priority_usernames,
-                        excluded_usernames=settings.exclude_usernames,
-                        kometa_integration=settings.kometa_integration,
-                    )
+                    set_data: ShowSet
+                    process_show_data(entry=entry, set_data=set_data, ctx=ctx)
                 elif media_type is MediaType.COLLECTION:
                     set_data: CollectionSet
-                    process_collection_data(
-                        entry=entry,
-                        set_data=set_data,
-                        mediux=mediux,
-                        service=service,
-                        priority_usernames=settings.priority_usernames,
-                        excluded_usernames=settings.exclude_usernames,
-                        kometa_integration=settings.kometa_integration,
-                    )
+                    process_collection_data(entry=entry, set_data=set_data, ctx=ctx)
                 elif media_type is MediaType.MOVIE:
                     set_data: MovieSet
-                    process_movie_data(
-                        entry=entry,
-                        set_data=set_data,
-                        mediux=mediux,
-                        service=service,
-                        priority_usernames=settings.priority_usernames,
-                        excluded_usernames=settings.exclude_usernames,
-                        kometa_integration=settings.kometa_integration,
-                    )
+                    process_movie_data(entry=entry, set_data=set_data, ctx=ctx)
                 if entry.all_posters_uploaded:
                     break

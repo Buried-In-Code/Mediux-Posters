@@ -1,6 +1,5 @@
 __all__ = ["BaseCollection", "BaseEpisode", "BaseMovie", "BaseSeason", "BaseShow"]
 
-from datetime import date
 
 from pydantic import Field
 
@@ -9,49 +8,44 @@ from mediux_posters.utils import BaseModel
 
 class BaseEpisode(BaseModel):
     id: int | str
-    imdb_id: str | None = None
-    name: str
     number: int
-    premiere_date: date | None = None
-    tmdb_id: int | None = None
-    tvdb_id: int | None = None
 
     title_card_uploaded: bool = False
+    backdrop_uploaded: bool = False
 
     @property
     def all_posters_uploaded(self) -> bool:
-        return self.title_card_uploaded
+        return self.title_card_uploaded and self.backdrop_uploaded
 
 
 class BaseSeason(BaseModel):
     id: int | str
-    imdb_id: str | None = None
-    name: str
     number: int
-    premiere_date: date | None = None
-    tmdb_id: int | None = None
-    tvdb_id: int | None = None
 
     episodes: list[BaseEpisode] = Field(default_factory=list)
     poster_uploaded: bool = False
+    backdrop_uploaded: bool = False
 
     @property
     def all_posters_uploaded(self) -> bool:
-        return self.poster_uploaded and all(x.all_posters_uploaded for x in self.episodes)
+        return (
+            self.poster_uploaded
+            and self.backdrop_uploaded
+            and all(x.all_posters_uploaded for x in self.episodes)
+        )
 
 
 class BaseShow(BaseModel):
     id: int | str
-    imdb_id: str | None = None
     name: str
-    premiere_date: date | None = None
     tmdb_id: int
-    tvdb_id: int | None = None
     year: int
 
     seasons: list[BaseSeason] = Field(default_factory=list)
     poster_uploaded: bool = False
     backdrop_uploaded: bool = False
+    logo_uploaded: bool = False
+    album_uploaded: bool = False
 
     @property
     def display_name(self) -> str:
@@ -66,21 +60,22 @@ class BaseShow(BaseModel):
         return (
             self.poster_uploaded
             and self.backdrop_uploaded
+            and self.logo_uploaded
+            and self.album_uploaded
             and all(x.all_posters_uploaded for x in self.seasons)
         )
 
 
 class BaseMovie(BaseModel):
     id: str | int
-    imdb_id: str | None = None
     name: str
-    premiere_date: date | None = None
     tmdb_id: int
-    tvdb_id: int | None = None
     year: int
 
     poster_uploaded: bool = False
     backdrop_uploaded: bool = False
+    logo_uploaded: bool = False
+    album_uploaded: bool = False
 
     @property
     def display_name(self) -> str:
@@ -92,7 +87,12 @@ class BaseMovie(BaseModel):
 
     @property
     def all_posters_uploaded(self) -> bool:
-        return self.poster_uploaded and self.backdrop_uploaded
+        return (
+            self.poster_uploaded
+            and self.backdrop_uploaded
+            and self.logo_uploaded
+            and self.album_uploaded
+        )
 
 
 class BaseCollection(BaseModel):
@@ -103,6 +103,8 @@ class BaseCollection(BaseModel):
     movies: list[BaseMovie] = Field(default_factory=list)
     poster_uploaded: bool = False
     backdrop_uploaded: bool = False
+    logo_uploaded: bool = False
+    album_uploaded: bool = False
 
     @property
     def display_name(self) -> str:
@@ -113,5 +115,7 @@ class BaseCollection(BaseModel):
         return (
             self.poster_uploaded
             and self.backdrop_uploaded
+            and self.logo_uploaded
+            and self.album_uploaded
             and all(x.all_posters_uploaded for x in self.movies)
         )

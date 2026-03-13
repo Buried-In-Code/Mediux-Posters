@@ -5,6 +5,7 @@ from typer import Option
 
 from mediux_posters.cli._typer import app
 from mediux_posters.cli.common import (
+    ProcessContext,
     ServiceOption,
     filter_sets,
     process_collection_data,
@@ -23,7 +24,7 @@ LOGGER = logging.getLogger(__name__)
 @app.command(
     name="sync", help="Synchronize posters by fetching data from Mediux and updating your services"
 )
-def sync_posters(
+def sync_posters(  # noqa: C901
     skip_services: Annotated[
         list[ServiceOption],
         Option(
@@ -107,6 +108,13 @@ def sync_posters(
                 except ServiceError as err:
                     LOGGER.error("[%s] %s", type(service).__name__, err)
                     continue
+            ctx = ProcessContext(
+                mediux=mediux,
+                service=service,
+                priority_usernames=settings.priority_usernames,
+                excluded_usernames=settings.exclude_usernames,
+                kometa_integration=settings.kometa_integration,
+            )
             entry_count = len(entries)
             for idx, entry in enumerate(entries, start=1):
                 CONSOLE.print(
@@ -131,36 +139,12 @@ def sync_posters(
                 for set_data in filtered_sets:
                     if media_type is MediaType.SHOW:
                         set_data: ShowSet
-                        process_show_data(
-                            entry=entry,
-                            set_data=set_data,
-                            mediux=mediux,
-                            service=service,
-                            priority_usernames=settings.priority_usernames,
-                            excluded_usernames=settings.exclude_usernames,
-                            kometa_integration=settings.kometa_integration,
-                        )
+                        process_show_data(entry=entry, set_data=set_data, ctx=ctx)
                     elif media_type is MediaType.COLLECTION:
                         set_data: CollectionSet
-                        process_collection_data(
-                            entry=entry,
-                            set_data=set_data,
-                            mediux=mediux,
-                            service=service,
-                            priority_usernames=settings.priority_usernames,
-                            excluded_usernames=settings.exclude_usernames,
-                            kometa_integration=settings.kometa_integration,
-                        )
+                        process_collection_data(entry=entry, set_data=set_data, ctx=ctx)
                     elif media_type is MediaType.MOVIE:
                         set_data: MovieSet
-                        process_movie_data(
-                            entry=entry,
-                            set_data=set_data,
-                            mediux=mediux,
-                            service=service,
-                            priority_usernames=settings.priority_usernames,
-                            excluded_usernames=settings.exclude_usernames,
-                            kometa_integration=settings.kometa_integration,
-                        )
+                        process_movie_data(entry=entry, set_data=set_data, ctx=ctx)
                     if entry.all_posters_uploaded:
                         break

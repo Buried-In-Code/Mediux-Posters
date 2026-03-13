@@ -1,4 +1,5 @@
 __all__ = [
+    "ProcessContext",
     "ServiceOption",
     "filter_sets",
     "process_collection_data",
@@ -9,6 +10,7 @@ __all__ = [
 
 import logging
 from collections.abc import Generator
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
 from platform import python_version
@@ -38,6 +40,21 @@ from mediux_posters.utils import delete_folder, get_cached_image, slugify
 LOGGER = logging.getLogger(__name__)
 DEFAULT_CREATOR_RANK: Final[int] = 1_000_000
 MAX_IMAGE_SIZE: Final[int] = 10_000_000  # 10 MB
+SERVICE_REGISTRY: Final[list[tuple[type, str]]] = [(Plex, "plex"), (Jellyfin, "jellyfin")]
+ENTRY_FILE_MAP: Final[dict[FileType, str]] = {
+    FileType.POSTER: "poster.jpg",
+    FileType.BACKDROP: "backdrop.jpg",
+    FileType.ALBUM: "album.jpg",
+    FileType.LOGO: "logo.jpg",
+}
+SEASON_FILE_MAP: Final[dict[FileType, str]] = {
+    FileType.POSTER: "poster.jpg",
+    FileType.BACKDROP: "backdrop.jpg",
+}
+EPISODE_FILE_MAP: Final[dict[FileType, str]] = {
+    FileType.TITLE_CARD: "titlecard.jpg",
+    FileType.BACKDROP: "backdrop.jpg",
+}
 
 
 class ServiceOption(str, Enum):
@@ -46,6 +63,16 @@ class ServiceOption(str, Enum):
 
     def __str__(self) -> str:
         return self.value
+
+
+@dataclass(slots=True)
+class ProcessContext:
+    mediux: Mediux
+    service: BaseService
+    priority_usernames: list[str]
+    excluded_usernames: list[str]
+    force: bool = False
+    kometa_integration: bool = False
 
 
 class Action(str, Enum):
@@ -77,18 +104,18 @@ def setup_services(
         raise Abort
 
     cache = ServiceCache()
-    services = []
-    skip_services = [x.value for x in skip_services]
-    if Plex.__name__ not in skip_services and settings.plex.token:
-        plex = Plex(base_url=settings.plex.base_url, token=settings.plex.token, cache=cache)
-        if plex.validate():
-            services.append(plex)
-    if Jellyfin.__name__ not in skip_services and settings.jellyfin.token:
-        jellyfin = Jellyfin(
-            base_url=settings.jellyfin.base_url, token=settings.jellyfin.token, cache=cache
-        )
-        if jellyfin.validate():
-            services.append(jellyfin)
+    skip_names = {x.value for x in skip_services}
+    services: list[BaseService] = []
+
+    for cls, cfg_attr in SERVICE_REGISTRY:
+        if cls.__name__ in skip_names:
+            continue
+        cfg = getattr(settings, cfg_attr)
+        if not cfg.token:
+            continue
+        svc = cls(base_url=cfg.base_url, token=cfg.token, cache=cache)
+        if svc.validate():
+            services.append(svc)
     if not services:
         LOGGER.error("No services configured, check your settings")
         raise Abort
@@ -121,25 +148,24 @@ def filter_sets(
             while user_sets:
                 if len(user_sets) == 1:
                     yield user_sets.pop(0)
-                else:
-                    choices = [
-                        Choice(
-                            title=[("class:dim", f"{x.id} | "), ("class:title", x.set_title)],
-                            description=f"{Mediux.WEB_URL}/sets/{x.id}",
-                            value=x,
-                        )
-                        for x in user_sets
-                    ]
-                    selected = select(
-                        f"Multiple sets found from '{username}'",
-                        choices=choices,
-                        style=Style([("dim", "dim")]),
-                    ).ask()
-                    if selected:
-                        yield selected
-                        user_sets = [x for x in user_sets if x != selected]
-                    else:
-                        raise Abort
+                    continue
+                choices = [
+                    Choice(
+                        title=[("class:dim", f"{x.id} | "), ("class:title", x.set_title)],
+                        description=f"{Mediux.WEB_URL}/sets/{x.id}",
+                        value=x,
+                    )
+                    for x in user_sets
+                ]
+                selected = select(
+                    f"Multiple sets found from '{username}'",
+                    choices=choices,
+                    style=Style([("dim", "dim")]),
+                ).ask()
+                if not selected:
+                    raise Abort
+                yield selected
+                user_sets = [x for x in user_sets if x != selected]
         else:
             yield from [x for x in set_list if x.username == username]
     if not only_priority_usernames:
@@ -177,9 +203,7 @@ def determine_action(  # noqa: PLR0911
     excluded_usernames: list[str],
     force: bool,
 ) -> Action:
-    if force:
-        return Action.DOWNLOAD
-    if not existing:
+    if force or not existing:
         return Action.DOWNLOAD
 
     existing_rank = get_creator_rank(
@@ -201,9 +225,9 @@ def determine_action(  # noqa: PLR0911
         return Action.SKIP
     if file.last_updated > existing.last_updated:
         return Action.DOWNLOAD
-    if service_timestamp is None or service_timestamp < existing.last_updated:
-        return Action.UPLOAD
-    return Action.SKIP
+    if service_timestamp and service_timestamp >= existing.last_updated:
+        return Action.SKIP
+    return Action.UPLOAD
 
 
 def process_image(  # noqa: PLR0911
@@ -213,13 +237,8 @@ def process_image(  # noqa: PLR0911
     parent: str,
     filename: str,
     set_data: ShowSet | CollectionSet | MovieSet,
-    mediux: Mediux,
-    service: BaseService,
-    priority_usernames: list[str],
-    excluded_usernames: list[str],
+    ctx: ProcessContext,
     should_log: bool,
-    kometa_integration: bool = False,
-    force: bool = False,
 ) -> bool:
     uploaded_attr = f"{cache_key.type.name.lower()}_uploaded"
     if getattr(obj, uploaded_attr):
@@ -229,17 +248,20 @@ def process_image(  # noqa: PLR0911
         return should_log
 
     image_file = get_cached_image(parent, filename)
-    existing = service.cache.select(key=cache_key)
-    service_timestamp = service.cache.get_timestamp(key=cache_key, service=type(service).__name__)
+    existing = ctx.service.cache.select(key=cache_key)
+    service_timestamp = ctx.service.cache.get_timestamp(
+        key=cache_key,
+        service=type(ctx.service).__name__,  # ty: ignore[invalid-argument-type]
+    )
 
     action = determine_action(
         existing=existing,
         service_timestamp=service_timestamp,
         set_data=set_data,
         file=file,
-        priority_usernames=priority_usernames,
-        excluded_usernames=excluded_usernames,
-        force=force,
+        priority_usernames=ctx.priority_usernames,
+        excluded_usernames=ctx.excluded_usernames,
+        force=ctx.force,
     )
     if action is Action.SKIP:
         return should_log
@@ -254,21 +276,21 @@ def process_image(  # noqa: PLR0911
     if action is Action.DOWNLOAD or not image_file.exists():
         image_file.unlink(missing_ok=True)
         try:
-            mediux.download_image(file_id=file.id, output=image_file)
+            ctx.mediux.download_image(file_id=file.id, output=image_file, parent_str=parent)
         except ServiceError as err:
             LOGGER.error("[Mediux] %s", err)
-            service.cache.delete(key=cache_key)
+            ctx.service.cache.delete(key=cache_key)
             setattr(obj, uploaded_attr, False)
             return should_log
         if not existing:
-            service.cache.insert(
+            ctx.service.cache.insert(
                 key=cache_key,
                 creator=set_data.username,
                 set_id=set_data.id,
                 last_updated=file.last_updated,
             )
         else:
-            service.cache.update(
+            ctx.service.cache.update(
                 key=cache_key,
                 creator=set_data.username,
                 set_id=set_data.id,
@@ -278,19 +300,29 @@ def process_image(  # noqa: PLR0911
     if image_file.stat().st_size >= MAX_IMAGE_SIZE:
         LOGGER.warning(
             "[%s] Image file '%s' is larger than %d MB, skipping upload",
-            type(service).__name__,
+            type(ctx.service).__name__,
             image_file,
             MAX_IMAGE_SIZE / 1000 / 1000,
         )
         return should_log
-    if not service.upload_image(
-        object_id=obj.id, image_file=image_file, kometa_integration=kometa_integration
+    if not ctx.service.upload_image(
+        object_id=obj.id,
+        image_file=image_file,
+        file_type=cache_key.type,
+        kometa_integration=ctx.kometa_integration,
     ):
-        service.cache.update_service(key=cache_key, service=type(service).__name__, timestamp=None)
+        ctx.service.cache.update_service(
+            key=cache_key,
+            service=type(ctx.service).__name__,  # ty: ignore[invalid-argument-type]
+            timestamp=None,
+        )
         setattr(obj, uploaded_attr, False)
         return should_log
-    now = datetime.now(tz=timezone.utc)
-    service.cache.update_service(key=cache_key, service=type(service).__name__, timestamp=now)
+    ctx.service.cache.update_service(
+        key=cache_key,
+        service=type(ctx.service).__name__,  # ty: ignore[invalid-argument-type]
+        timestamp=datetime.now(tz=timezone.utc),
+    )
     setattr(obj, uploaded_attr, True)
     return should_log
 
@@ -298,17 +330,11 @@ def process_image(  # noqa: PLR0911
 def process_entry_images(
     entry: Show | Collection | Movie,
     set_data: ShowSet | CollectionSet | MovieSet,
-    mediux: Mediux,
-    service: BaseService,
-    priority_usernames: list[str],
-    excluded_usernames: list[str],
+    ctx: ProcessContext,
     should_log: bool,
-    kometa_integration: bool = False,
-    force: bool = False,
 ) -> bool:
     parent = slugify(value=entry.display_name)
-    file_map = {FileType.POSTER: "poster.jpg", FileType.BACKDROP: "backdrop.jpg"}
-    for file_type, filename in file_map.items():
+    for file_type, filename in ENTRY_FILE_MAP.items():
         should_log = process_image(
             obj=entry,
             cache_key=CacheKey(tmdb_id=entry.tmdb_id, type=file_type),
@@ -316,70 +342,44 @@ def process_entry_images(
             parent=parent,
             filename=filename,
             set_data=set_data,
-            mediux=mediux,
-            service=service,
-            priority_usernames=priority_usernames,
-            excluded_usernames=excluded_usernames,
-            kometa_integration=kometa_integration,
-            force=force,
+            ctx=ctx,
             should_log=should_log,
         )
     return should_log
 
 
-def process_show_data(
-    entry: Show,
-    set_data: ShowSet,
-    mediux: Mediux,
-    service: BaseService,
-    priority_usernames: list[str],
-    excluded_usernames: list[str],
-    force: bool = False,
-    kometa_integration: bool = False,
-) -> None:
+def process_show_data(entry: Show, set_data: ShowSet, ctx: ProcessContext) -> None:
     should_log = True
     should_log = process_entry_images(
-        entry=entry,
-        set_data=set_data,
-        mediux=mediux,
-        service=service,
-        priority_usernames=priority_usernames,
-        excluded_usernames=excluded_usernames,
-        kometa_integration=kometa_integration,
-        force=force,
-        should_log=should_log,
+        entry=entry, set_data=set_data, ctx=ctx, should_log=should_log
     )
+    show_parent = slugify(value=entry.display_name)
     try:
-        seasons = service.list_seasons(show_id=entry.id)
+        seasons = ctx.service.list_seasons(show_id=entry.id)
     except ServiceError as err:
-        LOGGER.error("[%s] %s", type(service).__name__, err)
+        LOGGER.error("[%s] %s", type(ctx.service).__name__, err)
         seasons = []
     for season in seasons:
         entry.seasons.append(season)
         mediux_season = next((x for x in set_data.show.seasons if x.number == season.number), None)
         if not mediux_season:
             continue
-        should_log = process_image(
-            obj=season,
-            cache_key=CacheKey(
-                tmdb_id=entry.tmdb_id, season_num=season.number, type=FileType.POSTER
-            ),
-            id_value=mediux_season.id,
-            parent=slugify(value=entry.display_name),
-            filename=f"s{season.number:02}.jpg",
-            set_data=set_data,
-            mediux=mediux,
-            service=service,
-            priority_usernames=priority_usernames,
-            excluded_usernames=excluded_usernames,
-            kometa_integration=kometa_integration,
-            force=force,
-            should_log=should_log,
-        )
+        season_parent = show_parent + f"/S{season.number:02}"
+        for file_type, filename in SEASON_FILE_MAP.items():
+            should_log = process_image(
+                obj=season,
+                cache_key=CacheKey(tmdb_id=entry.tmdb_id, season_num=season.number, type=file_type),
+                id_value=mediux_season.id,
+                parent=season_parent,
+                filename=filename,
+                set_data=set_data,
+                ctx=ctx,
+                should_log=should_log,
+            )
         try:
-            episodes = service.list_episodes(show_id=entry.id, season_id=season.id)
+            episodes = ctx.service.list_episodes(show_id=entry.id, season_id=season.id)
         except ServiceError as err:
-            LOGGER.error("[%s] %s", type(service).__name__, err)
+            LOGGER.error("[%s] %s", type(ctx.service).__name__, err)
             episodes = []
         for episode in episodes:
             season.episodes.append(episode)
@@ -388,54 +388,36 @@ def process_show_data(
             )
             if not mediux_episode:
                 continue
-            should_log = process_image(
-                obj=episode,
-                cache_key=CacheKey(
-                    tmdb_id=entry.tmdb_id,
-                    season_num=season.number,
-                    episode_num=episode.number,
-                    type=FileType.TITLE_CARD,
-                ),
-                id_value=mediux_episode.id,
-                parent=slugify(value=entry.display_name),
-                filename=f"s{season.number:02}e{episode.number:02}.jpg",
-                set_data=set_data,
-                mediux=mediux,
-                service=service,
-                priority_usernames=priority_usernames,
-                excluded_usernames=excluded_usernames,
-                kometa_integration=kometa_integration,
-                force=force,
-                should_log=should_log,
-            )
+            episode_parent = season_parent + f"/E{episode.number:02}"
+            for file_type, filename in EPISODE_FILE_MAP.items():
+                should_log = process_image(
+                    obj=episode,
+                    cache_key=CacheKey(
+                        tmdb_id=entry.tmdb_id,
+                        season_num=season.number,
+                        episode_num=episode.number,
+                        type=file_type,
+                    ),
+                    id_value=mediux_episode.id,
+                    parent=episode_parent,
+                    filename=filename,
+                    set_data=set_data,
+                    ctx=ctx,
+                    should_log=should_log,
+                )
 
 
 def process_collection_data(
-    entry: Collection,
-    set_data: CollectionSet,
-    mediux: Mediux,
-    service: BaseService,
-    priority_usernames: list[str],
-    excluded_usernames: list[str],
-    force: bool = False,
-    kometa_integration: bool = False,
+    entry: Collection, set_data: CollectionSet, ctx: ProcessContext
 ) -> None:
     should_log = True
     should_log = process_entry_images(
-        entry=entry,
-        set_data=set_data,
-        mediux=mediux,
-        service=service,
-        priority_usernames=priority_usernames,
-        excluded_usernames=excluded_usernames,
-        kometa_integration=kometa_integration,
-        force=force,
-        should_log=should_log,
+        entry=entry, set_data=set_data, ctx=ctx, should_log=should_log
     )
     try:
-        movies = service.list_collection_movies(collection_id=entry.id)
+        movies = ctx.service.list_collection_movies(collection_id=entry.id)
     except ServiceError as err:
-        LOGGER.error("[%s] %s", type(service).__name__, err)
+        LOGGER.error("[%s] %s", type(ctx.service).__name__, err)
         movies = []
     for movie in movies:
         entry.movies.append(movie)
@@ -443,8 +425,7 @@ def process_collection_data(
         if not mediux_movie:
             continue
         parent = slugify(value=movie.display_name)
-        file_map = {FileType.POSTER: "poster.jpg", FileType.BACKDROP: "backdrop.jpg"}
-        for file_type, filename in file_map.items():
+        for file_type, filename in ENTRY_FILE_MAP.items():
             should_log = process_image(
                 obj=movie,
                 cache_key=CacheKey(tmdb_id=movie.tmdb_id, type=file_type),
@@ -452,35 +433,13 @@ def process_collection_data(
                 parent=parent,
                 filename=filename,
                 set_data=set_data,
-                mediux=mediux,
-                service=service,
-                priority_usernames=priority_usernames,
-                excluded_usernames=excluded_usernames,
-                kometa_integration=kometa_integration,
-                force=force,
+                ctx=ctx,
                 should_log=should_log,
             )
 
 
-def process_movie_data(
-    entry: Movie,
-    set_data: MovieSet,
-    mediux: Mediux,
-    service: BaseService,
-    priority_usernames: list[str],
-    excluded_usernames: list[str],
-    force: bool = False,
-    kometa_integration: bool = False,
-) -> None:
+def process_movie_data(entry: Movie, set_data: MovieSet, ctx: ProcessContext) -> None:
     should_log = True
     should_log = process_entry_images(
-        entry=entry,
-        set_data=set_data,
-        mediux=mediux,
-        service=service,
-        priority_usernames=priority_usernames,
-        excluded_usernames=excluded_usernames,
-        kometa_integration=kometa_integration,
-        force=force,
-        should_log=should_log,
+        entry=entry, set_data=set_data, ctx=ctx, should_log=should_log
     )

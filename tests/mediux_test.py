@@ -3,6 +3,9 @@ from datetime import date
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
+import pytest
+
+from mediux_posters.errors import ServiceError
 from mediux_posters.mediux import Mediux
 from mediux_posters.mediux.schemas import FileType
 from mediux_posters.utils import MediaType
@@ -56,8 +59,8 @@ def test_get_show_set(mediux_session: Mediux) -> None:
 
 
 def test_get_show_set_invalid(mediux_session: Mediux) -> None:
-    result = mediux_session.get_show_set(set_id=-1)
-    assert result is None
+    with pytest.raises(ServiceError):
+        mediux_session.get_show_set(set_id=-1)
 
 
 def test_show_set_season_id_typing(mediux_session: Mediux) -> None:
@@ -113,8 +116,8 @@ def test_get_collection_set(mediux_session: Mediux) -> None:
 
 
 def test_get_collection_set_invalid(mediux_session: Mediux) -> None:
-    result = mediux_session.get_collection_set(set_id=-1)
-    assert result is None
+    with pytest.raises(ServiceError):
+        mediux_session.get_collection_set(set_id=-1)
 
 
 def test_list_movie_sets(mediux_session: Mediux) -> None:
@@ -123,19 +126,15 @@ def test_list_movie_sets(mediux_session: Mediux) -> None:
     result = next(iter(x for x in results if x.id == 11023), None)
     assert result is not None
 
+    assert result.id == 11023
+    assert result.set_title == "Downton Abbey (2019) Set"
     assert len(result.files) != 0
     assert result.files[0].id == "b9dd4856-b95f-42b4-8e9a-633f7d152fa4"
     assert result.files[0].file_type == FileType.POSTER
-    assert result.files[0].show_id is None
-    assert result.files[0].season_id is None
-    assert result.files[0].episode_id is None
     assert result.files[0].movie_id == 535544
-    assert result.files[0].collection_id is None
-    assert result.id == 11023
     assert result.movie.id == 535544
     assert result.movie.release_date == date(2019, 9, 12)
     assert result.movie.title == "Downton Abbey"
-    assert result.set_title == "Downton Abbey (2019) Set"
     assert result.username == "fwlolx"
 
 
@@ -157,8 +156,8 @@ def test_get_movie_set(mediux_session: Mediux) -> None:
 
 
 def test_get_movie_set_invalid(mediux_session: Mediux) -> None:
-    result = mediux_session.get_movie_set(set_id=-1)
-    assert result is None
+    with pytest.raises(ServiceError):
+        mediux_session.get_movie_set(set_id=-1)
 
 
 def compute_file_hash(file: Path) -> str:
@@ -174,7 +173,7 @@ def test_download_image(mediux_session: Mediux) -> None:
     with NamedTemporaryFile() as output:
         output_file = Path(output.name)
         mediux_session.download_image(
-            file_id="b9dd4856-b95f-42b4-8e9a-633f7d152fa4", output=output_file
+            file_id="b9dd4856-b95f-42b4-8e9a-633f7d152fa4", parent_str="test", output=output_file
         )
 
         assert compute_file_hash(expected_image) == compute_file_hash(output_file), (

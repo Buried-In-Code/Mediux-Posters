@@ -60,11 +60,9 @@ _Jellyfin Collections are not yet supported._
 ## Notes
 
 - When running a sync/show/collection/movie it will keep downloading sets until all the needed posters are found.
-  - **Show:** Poster and Backdrop
-  - **Season:** Poster
-  - **Episode:** Title Card
-  - **Collection:** Poster and Backdrop
-  - **Movie:** Poster and Backdrop
+  - **Show, Collection, Movie:** Poster, Backdrop, Logo (and Album/SquareArt only on Plex)
+  - **Season:** Poster, Backdrop
+  - **Episode:** TitleCard, Backdrop
 - To enable support for Collections in Plex, each Collection needs to have a label with its tmdb-id, in the format of `tmdb-<number>`\
   If using Kometa, refer to [this comment](https://github.com/Buried-In-Code/Mediux-Posters/issues/12#issuecomment-2622002859) to have Kometa add these labels.
 

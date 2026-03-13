@@ -2,16 +2,17 @@ __all__ = ["Plex"]
 
 import logging
 import mimetypes
+import platform
 from json import JSONDecodeError
 from pathlib import Path
-from platform import release, system
 
 from httpx import Client, HTTPStatusError, RequestError, TimeoutException
 from pydantic import TypeAdapter, ValidationError
 
-from mediux_posters import __project__, __version__
+from mediux_posters import __version__
 from mediux_posters.console import CONSOLE
 from mediux_posters.errors import AuthenticationError, ServiceError
+from mediux_posters.mediux import FileType
 from mediux_posters.services._base import BaseService
 from mediux_posters.services.plex.schemas import (
     Collection,
@@ -35,7 +36,7 @@ class Plex(BaseService[int, Show, Season, Episode, Collection, Movie]):
             headers={
                 "Accept": "application/json",
                 "X-Plex-Token": token,
-                "User-Agent": f"{__project__.title()}/{__version__}/{system()}: {release()}",
+                "User-Agent": f"Mediux-Posters/{__version__} ({platform.system()}: {platform.release()}; Python v{platform.python_version()})",  # noqa: E501
             },
         )
 
@@ -91,7 +92,7 @@ class Plex(BaseService[int, Show, Season, Episode, Collection, Movie]):
             headers = {}
 
         try:
-            response = self.client.post(endpoint, headers=headers, data=body)
+            response = self.client.post(endpoint, headers=headers, data=body)  # ty: ignore[invalid-argument-type]
             response.raise_for_status()
         except RequestError as err:
             raise ServiceError(f"Unable to connect to '{err.request.url.path}'") from err
@@ -310,8 +311,17 @@ class Plex(BaseService[int, Show, Season, Episode, Collection, Movie]):
         )
 
     def upload_image(
-        self, object_id: int | str, image_file: Path, kometa_integration: bool
+        self, object_id: int | str, image_file: Path, file_type: FileType, kometa_integration: bool
     ) -> bool:
+        element = {
+            FileType.ALBUM: "squareArts",
+            FileType.BACKDROP: "arts",
+            FileType.LOGO: "clearLogos",
+            FileType.POSTER: "posters",
+            FileType.TITLE_CARD: "posters",
+        }.get(file_type)
+        if not element:
+            return False
         with CONSOLE.status(rf"\[Plex] Uploading {image_file.parent.name}/{image_file.name}"):
             mime_type, _ = mimetypes.guess_type(image_file)
             if not mime_type:
@@ -319,18 +329,11 @@ class Plex(BaseService[int, Show, Season, Episode, Collection, Movie]):
             headers = {"Content-Type": mime_type}
             try:
                 with image_file.open("rb") as stream:
-                    if image_file.stem == "backdrop":
-                        self._perform_post_request(
-                            endpoint=f"/library/metadata/{object_id}/arts",
-                            headers=headers,
-                            body=stream.read(),
-                        )
-                    else:
-                        self._perform_post_request(
-                            endpoint=f"/library/metadata/{object_id}/posters",
-                            headers=headers,
-                            body=stream.read(),
-                        )
+                    self._perform_post_request(
+                        endpoint=f"/library/metadata/{object_id}/{element}",
+                        headers=headers,
+                        body=stream.read(),
+                    )
                     if kometa_integration:
                         self.remove_labels(object_id, "Overlay")
                 return True

@@ -10,14 +10,14 @@ dev = [
   "prek >= 0.3.0",
   "ruff >= 0.15.0",
   "toml-sort >= 0.24.0",
-  "ty >= 0.0.20",
+  "ty >= 0.0.22",
 ]
 tests = [
   "pytest >= 9.0.0",
   "pytest-cov >= 7.0.0",
   "pytest-httpx >= 0.36.0",
-  "tox >= 4.36.0",
-  "tox-uv >= 1.29.0",
+  "tox >= 4.49.0",
+  "tox-uv >= 1.33.0",
 ]
 
 [project]
@@ -36,11 +36,10 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "graphql-query >= 1.4.0",
+  "gql[httpx] >= 4.0.0",
   "httpx[http2] >= 0.28.0",
   "pydantic >= 2.12.0",
   "questionary >= 2.1.0",
-  "ratelimit >= 2.2.0",
   "rich >= 14.3.0",
   "tomli >= 2.4.0 ; python_version < '3.11'",
   "tomli-w >= 1.2.0",
@@ -93,14 +92,11 @@ skip-magic-trailing-comma = true
 
 [tool.ruff.lint]
 ignore = [
-  "C901",
   "COM812",
   "D",
   "EM",
   "FBT",
-  "PLR0912",
   "PLR0913",
-  "PLR0915",
   "PLR2004",
   "PLW2901",
   "TCH",
