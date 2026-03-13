@@ -8,6 +8,7 @@ from mediux_posters.utils import BaseModel
 
 class BaseEpisode(BaseModel):
     id: int | str
+    number: int
 
     title_card_uploaded: bool = False
     backdrop_uploaded: bool = False
@@ -19,6 +20,7 @@ class BaseEpisode(BaseModel):
 
 class BaseSeason(BaseModel):
     id: int | str
+    number: int
 
     episodes: list[BaseEpisode] = Field(default_factory=list)
     poster_uploaded: bool = False

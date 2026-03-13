@@ -25,11 +25,11 @@ class Library(JellyfinModel):
 
 
 class Episode(BaseEpisode, JellyfinModel):
-    pass
+    number: int = Field(alias="IndexNumber")
 
 
 class Season(BaseSeason, JellyfinModel):
-    pass
+    number: int = Field(alias="IndexNumber", default=1)
 
 
 class Show(BaseShow, JellyfinModel):

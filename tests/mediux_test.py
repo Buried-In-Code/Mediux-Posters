@@ -173,7 +173,7 @@ def test_download_image(mediux_session: Mediux) -> None:
     with NamedTemporaryFile() as output:
         output_file = Path(output.name)
         mediux_session.download_image(
-            file_id="b9dd4856-b95f-42b4-8e9a-633f7d152fa4", output=output_file
+            file_id="b9dd4856-b95f-42b4-8e9a-633f7d152fa4", parent_str="test", output=output_file
         )
 
         assert compute_file_hash(expected_image) == compute_file_hash(output_file), (

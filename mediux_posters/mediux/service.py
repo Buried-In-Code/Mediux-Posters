@@ -250,7 +250,7 @@ class Mediux:
             else None
         )
 
-    def download_image(self, file_id: str, output: Path) -> None:
+    def download_image(self, file_id: str, output: Path, parent_str: str) -> None:
         output.parent.mkdir(parents=True, exist_ok=True)
         output.unlink(missing_ok=True)
         try:
@@ -269,7 +269,7 @@ class Mediux:
 
                 with Progress(console=CONSOLE, expand=True) as progress:
                     download_task = progress.add_task(
-                        f"Downloading {output.parent.name}/{output.name}", total=total
+                        f"Downloading {parent_str}/{output.name}", total=total
                     )
                     with output.open("wb") as file_stream:
                         for chunk in response.iter_bytes():

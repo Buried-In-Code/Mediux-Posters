@@ -34,10 +34,12 @@ class Library(PlexModel):
 
 class Episode(BaseEpisode, PlexModel):
     id: int = Field(alias="ratingKey")
+    number: int = Field(alias="index")
 
 
 class Season(BaseSeason, PlexModel):
     id: int = Field(alias="ratingKey")
+    number: int = Field(alias="index")
 
 
 class Show(BaseShow, PlexModel):

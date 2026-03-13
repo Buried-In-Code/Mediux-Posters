@@ -276,7 +276,7 @@ def process_image(  # noqa: PLR0911
     if action is Action.DOWNLOAD or not image_file.exists():
         image_file.unlink(missing_ok=True)
         try:
-            ctx.mediux.download_image(file_id=file.id, output=image_file)
+            ctx.mediux.download_image(file_id=file.id, output=image_file, parent_str=parent)
         except ServiceError as err:
             LOGGER.error("[Mediux] %s", err)
             ctx.service.cache.delete(key=cache_key)
