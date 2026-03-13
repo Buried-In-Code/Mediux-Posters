@@ -7,6 +7,7 @@ from typer import Argument, Option
 
 from mediux_posters.cli._typer import app
 from mediux_posters.cli.common import (
+    ProcessContext,
     ServiceOption,
     process_collection_data,
     process_movie_data,
@@ -22,7 +23,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 @app.command(name="set", help="Manually set posters for specific Mediux sets using URLs.")
-def set_posters(
+def set_posters(  # noqa: C901
     urls: Annotated[
         list[str], Argument(show_default=False, help="List of URLs from Mediux to process.")
     ],
@@ -108,36 +109,20 @@ def set_posters(
                 except ServiceError as err:
                     LOGGER.error("[%s] %s", type(service).__name__, err)
                     continue
+            ctx = ProcessContext(
+                mediux=mediux,
+                service=service,
+                force=True,
+                priority_usernames=settings.priority_usernames,
+                excluded_usernames=settings.exclude_usernames,
+                kometa_integration=settings.kometa_integration,
+            )
             if media_type is MediaType.SHOW:
-                process_show_data(
-                    entry=entry,
-                    set_data=set_data,
-                    mediux=mediux,
-                    service=service,
-                    force=True,
-                    priority_usernames=settings.priority_usernames,
-                    excluded_usernames=settings.exclude_usernames,
-                    kometa_integration=settings.kometa_integration,
-                )
+                assert isinstance(set_data, ShowSet)  # noqa: S101
+                process_show_data(entry=entry, set_data=set_data, ctx=ctx)
             elif media_type is MediaType.COLLECTION:
-                process_collection_data(
-                    entry=entry,
-                    set_data=set_data,
-                    mediux=mediux,
-                    service=service,
-                    force=True,
-                    priority_usernames=settings.priority_usernames,
-                    excluded_usernames=settings.exclude_usernames,
-                    kometa_integration=settings.kometa_integration,
-                )
+                assert isinstance(set_data, CollectionSet)  # noqa: S101
+                process_collection_data(entry=entry, set_data=set_data, ctx=ctx)
             elif media_type is MediaType.MOVIE:
-                process_movie_data(
-                    entry=entry,
-                    set_data=set_data,
-                    mediux=mediux,
-                    service=service,
-                    force=True,
-                    priority_usernames=settings.priority_usernames,
-                    excluded_usernames=settings.exclude_usernames,
-                    kometa_integration=settings.kometa_integration,
-                )
+                assert isinstance(set_data, MovieSet)  # noqa: S101
+                process_movie_data(entry=entry, set_data=set_data, ctx=ctx)

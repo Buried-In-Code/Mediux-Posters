@@ -10,7 +10,7 @@ dev = [
   "prek >= 0.3.0",
   "ruff >= 0.15.0",
   "toml-sort >= 0.24.0",
-  "ty >= 0.0.21",
+  "ty >= 0.0.22",
 ]
 tests = [
   "pytest >= 9.0.0",
@@ -92,14 +92,11 @@ skip-magic-trailing-comma = true
 
 [tool.ruff.lint]
 ignore = [
-  "C901",
   "COM812",
   "D",
   "EM",
   "FBT",
-  "PLR0912",
   "PLR0913",
-  "PLR0915",
   "PLR2004",
   "PLW2901",
   "TCH",

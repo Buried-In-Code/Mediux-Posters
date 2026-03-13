@@ -234,6 +234,7 @@ class Jellyfin(BaseService[str, Show, Season, Episode, Collection, Movie]):
             FileType.BACKDROP: "Backdrop",
             FileType.POSTER: "Primary",
             FileType.TITLE_CARD: "Primary",
+            FileType.LOGO: "Logo",
         }.get(file_type)
         if not element:
             return False

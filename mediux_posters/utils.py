@@ -73,7 +73,7 @@ def flatten_dict(content: dict[str, Any], parent_key: str = "") -> dict[str, Any
             items.update(flatten_dict(content=value, parent_key=new_key))
         elif isinstance(value, list) and value and isinstance(value[0], dict):
             for index, entry in enumerate(value):
-                items.update(flatten_dict(content=entry, parent_key=f"{new_key}[{index}]"))
+                items.update(flatten_dict(content=entry, parent_key=f"{new_key}[{index}]"))  # ty: ignore[invalid-argument-type]
         else:
             items[new_key] = value
     return dict(sorted(items.items()))
