@@ -74,6 +74,7 @@ File will be created on first run.
 ### Example File
 
 ```toml
+covers_path = "~/.cache/mediux-posters/covers"
 exclude_usernames = []
 kometa_integration = false
 only_priority_usernames = false
@@ -93,6 +94,10 @@ token = "<Token>"
 ```
 
 ### Details
+
+- `covers_path`
+
+  Folder location as to where to store downloaded covers.
 
 - `exclude_usernames`
 
