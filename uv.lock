@@ -475,7 +475,7 @@ dev = [
     { name = "prek", specifier = ">=0.3.0" },
     { name = "ruff", specifier = ">=0.15.0" },
     { name = "toml-sort", specifier = ">=0.24.0" },
-    { name = "ty", specifier = ">=0.0.22" },
+    { name = "ty", specifier = ">=0.0.23" },
 ]
 tests = [
     { name = "pytest", specifier = ">=9.0.0" },

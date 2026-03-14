@@ -113,6 +113,7 @@ def set_posters(  # noqa: C901
                 mediux=mediux,
                 service=service,
                 force=True,
+                covers_cache=settings.covers_path,
                 priority_usernames=settings.priority_usernames,
                 excluded_usernames=settings.exclude_usernames,
                 kometa_integration=settings.kometa_integration,

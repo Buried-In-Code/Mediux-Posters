@@ -13,6 +13,7 @@ from collections.abc import Generator
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
+from pathlib import Path
 from platform import python_version
 from typing import Final, Protocol, TypeVar
 
@@ -35,7 +36,7 @@ from mediux_posters.services import (
 )
 from mediux_posters.services.service_cache import CacheData, CacheKey, ServiceCache
 from mediux_posters.settings import Settings
-from mediux_posters.utils import delete_folder, get_cached_image, slugify
+from mediux_posters.utils import delete_folder, slugify
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_CREATOR_RANK: Final[int] = 1_000_000
@@ -69,6 +70,7 @@ class ServiceOption(str, Enum):
 class ProcessContext:
     mediux: Mediux
     service: BaseService
+    covers_cache: Path
     priority_usernames: list[str]
     excluded_usernames: list[str]
     force: bool = False
@@ -91,11 +93,14 @@ def setup_services(
     LOGGER.info("Mediux Posters v%s", __version__)
     LOGGER.info("Python v%s", python_version())
 
+    settings = Settings.load().save()
+
     if clean:
+        LOGGER.info("Cleaning covers directory: '%s'", settings.covers_path)
+        delete_folder(folder=settings.covers_path)
         LOGGER.info("Cleaning cache directory: '%s'", get_cache_root())
         delete_folder(folder=get_cache_root())
 
-    settings = Settings.load().save()
     if not settings.mediux.token:
         LOGGER.error("Missing Mediux token, check your settings")
         raise Abort
@@ -247,7 +252,7 @@ def process_image(  # noqa: PLR0911
     if not file:
         return should_log
 
-    image_file = get_cached_image(parent, filename)
+    image_file = ctx.covers_cache.joinpath(parent, filename)
     existing = ctx.service.cache.select(key=cache_key)
     service_timestamp = ctx.service.cache.get_timestamp(
         key=cache_key,
@@ -349,10 +354,7 @@ def process_entry_images(
 
 
 def process_show_data(entry: Show, set_data: ShowSet, ctx: ProcessContext) -> None:
-    should_log = True
-    should_log = process_entry_images(
-        entry=entry, set_data=set_data, ctx=ctx, should_log=should_log
-    )
+    should_log = process_entry_images(entry=entry, set_data=set_data, ctx=ctx, should_log=True)
     show_parent = slugify(value=entry.display_name)
     try:
         seasons = ctx.service.list_seasons(show_id=entry.id)
@@ -410,10 +412,7 @@ def process_show_data(entry: Show, set_data: ShowSet, ctx: ProcessContext) -> No
 def process_collection_data(
     entry: Collection, set_data: CollectionSet, ctx: ProcessContext
 ) -> None:
-    should_log = True
-    should_log = process_entry_images(
-        entry=entry, set_data=set_data, ctx=ctx, should_log=should_log
-    )
+    should_log = process_entry_images(entry=entry, set_data=set_data, ctx=ctx, should_log=True)
     try:
         movies = ctx.service.list_collection_movies(collection_id=entry.id)
     except ServiceError as err:
@@ -439,7 +438,4 @@ def process_collection_data(
 
 
 def process_movie_data(entry: Movie, set_data: MovieSet, ctx: ProcessContext) -> None:
-    should_log = True
-    should_log = process_entry_images(
-        entry=entry, set_data=set_data, ctx=ctx, should_log=should_log
-    )
+    process_entry_images(entry=entry, set_data=set_data, ctx=ctx, should_log=True)

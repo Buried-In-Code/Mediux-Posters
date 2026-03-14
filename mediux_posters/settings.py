@@ -7,7 +7,7 @@ import tomli_w as tomlwriter
 from pydantic import BeforeValidator, Field
 from rich.panel import Panel
 
-from mediux_posters import get_config_root
+from mediux_posters import get_cache_root, get_config_root
 from mediux_posters.console import CONSOLE
 from mediux_posters.utils import BaseModel, blank_is_none, flatten_dict
 
@@ -67,6 +67,7 @@ class Settings(SettingsModel):
     jellyfin: Jellyfin = Jellyfin()
     mediux: Mediux = Mediux()
     plex: Plex = Plex()
+    covers_path: Path = get_cache_root() / "covers"
 
     @classmethod
     def load(cls) -> Self:
