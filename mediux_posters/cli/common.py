@@ -97,8 +97,8 @@ def setup_services(
     settings = Settings.load().save()
 
     if clean:
-        LOGGER.info("Cleaning covers directory: '%s'", settings.covers_path)
-        delete_folder(folder=settings.covers_path)
+        LOGGER.info("Cleaning covers directory: '%s'", settings.covers.path)
+        delete_folder(folder=settings.covers.path)
         LOGGER.info("Cleaning cache directory: '%s'", get_cache_root())
         delete_folder(folder=get_cache_root())
 

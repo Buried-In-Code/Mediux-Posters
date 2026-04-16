@@ -121,7 +121,7 @@ def media_posters(  # noqa: C901
                 priority_usernames=settings.priority_usernames,
                 excluded_usernames=settings.exclude_usernames,
                 kometa_integration=settings.kometa_integration,
-                covers_store=settings.covers.store,
+                store_cover=settings.covers.store,
             )
             for set_data in filtered_sets:
                 if media_type is MediaType.SHOW:
