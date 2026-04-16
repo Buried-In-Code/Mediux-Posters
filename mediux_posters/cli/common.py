@@ -75,6 +75,7 @@ class ProcessContext:
     excluded_usernames: list[str]
     force: bool = False
     kometa_integration: bool = False
+    store_cover: bool = True
 
 
 class Action(str, Enum):
@@ -270,6 +271,8 @@ def process_image(  # noqa: PLR0911
     )
     if action is Action.SKIP:
         return should_log
+    if not ctx.store_cover:
+        action = Action.DOWNLOAD
     if should_log:
         LOGGER.info(
             "[Mediux] %sing '%s' by '%s'",
@@ -310,12 +313,15 @@ def process_image(  # noqa: PLR0911
             MAX_IMAGE_SIZE / 1000 / 1000,
         )
         return should_log
-    if not ctx.service.upload_image(
+    upload_success = ctx.service.upload_image(
         object_id=obj.id,
         image_file=image_file,
         file_type=cache_key.type,
         kometa_integration=ctx.kometa_integration,
-    ):
+    )
+    if not ctx.store_cover:
+        image_file.unlink(missing_ok=True)
+    if not upload_success:
         ctx.service.cache.update_service(
             key=cache_key,
             service=type(ctx.service).__name__,  # ty: ignore[invalid-argument-type]

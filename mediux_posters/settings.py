@@ -25,6 +25,11 @@ except ModuleNotFoundError:
 class SettingsModel(BaseModel, extra="ignore"): ...
 
 
+class Covers(SettingsModel):
+    path: Path = get_cache_root() / "covers"
+    store: bool = True
+
+
 class Jellyfin(SettingsModel):
     base_url: str = "http://127.0.0.1:8096"
     token: Annotated[str | None, BeforeValidator(blank_is_none)] = None
@@ -64,10 +69,10 @@ class Settings(SettingsModel):
     kometa_integration: bool = False
     only_priority_usernames: bool = False
     priority_usernames: list[str] = Field(default_factory=list)
+    covers: Covers = Covers()
     jellyfin: Jellyfin = Jellyfin()
     mediux: Mediux = Mediux()
     plex: Plex = Plex()
-    covers_path: Path = get_cache_root() / "covers"
 
     @classmethod
     def load(cls) -> Self:
