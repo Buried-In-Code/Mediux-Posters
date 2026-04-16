@@ -111,9 +111,11 @@ def sync_posters(  # noqa: C901
             ctx = ProcessContext(
                 mediux=mediux,
                 service=service,
+                covers_cache=settings.covers.path,
                 priority_usernames=settings.priority_usernames,
                 excluded_usernames=settings.exclude_usernames,
                 kometa_integration=settings.kometa_integration,
+                store_cover=settings.covers.store,
             )
             entry_count = len(entries)
             for idx, entry in enumerate(entries, start=1):

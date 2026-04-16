@@ -113,9 +113,11 @@ def set_posters(  # noqa: C901
                 mediux=mediux,
                 service=service,
                 force=True,
+                covers_cache=settings.covers.path,
                 priority_usernames=settings.priority_usernames,
                 excluded_usernames=settings.exclude_usernames,
                 kometa_integration=settings.kometa_integration,
+                store_cover=settings.covers.store,
             )
             if media_type is MediaType.SHOW:
                 assert isinstance(set_data, ShowSet)  # noqa: S101

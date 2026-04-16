@@ -37,14 +37,14 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v7
+      - uses: actions/checkout@v6.0.2
+      - uses: astral-sh/setup-uv@v8.0.0
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install project
         run: uv sync --locked --no-dev --all-extras --group tests --managed-python
       - name: Run tests
-        run: uv run pytest
+        run: uv run --no-dev pytest
         env:
           MEDIUX__BASE_URL: ${{ secrets.MEDIUX__BASE_URL }}
           MEDIUX__TOKEN: ${{ secrets.MEDIUX__TOKEN }}

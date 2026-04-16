@@ -13,6 +13,7 @@ from collections.abc import Generator
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
+from pathlib import Path
 from platform import python_version
 from typing import Final, Protocol, TypeVar
 
@@ -35,7 +36,7 @@ from mediux_posters.services import (
 )
 from mediux_posters.services.service_cache import CacheData, CacheKey, ServiceCache
 from mediux_posters.settings import Settings
-from mediux_posters.utils import delete_folder, get_cached_image, slugify
+from mediux_posters.utils import delete_folder, slugify
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_CREATOR_RANK: Final[int] = 1_000_000
@@ -69,10 +70,12 @@ class ServiceOption(str, Enum):
 class ProcessContext:
     mediux: Mediux
     service: BaseService
+    covers_cache: Path
     priority_usernames: list[str]
     excluded_usernames: list[str]
     force: bool = False
     kometa_integration: bool = False
+    store_cover: bool = True
 
 
 class Action(str, Enum):
@@ -91,11 +94,14 @@ def setup_services(
     LOGGER.info("Mediux Posters v%s", __version__)
     LOGGER.info("Python v%s", python_version())
 
+    settings = Settings.load().save()
+
     if clean:
+        LOGGER.info("Cleaning covers directory: '%s'", settings.covers.path)
+        delete_folder(folder=settings.covers.path)
         LOGGER.info("Cleaning cache directory: '%s'", get_cache_root())
         delete_folder(folder=get_cache_root())
 
-    settings = Settings.load().save()
     if not settings.mediux.token:
         LOGGER.error("Missing Mediux token, check your settings")
         raise Abort
@@ -230,7 +236,79 @@ def determine_action(  # noqa: PLR0911
     return Action.UPLOAD
 
 
-def process_image(  # noqa: PLR0911
+def download_image(
+    image_file: Path,
+    ctx: ProcessContext,
+    file: File,
+    parent: str,
+    cache_key: CacheKey,
+    existing: CacheData | None,
+    set_data: ShowSet | CollectionSet | MovieSet,
+) -> bool:
+    image_file.unlink(missing_ok=True)
+    try:
+        ctx.mediux.download_image(file_id=file.id, output=image_file, parent_str=parent)
+    except ServiceError as err:
+        LOGGER.error("[Mediux] %s", err)
+        ctx.service.cache.delete(key=cache_key)
+        return False
+    if not existing:
+        ctx.service.cache.insert(
+            key=cache_key,
+            creator=set_data.username,
+            set_id=set_data.id,
+            last_updated=file.last_updated,
+        )
+    else:
+        ctx.service.cache.update(
+            key=cache_key,
+            creator=set_data.username,
+            set_id=set_data.id,
+            last_updated=file.last_updated,
+        )
+    return True
+
+
+def upload_image(
+    image_file: Path,
+    ctx: ProcessContext,
+    obj: Show | Season | Episode | Collection | Movie,
+    cache_key: CacheKey,
+    uploaded_attr: str,
+) -> None:
+    if image_file.stat().st_size >= MAX_IMAGE_SIZE:
+        LOGGER.warning(
+            "[%s] Image file '%s' is larger than %d MB, skipping upload",
+            type(ctx.service).__name__,
+            image_file,
+            MAX_IMAGE_SIZE / 1000 / 1000,
+        )
+        return
+    upload_success = ctx.service.upload_image(
+        object_id=obj.id,
+        image_file=image_file,
+        file_type=cache_key.type,
+        kometa_integration=ctx.kometa_integration,
+    )
+    if not ctx.store_cover:
+        image_file.unlink(missing_ok=True)
+    if not upload_success:
+        ctx.service.cache.update_service(
+            key=cache_key,
+            service=type(ctx.service).__name__,  # ty: ignore[invalid-argument-type]
+            timestamp=None,
+        )
+        setattr(obj, uploaded_attr, False)
+        return
+    ctx.service.cache.update_service(
+        key=cache_key,
+        service=type(ctx.service).__name__,  # ty: ignore[invalid-argument-type]
+        timestamp=datetime.now(tz=timezone.utc),
+    )
+    setattr(obj, uploaded_attr, True)
+
+
+def process_image(
     obj: Show | Season | Episode | Collection | Movie,
     cache_key: CacheKey,
     id_value: int | str,
@@ -247,7 +325,7 @@ def process_image(  # noqa: PLR0911
     if not file:
         return should_log
 
-    image_file = get_cached_image(parent, filename)
+    image_file = ctx.covers_cache.joinpath(parent, filename)
     existing = ctx.service.cache.select(key=cache_key)
     service_timestamp = ctx.service.cache.get_timestamp(
         key=cache_key,
@@ -265,6 +343,8 @@ def process_image(  # noqa: PLR0911
     )
     if action is Action.SKIP:
         return should_log
+    if not ctx.store_cover:
+        action = Action.DOWNLOAD
     if should_log:
         LOGGER.info(
             "[Mediux] %sing '%s' by '%s'",
@@ -274,56 +354,21 @@ def process_image(  # noqa: PLR0911
         )
         should_log = False
     if action is Action.DOWNLOAD or not image_file.exists():
-        image_file.unlink(missing_ok=True)
-        try:
-            ctx.mediux.download_image(file_id=file.id, output=image_file, parent_str=parent)
-        except ServiceError as err:
-            LOGGER.error("[Mediux] %s", err)
-            ctx.service.cache.delete(key=cache_key)
+        download_success = download_image(
+            image_file=image_file,
+            ctx=ctx,
+            file=file,
+            parent=parent,
+            cache_key=cache_key,
+            existing=existing,
+            set_data=set_data,
+        )
+        if not download_success:
             setattr(obj, uploaded_attr, False)
             return should_log
-        if not existing:
-            ctx.service.cache.insert(
-                key=cache_key,
-                creator=set_data.username,
-                set_id=set_data.id,
-                last_updated=file.last_updated,
-            )
-        else:
-            ctx.service.cache.update(
-                key=cache_key,
-                creator=set_data.username,
-                set_id=set_data.id,
-                last_updated=file.last_updated,
-            )
-
-    if image_file.stat().st_size >= MAX_IMAGE_SIZE:
-        LOGGER.warning(
-            "[%s] Image file '%s' is larger than %d MB, skipping upload",
-            type(ctx.service).__name__,
-            image_file,
-            MAX_IMAGE_SIZE / 1000 / 1000,
-        )
-        return should_log
-    if not ctx.service.upload_image(
-        object_id=obj.id,
-        image_file=image_file,
-        file_type=cache_key.type,
-        kometa_integration=ctx.kometa_integration,
-    ):
-        ctx.service.cache.update_service(
-            key=cache_key,
-            service=type(ctx.service).__name__,  # ty: ignore[invalid-argument-type]
-            timestamp=None,
-        )
-        setattr(obj, uploaded_attr, False)
-        return should_log
-    ctx.service.cache.update_service(
-        key=cache_key,
-        service=type(ctx.service).__name__,  # ty: ignore[invalid-argument-type]
-        timestamp=datetime.now(tz=timezone.utc),
+    upload_image(
+        image_file=image_file, ctx=ctx, obj=obj, cache_key=cache_key, uploaded_attr=uploaded_attr
     )
-    setattr(obj, uploaded_attr, True)
     return should_log
 
 
@@ -349,10 +394,7 @@ def process_entry_images(
 
 
 def process_show_data(entry: Show, set_data: ShowSet, ctx: ProcessContext) -> None:
-    should_log = True
-    should_log = process_entry_images(
-        entry=entry, set_data=set_data, ctx=ctx, should_log=should_log
-    )
+    should_log = process_entry_images(entry=entry, set_data=set_data, ctx=ctx, should_log=True)
     show_parent = slugify(value=entry.display_name)
     try:
         seasons = ctx.service.list_seasons(show_id=entry.id)
@@ -410,10 +452,7 @@ def process_show_data(entry: Show, set_data: ShowSet, ctx: ProcessContext) -> No
 def process_collection_data(
     entry: Collection, set_data: CollectionSet, ctx: ProcessContext
 ) -> None:
-    should_log = True
-    should_log = process_entry_images(
-        entry=entry, set_data=set_data, ctx=ctx, should_log=should_log
-    )
+    should_log = process_entry_images(entry=entry, set_data=set_data, ctx=ctx, should_log=True)
     try:
         movies = ctx.service.list_collection_movies(collection_id=entry.id)
     except ServiceError as err:
@@ -439,7 +478,4 @@ def process_collection_data(
 
 
 def process_movie_data(entry: Movie, set_data: MovieSet, ctx: ProcessContext) -> None:
-    should_log = True
-    should_log = process_entry_images(
-        entry=entry, set_data=set_data, ctx=ctx, should_log=should_log
-    )
+    process_entry_images(entry=entry, set_data=set_data, ctx=ctx, should_log=True)

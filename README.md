@@ -79,6 +79,10 @@ kometa_integration = false
 only_priority_usernames = false
 priority_usernames = []
 
+[covers]
+path = "~/.cache/mediux-posters/covers"
+store = true
+
 [jellyfin]
 base_url = "http://127.0.0.1:8096"
 token = "<Token>"
@@ -93,6 +97,14 @@ token = "<Token>"
 ```
 
 ### Details
+
+- `covers.path`
+
+  Folder location as to where to store downloaded covers.
+
+- `covers.store`
+
+  Wether to store the images in the cache between runs, useful when running multiple services to not have to redownload images.
 
 - `exclude_usernames`
 

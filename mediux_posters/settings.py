@@ -7,7 +7,7 @@ import tomli_w as tomlwriter
 from pydantic import BeforeValidator, Field
 from rich.panel import Panel
 
-from mediux_posters import get_config_root
+from mediux_posters import get_cache_root, get_config_root
 from mediux_posters.console import CONSOLE
 from mediux_posters.utils import BaseModel, blank_is_none, flatten_dict
 
@@ -23,6 +23,11 @@ except ModuleNotFoundError:
 
 
 class SettingsModel(BaseModel, extra="ignore"): ...
+
+
+class Covers(SettingsModel):
+    path: Path = get_cache_root() / "covers"
+    store: bool = True
 
 
 class Jellyfin(SettingsModel):
@@ -64,6 +69,7 @@ class Settings(SettingsModel):
     kometa_integration: bool = False
     only_priority_usernames: bool = False
     priority_usernames: list[str] = Field(default_factory=list)
+    covers: Covers = Covers()
     jellyfin: Jellyfin = Jellyfin()
     mediux: Mediux = Mediux()
     plex: Plex = Plex()

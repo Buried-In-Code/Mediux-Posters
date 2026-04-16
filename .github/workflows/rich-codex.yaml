@@ -27,14 +27,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v7
+      - uses: actions/checkout@v6.0.2
+      - uses: astral-sh/setup-uv@v8.0.0
         with:
           python-version: ${{ env.PY_VERSION }}
       - name: Install project
         run: uv sync --locked --dev --all-extras --managed-python
-      - name: Generate terminal images with rich-codex
-        uses: ewels/rich-codex@v1.2.11
+      - uses: ewels/rich-codex@v1.2.11
         with:
           commit_changes: true
           clean_img_paths: docs/img/*.svg
