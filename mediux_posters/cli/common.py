@@ -236,7 +236,79 @@ def determine_action(  # noqa: PLR0911
     return Action.UPLOAD
 
 
-def process_image(  # noqa: PLR0911
+def download_image(
+    image_file: Path,
+    ctx: ProcessContext,
+    file: File,
+    parent: str,
+    cache_key: CacheKey,
+    existing: CacheData | None,
+    set_data: ShowSet | CollectionSet | MovieSet,
+) -> bool:
+    image_file.unlink(missing_ok=True)
+    try:
+        ctx.mediux.download_image(file_id=file.id, output=image_file, parent_str=parent)
+    except ServiceError as err:
+        LOGGER.error("[Mediux] %s", err)
+        ctx.service.cache.delete(key=cache_key)
+        return False
+    if not existing:
+        ctx.service.cache.insert(
+            key=cache_key,
+            creator=set_data.username,
+            set_id=set_data.id,
+            last_updated=file.last_updated,
+        )
+    else:
+        ctx.service.cache.update(
+            key=cache_key,
+            creator=set_data.username,
+            set_id=set_data.id,
+            last_updated=file.last_updated,
+        )
+    return True
+
+
+def upload_image(
+    image_file: Path,
+    ctx: ProcessContext,
+    obj: Show | Season | Episode | Collection | Movie,
+    cache_key: CacheKey,
+    uploaded_attr: str,
+) -> None:
+    if image_file.stat().st_size >= MAX_IMAGE_SIZE:
+        LOGGER.warning(
+            "[%s] Image file '%s' is larger than %d MB, skipping upload",
+            type(ctx.service).__name__,
+            image_file,
+            MAX_IMAGE_SIZE / 1000 / 1000,
+        )
+        return
+    upload_success = ctx.service.upload_image(
+        object_id=obj.id,
+        image_file=image_file,
+        file_type=cache_key.type,
+        kometa_integration=ctx.kometa_integration,
+    )
+    if not ctx.store_cover:
+        image_file.unlink(missing_ok=True)
+    if not upload_success:
+        ctx.service.cache.update_service(
+            key=cache_key,
+            service=type(ctx.service).__name__,  # ty: ignore[invalid-argument-type]
+            timestamp=None,
+        )
+        setattr(obj, uploaded_attr, False)
+        return
+    ctx.service.cache.update_service(
+        key=cache_key,
+        service=type(ctx.service).__name__,  # ty: ignore[invalid-argument-type]
+        timestamp=datetime.now(tz=timezone.utc),
+    )
+    setattr(obj, uploaded_attr, True)
+
+
+def process_image(
     obj: Show | Season | Episode | Collection | Movie,
     cache_key: CacheKey,
     id_value: int | str,
@@ -282,59 +354,21 @@ def process_image(  # noqa: PLR0911
         )
         should_log = False
     if action is Action.DOWNLOAD or not image_file.exists():
-        image_file.unlink(missing_ok=True)
-        try:
-            ctx.mediux.download_image(file_id=file.id, output=image_file, parent_str=parent)
-        except ServiceError as err:
-            LOGGER.error("[Mediux] %s", err)
-            ctx.service.cache.delete(key=cache_key)
+        download_success = download_image(
+            image_file=image_file,
+            ctx=ctx,
+            file=file,
+            parent=parent,
+            cache_key=cache_key,
+            existing=existing,
+            set_data=set_data,
+        )
+        if not download_success:
             setattr(obj, uploaded_attr, False)
             return should_log
-        if not existing:
-            ctx.service.cache.insert(
-                key=cache_key,
-                creator=set_data.username,
-                set_id=set_data.id,
-                last_updated=file.last_updated,
-            )
-        else:
-            ctx.service.cache.update(
-                key=cache_key,
-                creator=set_data.username,
-                set_id=set_data.id,
-                last_updated=file.last_updated,
-            )
-
-    if image_file.stat().st_size >= MAX_IMAGE_SIZE:
-        LOGGER.warning(
-            "[%s] Image file '%s' is larger than %d MB, skipping upload",
-            type(ctx.service).__name__,
-            image_file,
-            MAX_IMAGE_SIZE / 1000 / 1000,
-        )
-        return should_log
-    upload_success = ctx.service.upload_image(
-        object_id=obj.id,
-        image_file=image_file,
-        file_type=cache_key.type,
-        kometa_integration=ctx.kometa_integration,
+    upload_image(
+        image_file=image_file, ctx=ctx, obj=obj, cache_key=cache_key, uploaded_attr=uploaded_attr
     )
-    if not ctx.store_cover:
-        image_file.unlink(missing_ok=True)
-    if not upload_success:
-        ctx.service.cache.update_service(
-            key=cache_key,
-            service=type(ctx.service).__name__,  # ty: ignore[invalid-argument-type]
-            timestamp=None,
-        )
-        setattr(obj, uploaded_attr, False)
-        return should_log
-    ctx.service.cache.update_service(
-        key=cache_key,
-        service=type(ctx.service).__name__,  # ty: ignore[invalid-argument-type]
-        timestamp=datetime.now(tz=timezone.utc),
-    )
-    setattr(obj, uploaded_attr, True)
     return should_log
 
 
