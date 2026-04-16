@@ -10,14 +10,14 @@ dev = [
   "prek >= 0.3.0",
   "ruff >= 0.15.0",
   "toml-sort >= 0.24.0",
-  "ty >= 0.0.23",
+  "ty >= 0.0.30",
 ]
 tests = [
   "pytest >= 9.0.0",
-  "pytest-cov >= 7.0.0",
+  "pytest-cov >= 7.1.0",
   "pytest-httpx >= 0.36.0",
-  "tox >= 4.49.0",
-  "tox-uv >= 1.33.0",
+  "tox >= 4.53.0",
+  "tox-uv >= 1.35.0",
 ]
 
 [project]
@@ -38,9 +38,9 @@ classifiers = [
 dependencies = [
   "gql[httpx] >= 4.0.0",
   "httpx[http2] >= 0.28.0",
-  "pydantic >= 2.12.0",
+  "pydantic >= 2.13.0",
   "questionary >= 2.1.0",
-  "rich >= 14.3.0",
+  "rich >= 15.0.0",
   "tomli >= 2.4.0 ; python_version < '3.11'",
   "tomli-w >= 1.2.0",
   "typer >= 0.24.0",
