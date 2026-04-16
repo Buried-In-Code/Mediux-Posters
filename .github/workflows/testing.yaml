@@ -44,7 +44,7 @@ jobs:
       - name: Install project
         run: uv sync --locked --no-dev --all-extras --group tests --managed-python
       - name: Run tests
-        run: uv run pytest
+        run: uv run --no-dev pytest
         env:
           MEDIUX__BASE_URL: ${{ secrets.MEDIUX__BASE_URL }}
           MEDIUX__TOKEN: ${{ secrets.MEDIUX__TOKEN }}
