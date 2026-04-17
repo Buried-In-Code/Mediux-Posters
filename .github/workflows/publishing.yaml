@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6.0.2
-      - uses: astral-sh/setup-uv@v8.0.0
+      - uses: astral-sh/setup-uv@v8.1.0
         with:
           python-version: ${{ env.PY_VERSION }}
       - name: Install project
@@ -46,7 +46,7 @@ jobs:
         with:
           name: python-package-distributions
           path: dist/
-      - uses: astral-sh/setup-uv@v8.0.0
+      - uses: astral-sh/setup-uv@v8.1.0
         with:
           python-version: ${{ env.PY_VERSION }}
       - name: Validate dist

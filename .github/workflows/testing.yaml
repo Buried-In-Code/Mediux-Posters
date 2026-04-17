@@ -38,7 +38,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6.0.2
-      - uses: astral-sh/setup-uv@v8.0.0
+      - uses: astral-sh/setup-uv@v8.1.0
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install project
