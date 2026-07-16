@@ -1,0 +1,102 @@
+repos:
+  - repo: local
+    hooks:
+      - id: toml-sort
+        args:
+          - "--in-place"
+        entry: toml-sort
+        exclude: "uv.lock|pylock.toml"
+        language: system
+        name: toml sort
+        types:
+          - toml
+      - id: mdformat
+        args:
+          - "--number"
+          - "--wrap=keep"
+        entry: mdformat
+        language: system
+        name: mdformat
+        types:
+          - markdown
+      - id: ruff-check
+        entry: ruff check .
+        language: system
+        name: ruff check
+        pass_filenames: false
+        types:
+          - python
+      - id: ruff-format
+        entry: ruff format .
+        language: system
+        name: ruff format
+        pass_filenames: false
+        types:
+          - python
+      - id: ty
+        entry: ty check .
+        language: system
+        name: ruff check
+        pass_filenames: false
+        types:
+          - python
+  - repo: "https://github.com/pre-commit/pre-commit-hooks"
+    rev: v6.0.0
+    hooks:
+      - id: check-ast
+      - id: check-builtin-literals
+      - id: check-docstring-first
+      - id: debug-statements
+      - id: forbid-submodules
+  - repo: "https://github.com/zizmorcore/zizmor-pre-commit"
+    rev: v1.27.0
+    hooks:
+      - id: zizmor
+        args:
+          - "--fix=all"
+          - "--no-progress"
+          - "--persona=auditor"
+  - repo: builtin
+    hooks:
+      - id: check-added-large-files
+        args:
+          - "--enforce-all"
+      - id: check-case-conflict
+      # - id: check-executables-have-shebangs
+      # - id: check-illegal-windows-names
+      # - id: check-json
+      # - id: check-json5
+      - id: check-merge-conflict
+        args:
+          - "--assume-in-merge"
+      - id: check-shebang-scripts-are-executable
+      # - id: check-symlinks
+      - id: check-toml
+      - id: check-vcs-permalinks
+      - id: check-xml
+      - id: check-yaml
+        args:
+          - "--allow-multiple-documents"
+      - id: destroyed-symlinks
+      - id: detect-private-key
+      - id: end-of-file-fixer
+        exclude_types:
+          - json
+          - svg
+          - xml
+      - id: fix-byte-order-marker
+      - id: mixed-line-ending
+        args:
+          - "--fix=auto"
+      # - id: pretty-format-json
+      #   args:
+      #     - "--autofix"
+      #     - "--indent=2"
+      #     - "--no-ensure-ascii"
+      - id: trailing-whitespace
+        args:
+          - "--markdown-linebreak-ext=md"
+  - repo: meta
+    hooks:
+      - id: check-hooks-apply
+      - id: check-useless-excludes

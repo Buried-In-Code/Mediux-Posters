@@ -75,9 +75,9 @@
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
-        
+
     <g transform="translate(9, 41)" clip-path="url(#terminal-401837656-clip-terminal)">
-    
+
     <g class="terminal-401837656-matrix">
     <text class="terminal-401837656-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-401837656-line-0)">
 </text><text class="terminal-401837656-r3" x="12.2" y="44.4" textLength="85.4" clip-path="url(#terminal-401837656-line-1)">Usage:&#160;</text><text class="terminal-401837656-r1" x="97.6" y="44.4" textLength="402.6" clip-path="url(#terminal-401837656-line-1)">mediux-posters&#160;settings&#160;[OPTIONS]</text><text class="terminal-401837656-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-401837656-line-1)">

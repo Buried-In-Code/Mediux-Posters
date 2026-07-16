@@ -1,0 +1,24 @@
+rules:
+  unpinned-uses:
+    ignore:
+      - linting.yaml
+      - rich-codex.yaml
+      - testing.yaml
+      - publishing.yaml
+  anonymous-definition:
+    ignore:
+      - 'linting.yaml:22'
+      - 'publishing.yaml:12'
+      - 'publishing.yaml:33'
+      - 'publishing.yaml:49'
+      - 'rich-codex.yaml:27'
+      - 'testing.yaml:20'
+      - 'testing.yaml:53'
+  undocumented-permissions:
+    ignore:
+      - 'publishing.yaml:58'
+      - 'rich-codex.yaml:29'
+  secrets-outside-env:
+    ignore:
+      - 'testing.yaml:49'
+      - 'testing.yaml:50'

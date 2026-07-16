@@ -1,14 +1,13 @@
 name: Rich Codex
-
 on:
-  push:
+  pull_request:
     branches:
       - main
     paths:
       - .github/workflows/rich-codex.yaml
       - README.md
       - mediux_posters/cli/**
-  pull_request:
+  push:
     branches:
       - main
     paths:
@@ -17,17 +16,23 @@ on:
       - mediux_posters/cli/**
   workflow_dispatch:
 
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
 env:
-  PY_VERSION: "3.10"
+  PY_VERSION: '3.10'
+permissions: {}
 
 jobs:
   rich_codex:
     permissions:
       contents: write
-    runs-on: ubuntu-latest
 
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.0
+        with:
+          persist-credentials: false
       - uses: astral-sh/setup-uv@v8.3.2
         with:
           python-version: ${{ env.PY_VERSION }}
