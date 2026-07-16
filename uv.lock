@@ -437,7 +437,7 @@ requires-dist = [
     { name = "rich", specifier = ">=15.0.0" },
     { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=2.4.0" },
     { name = "tomli-w", specifier = ">=1.2.0" },
-    { name = "typer", specifier = ">=0.24.0" },
+    { name = "typer", specifier = ">=0.27.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -445,16 +445,16 @@ dev = [
     { name = "mdformat", specifier = ">=1.0.0" },
     { name = "mdformat-gfm", specifier = ">=1.0.0" },
     { name = "mdformat-ruff", specifier = ">=0.1.0" },
-    { name = "prek", specifier = ">=0.3.0" },
+    { name = "prek", specifier = ">=0.4.0" },
     { name = "ruff", specifier = ">=0.15.0" },
     { name = "toml-sort", specifier = ">=0.24.0" },
-    { name = "ty", specifier = ">=0.0.30" },
+    { name = "ty", specifier = ">=0.0.60" },
 ]
 tests = [
-    { name = "pytest", specifier = ">=9.0.0" },
+    { name = "pytest", specifier = ">=9.1.0" },
     { name = "pytest-cov", specifier = ">=7.1.0" },
     { name = "pytest-httpx", specifier = ">=0.36.0" },
-    { name = "tox", specifier = ">=4.53.0" },
+    { name = "tox", specifier = ">=4.56.0" },
     { name = "tox-uv", specifier = ">=1.35.0" },
 ]
 

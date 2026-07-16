@@ -1561,7 +1561,7 @@ marker = "\"default\" in dependency_groups or \"tests\" in dependency_groups"
 dependencies = []
 
 [tool.pdm]
-hashes = {sha256 = "f78dbb65d93a51aec6faa734425658633e8a3cb189b28b5ced082e2b709e0e4d"}
+hashes = {sha256 = "01f8b97d43b2eee407b3317ab48931032942d49c9c0ddc544211e72f96cdb0cd"}
 strategy = ["inherit_metadata", "static_urls"]
 
 [[tool.pdm.targets]]
