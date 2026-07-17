@@ -40,14 +40,14 @@ jobs:
         run: uv sync --locked --no-dev
       - name: Generate previews
         run: |
-          uv run mediux-posters --generate-help-preview
-          uv run mediux-posters media --generate-help-preview
-          uv run mediux-posters set --generate-help-preview
-          uv run mediux-posters settings --generate-help-preview
-          uv run mediux-posters sync --generate-help-preview
+          COLUMNS=120 uv run mediux-posters --generate-help-preview
+          COLUMNS=120 uv run mediux-posters media --generate-help-preview
+          COLUMNS=120 uv run mediux-posters set --generate-help-preview
+          COLUMNS=120 uv run mediux-posters settings --generate-help-preview
+          COLUMNS=120 uv run mediux-posters sync --generate-help-preview
       - name: Commit updated previews
         run: |
-          git add docs/help/*.svg
+          git add docs/img/*.svg
 
           if git diff --cached --quiet; then
             echo "No SVG changes"
