@@ -1,13 +1,12 @@
 import re
 
-import pytest
-from pytest_httpx import HTTPXMock
+from requests_mock import Mocker
 
 from mediux_posters.services import Plex
 
 
-def add_list_libraries_mock(mock: HTTPXMock) -> None:
-    mock.add_response(
+def add_list_libraries_mock(mocker: Mocker) -> None:
+    mocker.get(
         url="http://localhost/library/sections",
         json={
             "MediaContainer": {
@@ -17,12 +16,11 @@ def add_list_libraries_mock(mock: HTTPXMock) -> None:
                 ]
             }
         },
-        is_reusable=True,
     )
 
 
-def add_list_shows_mock(mock: HTTPXMock) -> None:
-    mock.add_response(
+def add_list_shows_mock(mocker: Mocker) -> None:
+    mocker.get(
         url=re.compile(r"http://localhost/library/sections/.*/all\?includeGuids=1"),
         json={
             "MediaContainer": {
@@ -42,12 +40,11 @@ def add_list_shows_mock(mock: HTTPXMock) -> None:
                 ]
             }
         },
-        is_reusable=True,
     )
 
 
-def add_get_show_mock(mock: HTTPXMock) -> None:
-    mock.add_response(
+def add_get_show_mock(mocker: Mocker) -> None:
+    mocker.get(
         url=re.compile(r"http://localhost/library/sections/.*\?includeGuids=1"),
         json={
             "MediaContainer": {
@@ -61,28 +58,25 @@ def add_get_show_mock(mock: HTTPXMock) -> None:
                 ]
             }
         },
-        is_reusable=True,
     )
 
 
-def add_list_seasons_mock(mock: HTTPXMock) -> None:
-    mock.add_response(
+def add_list_seasons_mock(mocker: Mocker) -> None:
+    mocker.get(
         url=re.compile(r"http://localhost/library/metadata/.*/children\?includeGuids=1"),
         json={"MediaContainer": {"Metadata": [{"ratingKey": "119056", "index": 1}]}},
-        is_reusable=True,
     )
 
 
-def add_list_episodes_mock(mock: HTTPXMock) -> None:
-    mock.add_response(
+def add_list_episodes_mock(mocker: Mocker) -> None:
+    mocker.get(
         url=re.compile(r"http://localhost/library/metadata/.*/children\?includeGuids=1"),
         json={"MediaContainer": {"Metadata": [{"ratingKey": "119057", "index": 1}]}},
-        is_reusable=True,
     )
 
 
-def add_list_collections_mock(mock: HTTPXMock) -> None:
-    mock.add_response(
+def add_list_collections_mock(mocker: Mocker) -> None:
+    mocker.get(
         url=re.compile(r"http://localhost/library/sections/.*/collections\?includeGuids=1"),
         json={
             "MediaContainer": {
@@ -92,12 +86,11 @@ def add_list_collections_mock(mock: HTTPXMock) -> None:
                 ]
             }
         },
-        is_reusable=True,
     )
 
 
-def add_get_collection_mock(mock: HTTPXMock) -> None:
-    mock.add_response(
+def add_get_collection_mock(mocker: Mocker) -> None:
+    mocker.get(
         url=re.compile(r"http://localhost/library/metadata/.*\?includeGuids=1"),
         json={
             "MediaContainer": {
@@ -110,18 +103,17 @@ def add_get_collection_mock(mock: HTTPXMock) -> None:
                 ]
             }
         },
-        is_reusable=True,
     )
 
 
-def add_list_collection_movies_mock(mock: HTTPXMock) -> None:
-    mock.add_response(
+def add_list_collection_movies_mock(mocker: Mocker) -> None:
+    mocker.get(
         url=re.compile(r"http://localhost/library/metadata/.*/children\?includeGuids=1"),
         json={
             "MediaContainer": {
                 "Metadata": [
                     {
-                        "ratingKey": "110309",
+                        "ratingKey": "141762",
                         "title": "Spider-Man: Into the Spider-Verse",
                         "year": 2018,
                         "Guid": [{"id": "tmdb://324857"}],
@@ -135,18 +127,17 @@ def add_list_collection_movies_mock(mock: HTTPXMock) -> None:
                 ]
             }
         },
-        is_reusable=True,
     )
 
 
-def add_list_movies_mock(mock: HTTPXMock) -> None:
-    mock.add_response(
+def add_list_movies_mock(mocker: Mocker) -> None:
+    mocker.get(
         url=re.compile(r"http://localhost/library/sections/.*/all\?includeGuids=1"),
         json={
             "MediaContainer": {
                 "Metadata": [
                     {
-                        "ratingKey": "110309",
+                        "ratingKey": "141762",
                         "title": "Spider-Man: Into the Spider-Verse",
                         "year": 2018,
                         "Guid": [{"id": "tmdb://324857"}],
@@ -160,18 +151,17 @@ def add_list_movies_mock(mock: HTTPXMock) -> None:
                 ]
             }
         },
-        is_reusable=True,
     )
 
 
-def add_get_movie_mock(mock: HTTPXMock) -> None:
-    mock.add_response(
+def add_get_movie_mock(mocker: Mocker) -> None:
+    mocker.get(
         url=re.compile(r"http://localhost/library/sections/.*\?includeGuids=1"),
         json={
             "MediaContainer": {
                 "Metadata": [
                     {
-                        "ratingKey": "110309",
+                        "ratingKey": "141762",
                         "title": "Spider-Man: Into the Spider-Verse",
                         "year": 2018,
                         "Guid": [{"id": "tmdb://324857"}],
@@ -179,17 +169,13 @@ def add_get_movie_mock(mock: HTTPXMock) -> None:
                 ]
             }
         },
-        is_reusable=True,
     )
 
 
-@pytest.mark.httpx_mock(
-    should_mock=lambda request: request.url.host == "localhost",
-    assert_all_responses_were_requested=False,
-)
-def test_list_shows(plex_session: Plex, httpx_mock: HTTPXMock) -> None:
-    add_list_libraries_mock(mock=httpx_mock)
-    add_list_shows_mock(mock=httpx_mock)
+def test_list_shows(plex_session: Plex, requests_mock: Mocker) -> None:
+    if "localhost" in plex_session.base_url:
+        add_list_libraries_mock(mocker=requests_mock)
+        add_list_shows_mock(mocker=requests_mock)
 
     results = plex_session.list_shows()
     assert results is not None
@@ -198,13 +184,10 @@ def test_list_shows(plex_session: Plex, httpx_mock: HTTPXMock) -> None:
     assert result is not None
 
 
-@pytest.mark.httpx_mock(
-    should_mock=lambda request: request.url.host == "localhost",
-    assert_all_responses_were_requested=False,
-)
-def test_get_show(plex_session: Plex, httpx_mock: HTTPXMock) -> None:
-    add_list_libraries_mock(mock=httpx_mock)
-    add_get_show_mock(mock=httpx_mock)
+def test_get_show(plex_session: Plex, requests_mock: Mocker) -> None:
+    if "localhost" in plex_session.base_url:
+        add_list_libraries_mock(mocker=requests_mock)
+        add_get_show_mock(mocker=requests_mock)
 
     result = plex_session.get_show(tmdb_id=1457)
     assert result is not None
@@ -215,12 +198,9 @@ def test_get_show(plex_session: Plex, httpx_mock: HTTPXMock) -> None:
     assert result.year == 1995
 
 
-@pytest.mark.httpx_mock(
-    should_mock=lambda request: request.url.host == "localhost",
-    assert_all_responses_were_requested=False,
-)
-def test_list_seasons(plex_session: Plex, httpx_mock: HTTPXMock) -> None:
-    add_list_seasons_mock(mock=httpx_mock)
+def test_list_seasons(plex_session: Plex, requests_mock: Mocker) -> None:
+    if "localhost" in plex_session.base_url:
+        add_list_seasons_mock(mocker=requests_mock)
 
     results = plex_session.list_seasons(show_id=119055)
     assert len(results) != 0
@@ -228,12 +208,9 @@ def test_list_seasons(plex_session: Plex, httpx_mock: HTTPXMock) -> None:
     assert results[0].id == 119056
 
 
-@pytest.mark.httpx_mock(
-    should_mock=lambda request: request.url.host == "localhost",
-    assert_all_responses_were_requested=False,
-)
-def test_list_episodes(plex_session: Plex, httpx_mock: HTTPXMock) -> None:
-    add_list_episodes_mock(mock=httpx_mock)
+def test_list_episodes(plex_session: Plex, requests_mock: Mocker) -> None:
+    if "localhost" in plex_session.base_url:
+        add_list_episodes_mock(mocker=requests_mock)
 
     results = plex_session.list_episodes(show_id=119055, season_id=119056)
     assert len(results) != 0
@@ -241,14 +218,11 @@ def test_list_episodes(plex_session: Plex, httpx_mock: HTTPXMock) -> None:
     assert results[0].id == 119057
 
 
-@pytest.mark.httpx_mock(
-    should_mock=lambda request: request.url.host == "localhost",
-    assert_all_responses_were_requested=False,
-)
-def test_list_collections(plex_session: Plex, httpx_mock: HTTPXMock) -> None:
-    add_list_libraries_mock(mock=httpx_mock)
-    add_list_collections_mock(mock=httpx_mock)
-    add_get_collection_mock(mock=httpx_mock)
+def test_list_collections(plex_session: Plex, requests_mock: Mocker) -> None:
+    if "localhost" in plex_session.base_url:
+        add_list_libraries_mock(mocker=requests_mock)
+        add_list_collections_mock(mocker=requests_mock)
+        add_get_collection_mock(mocker=requests_mock)
 
     results = plex_session.list_collections()
     assert len(results) != 0
@@ -257,14 +231,11 @@ def test_list_collections(plex_session: Plex, httpx_mock: HTTPXMock) -> None:
     assert result is not None
 
 
-@pytest.mark.httpx_mock(
-    should_mock=lambda request: request.url.host == "localhost",
-    assert_all_responses_were_requested=False,
-)
-def test_get_collection(plex_session: Plex, httpx_mock: HTTPXMock) -> None:
-    add_list_libraries_mock(mock=httpx_mock)
-    add_list_collections_mock(mock=httpx_mock)
-    add_get_collection_mock(mock=httpx_mock)
+def test_get_collection(plex_session: Plex, requests_mock: Mocker) -> None:
+    if "localhost" in plex_session.base_url:
+        add_list_libraries_mock(mocker=requests_mock)
+        add_list_collections_mock(mocker=requests_mock)
+        add_get_collection_mock(mocker=requests_mock)
 
     result = plex_session.get_collection(tmdb_id=573436)
     assert result is not None
@@ -274,29 +245,23 @@ def test_get_collection(plex_session: Plex, httpx_mock: HTTPXMock) -> None:
     assert result.tmdb_id == 573436
 
 
-@pytest.mark.httpx_mock(
-    should_mock=lambda request: request.url.host == "localhost",
-    assert_all_responses_were_requested=False,
-)
-def test_list_collection_movies(plex_session: Plex, httpx_mock: HTTPXMock) -> None:
-    add_list_collection_movies_mock(mock=httpx_mock)
+def test_list_collection_movies(plex_session: Plex, requests_mock: Mocker) -> None:
+    if "localhost" in plex_session.base_url:
+        add_list_collection_movies_mock(mocker=requests_mock)
 
     results = plex_session.list_collection_movies(collection_id=1897)
     assert len(results) != 0
 
-    assert results[0].id == 110309
+    assert results[0].id == 141762
     assert results[0].name == "Spider-Man: Into the Spider-Verse"
     assert results[0].tmdb_id == 324857
     assert results[0].year == 2018
 
 
-@pytest.mark.httpx_mock(
-    should_mock=lambda request: request.url.host == "localhost",
-    assert_all_responses_were_requested=False,
-)
-def test_list_movies(plex_session: Plex, httpx_mock: HTTPXMock) -> None:
-    add_list_libraries_mock(mock=httpx_mock)
-    add_list_movies_mock(mock=httpx_mock)
+def test_list_movies(plex_session: Plex, requests_mock: Mocker) -> None:
+    if "localhost" in plex_session.base_url:
+        add_list_libraries_mock(mocker=requests_mock)
+        add_list_movies_mock(mocker=requests_mock)
 
     results = plex_session.list_movies()
     assert len(results) != 0
@@ -305,18 +270,15 @@ def test_list_movies(plex_session: Plex, httpx_mock: HTTPXMock) -> None:
     assert result is not None
 
 
-@pytest.mark.httpx_mock(
-    should_mock=lambda request: request.url.host == "localhost",
-    assert_all_responses_were_requested=False,
-)
-def test_get_movie(plex_session: Plex, httpx_mock: HTTPXMock) -> None:
-    add_list_libraries_mock(mock=httpx_mock)
-    add_get_movie_mock(mock=httpx_mock)
+def test_get_movie(plex_session: Plex, requests_mock: Mocker) -> None:
+    if "localhost" in plex_session.base_url:
+        add_list_libraries_mock(mocker=requests_mock)
+        add_get_movie_mock(mocker=requests_mock)
 
     result = plex_session.get_movie(tmdb_id=324857)
     assert result is not None
 
-    assert result.id == 110309
+    assert result.id == 141762
     assert result.name == "Spider-Man: Into the Spider-Verse"
     assert result.tmdb_id == 324857
     assert result.year == 2018

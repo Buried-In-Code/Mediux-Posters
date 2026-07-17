@@ -8,15 +8,15 @@ rules:
   anonymous-definition:
     ignore:
       - 'linting.yaml:22'
-      - 'publishing.yaml:12'
-      - 'publishing.yaml:33'
-      - 'publishing.yaml:49'
+      - 'publishing.yaml:22'
+      - 'publishing.yaml:43'
+      - 'publishing.yaml:59'
       - 'rich-codex.yaml:27'
       - 'testing.yaml:20'
       - 'testing.yaml:53'
   undocumented-permissions:
     ignore:
-      - 'publishing.yaml:58'
+      - 'publishing.yaml:68'
       - 'rich-codex.yaml:29'
   secrets-outside-env:
     ignore:

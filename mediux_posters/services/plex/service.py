@@ -3,11 +3,12 @@ __all__ = ["Plex"]
 import logging
 import mimetypes
 import platform
-from json import JSONDecodeError
+from http import HTTPStatus
 from pathlib import Path
 
-from httpx import Client, HTTPStatusError, RequestError, TimeoutException
 from pydantic import TypeAdapter, ValidationError
+from requests import Session
+from requests.exceptions import HTTPError, JSONDecodeError, RequestException, Timeout
 
 from mediux_posters import __version__
 from mediux_posters.console import CONSOLE
@@ -31,13 +32,14 @@ LOGGER = logging.getLogger(__name__)
 class Plex(BaseService[int, Show, Season, Episode, Collection, Movie]):
     def __init__(self, base_url: str, token: str, cache: ServiceCache):
         super().__init__(cache=cache)
-        self.client = Client(
-            base_url=base_url,
-            headers={
+        self.base_url = base_url
+        self.client = Session()
+        self.client.headers.update(
+            {
                 "Accept": "application/json",
                 "X-Plex-Token": token,
                 "User-Agent": f"Mediux-Posters/{__version__} ({platform.system()}: {platform.release()}; Python v{platform.python_version()})",  # noqa: E501
-            },
+            }
         )
 
     @classmethod
@@ -63,75 +65,93 @@ class Plex(BaseService[int, Show, Season, Episode, Collection, Movie]):
     def _perform_get_request(
         self, endpoint: str, params: dict[str, int | str] | None = None
     ) -> dict:
-        if params is None:
-            params = {}
+        params = params or {}
+        url = self.base_url + endpoint
 
         try:
-            response = self.client.get(endpoint, params=params)
+            response = self.client.get(url=url, params=params)
             response.raise_for_status()
             return response.json()
-        except RequestError as err:
-            raise ServiceError(f"Unable to connect to '{err.request.url.path}'") from err
-        except HTTPStatusError as err:
+        except Timeout as err:
+            raise ServiceError("Service took too long to respond") from err
+        except HTTPError as err:
+            status_code = (
+                HTTPStatus.INTERNAL_SERVER_ERROR
+                if err.response is None
+                else err.response.status_code
+            )
             try:
-                error_msg = f"{err.response.json()['title']}: {err.response.json()['detail']}"
-                if err.response.status_code in (401, 403):
-                    raise AuthenticationError(f"{err.response.status_code}: {error_msg}")
-                raise ServiceError(f"{err.response.status_code}: {error_msg}")
+                response = {} if err.response is None else err.response.json()
+                error_msg = f"{response['title']}: {response['detail']}"
+                if status_code in (401, 403):
+                    raise AuthenticationError(f"{status_code}: {error_msg}")
+                raise ServiceError(f"{status_code}: {error_msg}")
             except JSONDecodeError as err:
                 raise ServiceError("Unable to parse response as Json") from err
+        except RequestException as err:
+            raise ServiceError(f"Unable to connect to '{url}'") from err
         except JSONDecodeError as err:
             raise ServiceError("Unable to parse response as Json") from err
-        except TimeoutException as err:
-            raise ServiceError("Service took too long to respond") from err
 
     def _perform_post_request(
         self, endpoint: str, body: bytes, headers: dict[str, str] | None = None
     ) -> None:
-        if headers is None:
-            headers = {}
+        headers = headers or {}
+        url = self.base_url + endpoint
 
         try:
-            response = self.client.post(endpoint, headers=headers, data=body)  # ty: ignore[invalid-argument-type]
+            response = self.client.post(url=url, headers=headers, data=body)
             response.raise_for_status()
-        except RequestError as err:
-            raise ServiceError(f"Unable to connect to '{err.request.url.path}'") from err
-        except HTTPStatusError as err:
+        except Timeout as err:
+            raise ServiceError("Service took too long to respond") from err
+        except HTTPError as err:
+            status_code = (
+                HTTPStatus.INTERNAL_SERVER_ERROR
+                if err.response is None
+                else err.response.status_code
+            )
             try:
-                error_msg = f"{err.response.json()['title']}: {err.response.json()['detail']}"
-                if err.response.status_code in (401, 403):
-                    raise AuthenticationError(f"{err.response.status_code}: {error_msg}")
-                raise ServiceError(f"{err.response.status_code}: {error_msg}")
+                response = {} if err.response is None else err.response.json()
+                error_msg = f"{response['title']}: {response['detail']}"
+                if status_code in (401, 403):
+                    raise AuthenticationError(f"{status_code}: {error_msg}")
+                raise ServiceError(f"{status_code}: {error_msg}")
             except JSONDecodeError as err:
                 raise ServiceError("Unable to parse response as Json") from err
+        except RequestException as err:
+            raise ServiceError(f"Unable to connect to '{url}'") from err
         except JSONDecodeError as err:
             raise ServiceError("Unable to parse response as Json") from err
-        except TimeoutException as err:
-            raise ServiceError("Service took too long to respond") from err
 
     def _perform_put_request(
         self, endpoint: str, params: dict[str, int | str] | None = None
     ) -> None:
-        if params is None:
-            params = {}
+        params = params or {}
+        url = self.base_url + endpoint
 
         try:
-            response = self.client.put(endpoint, params=params)
+            response = self.client.put(url=url, params=params)
             response.raise_for_status()
-        except RequestError as err:
-            raise ServiceError(f"Unable to connect to '{err.request.url.path}'") from err
-        except HTTPStatusError as err:
+        except Timeout as err:
+            raise ServiceError("Service took too long to respond") from err
+        except HTTPError as err:
+            status_code = (
+                HTTPStatus.INTERNAL_SERVER_ERROR
+                if err.response is None
+                else err.response.status_code
+            )
             try:
-                error_msg = f"{err.response.json()['title']}: {err.response.json()['detail']}"
-                if err.response.status_code in (401, 403):
-                    raise AuthenticationError(f"{err.response.status_code}: {error_msg}")
-                raise ServiceError(f"{err.response.status_code}: {error_msg}")
+                response = {} if err.response is None else err.response.json()
+                error_msg = f"{response['title']}: {response['detail']}"
+                if status_code in (401, 403):
+                    raise AuthenticationError(f"{status_code}: {error_msg}")
+                raise ServiceError(f"{status_code}: {error_msg}")
             except JSONDecodeError as err:
                 raise ServiceError("Unable to parse response as Json") from err
+        except RequestException as err:
+            raise ServiceError(f"Unable to connect to '{url}'") from err
         except JSONDecodeError as err:
             raise ServiceError("Unable to parse response as Json") from err
-        except TimeoutException as err:
-            raise ServiceError("Service took too long to respond") from err
 
     def _list_libraries(
         self, media_type: MediaType, skip_libraries: list[str] | None = None
