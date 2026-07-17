@@ -10,6 +10,8 @@ on:
       - main
     paths-ignore:
       - docs/**
+    tags:
+      - '*'
 
 concurrency:
   cancel-in-progress: true
