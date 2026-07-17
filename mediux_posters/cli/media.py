@@ -67,7 +67,7 @@ def register(subparsers: _SubParsersAction) -> None:
 
 def run(args) -> None:  # noqa: ANN001, C901
     settings, mediux, services = setup_services(
-        skip_services=args.skip_services, clean=args.clean, debug=args.debug
+        skip_services=args.skip_service, clean=args.clean, debug=args.debug
     )
     service_count = len(services)
     for service_idx, service in enumerate(services, start=1):

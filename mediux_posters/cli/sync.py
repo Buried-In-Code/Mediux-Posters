@@ -102,7 +102,7 @@ def register(subparsers: _SubParsersAction) -> None:
 
 def run(args) -> None:  # noqa: ANN001, C901
     settings, mediux, services = setup_services(
-        skip_services=args.skip_services, clean=args.clean, debug=args.debug
+        skip_services=args.skip_service, clean=args.clean, debug=args.debug
     )
     service_count = len(services)
     for service_idx, service in enumerate(services, start=1):
@@ -112,12 +112,12 @@ def run(args) -> None:  # noqa: ANN001, C901
             style="title",
         )
         for media_type in MediaType:
-            if media_type in args.skip_media_types:
+            if media_type in args.skip_type:
                 continue
             with CONSOLE.status(rf"\[{type(service).__name__}] Fetching {media_type.value} media"):
                 try:
                     entries = service.list(
-                        media_type=media_type, skip_libraries=args.skip_libraries
+                        media_type=media_type, skip_libraries=args.skip_library
                     )[args.start : args.end]
                 except ServiceError as err:
                     LOGGER.error("[%s] %s", type(service).__name__, err)
