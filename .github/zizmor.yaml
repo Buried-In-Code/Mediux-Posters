@@ -1,23 +1,23 @@
 rules:
   unpinned-uses:
     ignore:
+      - help-previews.yaml
       - linting.yaml
-      - rich-codex.yaml
       - testing.yaml
       - publishing.yaml
   anonymous-definition:
     ignore:
+      - 'help-previews.yaml:27'
       - 'linting.yaml:22'
       - 'publishing.yaml:22'
       - 'publishing.yaml:43'
       - 'publishing.yaml:59'
-      - 'rich-codex.yaml:27'
       - 'testing.yaml:20'
       - 'testing.yaml:53'
   undocumented-permissions:
     ignore:
+      - 'help-previews.yaml:29'
       - 'publishing.yaml:68'
-      - 'rich-codex.yaml:29'
   secrets-outside-env:
     ignore:
       - 'testing.yaml:49'

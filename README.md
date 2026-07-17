@@ -28,32 +28,27 @@ _Jellyfin Collections are not yet supported._
 
 <details><summary>mediux-posters Commands</summary>
 
-  <!-- RICH-CODEX hide_command: true -->
-  ![`uv run mediux-posters`](docs/img/mediux-posters.svg)
+![mediux-posters help](docs/img/mediux-posters.svg)
 
 </details>
 <details><summary>mediux-posters sync</summary>
 
-  <!-- RICH-CODEX hide_command: true -->
-  ![`uv run mediux-posters sync --help`](docs/img/mediux-posters_sync.svg)
+![mediux-posters sync command help](docs/img/mediux-posters_sync.svg)
 
 </details>
 <details><summary>mediux-posters media</summary>
 
-  <!-- RICH-CODEX hide_command: true -->
-  ![`uv run mediux-posters media --help`](docs/img/mediux-posters_media.svg)
+![mediux-posters media help](docs/img/mediux-posters_media.svg)
 
 </details>
 <details><summary>mediux-posters set</summary>
 
-  <!-- RICH-CODEX hide_command: true -->
-  ![`uv run mediux-posters set --help`](docs/img/mediux-posters_set.svg)
+![mediux-posters set help](docs/img/mediux-posters_set.svg)
 
 </details>
 <details><summary>mediux-posters settings</summary>
 
-  <!-- RICH-CODEX hide_command: true -->
-  ![`uv run mediux-posters settings --help`](docs/img/mediux-posters_settings.svg)
+![mediux-posters settings help](docs/img/mediux-posters_settings.svg)
 
 </details>
 

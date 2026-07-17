@@ -37,9 +37,9 @@ classifiers = [
 ]
 dependencies = [
   "gql[requests] >= 4.0.0",
-  "requests >= 2.34.0",
   "pydantic >= 2.13.0",
   "questionary >= 2.1.0",
+  "requests >= 2.34.0",
   "rich >= 15.0.0",
   "rich-argparse >= 1.8.0",
   "tomli >= 2.4.0 ; python_version < '3.11'",
