@@ -1,0 +1,61 @@
+name: Generate Help Previews
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/help-previews.yaml
+      - README.md
+      - mediux_posters/cli/**
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/help-previews.yaml
+      - README.md
+      - mediux_posters/cli/**
+  workflow_dispatch:
+
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+env:
+  PY_VERSION: '3.10'
+permissions: {}
+
+jobs:
+  help-previews:
+    permissions:
+      contents: write
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.0
+        with:
+          persist-credentials: true
+      - uses: astral-sh/setup-uv@v8.3.2
+        with:
+          python-version: ${{ env.PY_VERSION }}
+      - name: Install project
+        run: uv sync --locked --no-dev
+      - name: Generate previews
+        run: |
+          uv run mediux-posters --generate-help-preview
+          uv run mediux-posters media --generate-help-preview
+          uv run mediux-posters set --generate-help-preview
+          uv run mediux-posters settings --generate-help-preview
+          uv run mediux-posters sync --generate-help-preview
+      - name: Commit updated previews
+        run: |
+          git add docs/help/*.svg
+          
+          if git diff --cached --quiet; then
+            echo "No SVG changes"
+            exit 0
+          fi
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          git commit -m "Update help previews"
+          git push

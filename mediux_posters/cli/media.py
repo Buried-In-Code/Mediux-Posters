@@ -1,11 +1,10 @@
-__all__ = ["media_posters"]
+__all__ = ["register"]
 
 import logging
-from typing import Annotated
+from argparse import _SubParsersAction
 
-from typer import Argument, Option
+from rich_argparse import HelpPreviewAction, RichHelpFormatter
 
-from mediux_posters.cli._typer import app
 from mediux_posters.cli.common import (
     ProcessContext,
     ServiceOption,
@@ -15,6 +14,7 @@ from mediux_posters.cli.common import (
     process_show_data,
     setup_services,
 )
+from mediux_posters.cli.enum import enum_arg
 from mediux_posters.console import CONSOLE
 from mediux_posters.errors import ServiceError
 from mediux_posters.mediux import CollectionSet, Mediux, MovieSet, ShowSet
@@ -23,46 +23,51 @@ from mediux_posters.utils import MediaType
 LOGGER = logging.getLogger(__name__)
 
 
-@app.command(name="media", help="Manually set posters for specific Mediux media using URLs.")
-def media_posters(  # noqa: C901
-    urls: Annotated[
-        list[str], Argument(show_default=False, help="List of URLs from Mediux to process.")
-    ],
-    skip_services: Annotated[
-        list[ServiceOption],
-        Option(
-            "--skip-service",
-            "-S",
-            show_default=False,
-            case_sensitive=False,
-            default_factory=list,
-            help="List of Services to skip. "
-            "Specify this option multiple times for skipping multiple services.",
+def register(subparsers: _SubParsersAction) -> None:
+    parser = subparsers.add_parser(
+        "media",
+        help="Manually set posters for specific Mediux media using URLs.",
+        formatter_class=RichHelpFormatter,
+    )
+    parser.add_argument("urls", nargs="+", help="List of URLs from Mediux to process.")
+    parser.add_argument(
+        "-S",
+        "--skip-service",
+        action="append",
+        type=enum_arg(enum_type=ServiceOption),
+        choices=list(ServiceOption),
+        default=[],
+        metavar="SERVICE",
+        help=(
+            "List of services to skip. "
+            "Specify this option multiple times for skipping multiple services."
         ),
-    ],
-    interactive: Annotated[
-        bool,
-        Option(
-            "--interactive",
-            "-i",
-            show_default=False,
-            help="Pause script to allow user selection of set.",
-        ),
-    ] = False,
-    clean: Annotated[
-        bool,
-        Option("--clean", "-c", show_default=False, help="Delete the whole cache before starting."),
-    ] = False,
-    debug: Annotated[
-        bool,
-        Option(
-            "--debug",
-            help="Enable debug mode to show extra logging information for troubleshooting.",
-        ),
-    ] = False,
-) -> None:
+    )
+    parser.add_argument(
+        "-i",
+        "--interactive",
+        action="store_true",
+        help="Pause script to allow user selection of set.",
+    )
+    parser.add_argument(
+        "-c", "--clean", action="store_true", help="Delete the whole cache before starting."
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Enable debug mode to show extra logging information for troubleshooting.",
+    )
+    parser.add_argument(
+        "--generate-help-preview",
+        action=HelpPreviewAction,
+        path="docs/img/mediux-posters_media.svg",
+    )
+    parser.set_defaults(func=run)
+
+
+def run(args) -> None:  # noqa: ANN001, C901
     settings, mediux, services = setup_services(
-        skip_services=skip_services, clean=clean, debug=debug
+        skip_services=args.skip_services, clean=args.clean, debug=args.debug
     )
     service_count = len(services)
     for service_idx, service in enumerate(services, start=1):
@@ -71,8 +76,8 @@ def media_posters(  # noqa: C901
             align="left",
             style="title",
         )
-        url_count = len(urls)
-        for idx, url in enumerate(urls, start=1):
+        url_count = len(args.urls)
+        for idx, url in enumerate(args.urls, start=1):
             media_type = next(
                 (x for x in MediaType if url.startswith(f"{Mediux.WEB_URL}/{x}s/")), None
             )
@@ -112,7 +117,7 @@ def media_posters(  # noqa: C901
                     set_list=set_list,
                     priority_usernames=settings.priority_usernames,
                     only_priority_usernames=settings.only_priority_usernames,
-                    interactive=interactive,
+                    interactive=args.interactive,
                 )
             ctx = ProcessContext(
                 mediux=mediux,
