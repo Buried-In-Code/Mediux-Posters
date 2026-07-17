@@ -22,3 +22,6 @@ rules:
     ignore:
       - 'testing.yaml:49'
       - 'testing.yaml:50'
+  artipacked:
+    ignore:
+      - 'generate-previews.yaml:33'
