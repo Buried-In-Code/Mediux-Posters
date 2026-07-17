@@ -11,7 +11,7 @@ updates:
     cooldown:
       default-days: 7
 
-  - package-ecosystem: uv
+  - package-ecosystem: pip
     directory: /
     schedule:
       interval: daily

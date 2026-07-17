@@ -40,20 +40,22 @@ jobs:
               && github.event.pull_request.head.ref
               || github.ref_name
             }}
-      - uses: astral-sh/setup-uv@v8.3.2
+      - uses: pdm-project/setup-pdm@v4.5
         with:
           python-version: ${{ env.PY_VERSION }}
+          cache: true
+          cache-dependency-path: pylock.toml
       - name: Install project
-        run: uv sync --locked --dev --all-extras --managed-python
+        run: pdm install -G :all
       - name: Generate previews
         run: |
-          COLUMNS=120 uv run mediux-posters --generate-help-preview
-          COLUMNS=120 uv run mediux-posters media --generate-help-preview
-          COLUMNS=120 uv run mediux-posters set --generate-help-preview
-          COLUMNS=120 uv run mediux-posters settings --generate-help-preview
-          COLUMNS=120 uv run mediux-posters sync --generate-help-preview
+          COLUMNS=120 pdm run mediux-posters --generate-help-preview
+          COLUMNS=120 pdm run mediux-posters media --generate-help-preview
+          COLUMNS=120 pdm run mediux-posters set --generate-help-preview
+          COLUMNS=120 pdm run mediux-posters settings --generate-help-preview
+          COLUMNS=120 pdm run mediux-posters sync --generate-help-preview
       - name: Run prek
-        run: uv run prek run -a || true
+        run: pdm run prek run -a || true
       - name: Commit updated previews
         run: |
           git add docs/img/*.svg

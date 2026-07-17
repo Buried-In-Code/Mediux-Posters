@@ -10,18 +10,18 @@ rules:
       - 'generate-previews.yaml:27'
       - 'linting.yaml:22'
       - 'publishing.yaml:22'
-      - 'publishing.yaml:43'
-      - 'publishing.yaml:59'
+      - 'publishing.yaml:45'
+      - 'publishing.yaml:61'
       - 'testing.yaml:20'
-      - 'testing.yaml:53'
+      - 'testing.yaml:55'
   undocumented-permissions:
     ignore:
       - 'generate-previews.yaml:29'
-      - 'publishing.yaml:68'
+      - 'publishing.yaml:70'
   secrets-outside-env:
     ignore:
-      - 'testing.yaml:49'
-      - 'testing.yaml:50'
+      - 'testing.yaml:51'
+      - 'testing.yaml:52'
   artipacked:
     ignore:
       - 'generate-previews.yaml:33'
