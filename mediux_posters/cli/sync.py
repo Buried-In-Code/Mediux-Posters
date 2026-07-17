@@ -116,9 +116,9 @@ def run(args) -> None:  # noqa: ANN001, C901
                 continue
             with CONSOLE.status(rf"\[{type(service).__name__}] Fetching {media_type.value} media"):
                 try:
-                    entries = service.list(
-                        media_type=media_type, skip_libraries=args.skip_library
-                    )[args.start : args.end]
+                    entries = service.list(media_type=media_type, skip_libraries=args.skip_library)[
+                        args.start : args.end
+                    ]
                 except ServiceError as err:
                     LOGGER.error("[%s] %s", type(service).__name__, err)
                     continue
