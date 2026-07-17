@@ -19,63 +19,60 @@
         font-weight: 700;
     }
 
-    .terminal-3169403077-matrix {
+    .terminal-2748238008-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-3169403077-title {
+    .terminal-2748238008-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-3169403077-r1 { fill: #ff8700 }
-.terminal-3169403077-r2 { fill: #c5c8c6 }
-.terminal-3169403077-r3 { fill: #808080 }
-.terminal-3169403077-r4 { fill: #68a0b3 }
+    .terminal-2748238008-r1 { fill: #c5c8c6 }
     </style>
 
     <defs>
-    <clipPath id="terminal-3169403077-clip-terminal">
+    <clipPath id="terminal-2748238008-clip-terminal">
       <rect x="0" y="0" width="1463.0" height="316.2" />
     </clipPath>
-    <clipPath id="terminal-3169403077-line-0">
+    <clipPath id="terminal-2748238008-line-0">
     <rect x="0" y="1.5" width="1464" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3169403077-line-1">
+<clipPath id="terminal-2748238008-line-1">
     <rect x="0" y="25.9" width="1464" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3169403077-line-2">
+<clipPath id="terminal-2748238008-line-2">
     <rect x="0" y="50.3" width="1464" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3169403077-line-3">
+<clipPath id="terminal-2748238008-line-3">
     <rect x="0" y="74.7" width="1464" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3169403077-line-4">
+<clipPath id="terminal-2748238008-line-4">
     <rect x="0" y="99.1" width="1464" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3169403077-line-5">
+<clipPath id="terminal-2748238008-line-5">
     <rect x="0" y="123.5" width="1464" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3169403077-line-6">
+<clipPath id="terminal-2748238008-line-6">
     <rect x="0" y="147.9" width="1464" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3169403077-line-7">
+<clipPath id="terminal-2748238008-line-7">
     <rect x="0" y="172.3" width="1464" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3169403077-line-8">
+<clipPath id="terminal-2748238008-line-8">
     <rect x="0" y="196.7" width="1464" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3169403077-line-9">
+<clipPath id="terminal-2748238008-line-9">
     <rect x="0" y="221.1" width="1464" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3169403077-line-10">
+<clipPath id="terminal-2748238008-line-10">
     <rect x="0" y="245.5" width="1464" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3169403077-line-11">
+<clipPath id="terminal-2748238008-line-11">
     <rect x="0" y="269.9" width="1464" height="24.65"/>
             </clipPath>
     </defs>
@@ -86,23 +83,23 @@
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
-
-    <g transform="translate(9, 41)" clip-path="url(#terminal-3169403077-clip-terminal)">
-
-    <g class="terminal-3169403077-matrix">
-    <text class="terminal-3169403077-r1" x="0" y="20" textLength="73.2" clip-path="url(#terminal-3169403077-line-0)">Usage:</text><text class="terminal-3169403077-r3" x="85.4" y="20" textLength="170.8" clip-path="url(#terminal-3169403077-line-0)">mediux-posters</text><text class="terminal-3169403077-r2" x="256.2" y="20" textLength="24.4" clip-path="url(#terminal-3169403077-line-0)">&#160;[</text><text class="terminal-3169403077-r4" x="280.6" y="20" textLength="24.4" clip-path="url(#terminal-3169403077-line-0)">-h</text><text class="terminal-3169403077-r2" x="305" y="20" textLength="36.6" clip-path="url(#terminal-3169403077-line-0)">]&#160;[</text><text class="terminal-3169403077-r4" x="341.6" y="20" textLength="109.8" clip-path="url(#terminal-3169403077-line-0)">--version</text><text class="terminal-3169403077-r2" x="451.4" y="20" textLength="24.4" clip-path="url(#terminal-3169403077-line-0)">]&#160;</text><text class="terminal-3169403077-r4" x="475.8" y="20" textLength="305" clip-path="url(#terminal-3169403077-line-0)">{media,set,settings,sync}</text><text class="terminal-3169403077-r4" x="793" y="20" textLength="36.6" clip-path="url(#terminal-3169403077-line-0)">...</text><text class="terminal-3169403077-r2" x="1464" y="20" textLength="12.2" clip-path="url(#terminal-3169403077-line-0)">
-</text><text class="terminal-3169403077-r2" x="1464" y="44.4" textLength="12.2" clip-path="url(#terminal-3169403077-line-1)">
-</text><text class="terminal-3169403077-r1" x="0" y="68.8" textLength="256.2" clip-path="url(#terminal-3169403077-line-2)">Positional&#160;Arguments:</text><text class="terminal-3169403077-r2" x="1464" y="68.8" textLength="12.2" clip-path="url(#terminal-3169403077-line-2)">
-</text><text class="terminal-3169403077-r4" x="24.4" y="93.2" textLength="305" clip-path="url(#terminal-3169403077-line-3)">{media,set,settings,sync}</text><text class="terminal-3169403077-r2" x="1464" y="93.2" textLength="12.2" clip-path="url(#terminal-3169403077-line-3)">
-</text><text class="terminal-3169403077-r4" x="48.8" y="117.6" textLength="61" clip-path="url(#terminal-3169403077-line-4)">media</text><text class="terminal-3169403077-r2" x="292.8" y="117.6" textLength="707.6" clip-path="url(#terminal-3169403077-line-4)">Manually&#160;set&#160;posters&#160;for&#160;specific&#160;Mediux&#160;media&#160;using&#160;URLs.</text><text class="terminal-3169403077-r2" x="1464" y="117.6" textLength="12.2" clip-path="url(#terminal-3169403077-line-4)">
-</text><text class="terminal-3169403077-r4" x="48.8" y="142" textLength="36.6" clip-path="url(#terminal-3169403077-line-5)">set</text><text class="terminal-3169403077-r2" x="292.8" y="142" textLength="695.4" clip-path="url(#terminal-3169403077-line-5)">Manually&#160;set&#160;posters&#160;for&#160;specific&#160;Mediux&#160;sets&#160;using&#160;URLs.</text><text class="terminal-3169403077-r2" x="1464" y="142" textLength="12.2" clip-path="url(#terminal-3169403077-line-5)">
-</text><text class="terminal-3169403077-r4" x="48.8" y="166.4" textLength="97.6" clip-path="url(#terminal-3169403077-line-6)">settings</text><text class="terminal-3169403077-r2" x="292.8" y="166.4" textLength="414.8" clip-path="url(#terminal-3169403077-line-6)">Display&#160;app&#160;settings&#160;and&#160;defaults.</text><text class="terminal-3169403077-r2" x="1464" y="166.4" textLength="12.2" clip-path="url(#terminal-3169403077-line-6)">
-</text><text class="terminal-3169403077-r4" x="48.8" y="190.8" textLength="48.8" clip-path="url(#terminal-3169403077-line-7)">sync</text><text class="terminal-3169403077-r2" x="292.8" y="190.8" textLength="915" clip-path="url(#terminal-3169403077-line-7)">Synchronize&#160;posters&#160;by&#160;fetching&#160;data&#160;from&#160;Mediux&#160;and&#160;updating&#160;your&#160;services</text><text class="terminal-3169403077-r2" x="1464" y="190.8" textLength="12.2" clip-path="url(#terminal-3169403077-line-7)">
-</text><text class="terminal-3169403077-r2" x="1464" y="215.2" textLength="12.2" clip-path="url(#terminal-3169403077-line-8)">
-</text><text class="terminal-3169403077-r1" x="0" y="239.6" textLength="97.6" clip-path="url(#terminal-3169403077-line-9)">Options:</text><text class="terminal-3169403077-r2" x="1464" y="239.6" textLength="12.2" clip-path="url(#terminal-3169403077-line-9)">
-</text><text class="terminal-3169403077-r4" x="24.4" y="264" textLength="24.4" clip-path="url(#terminal-3169403077-line-10)">-h</text><text class="terminal-3169403077-r2" x="48.8" y="264" textLength="24.4" clip-path="url(#terminal-3169403077-line-10)">,&#160;</text><text class="terminal-3169403077-r4" x="73.2" y="264" textLength="73.2" clip-path="url(#terminal-3169403077-line-10)">--help</text><text class="terminal-3169403077-r2" x="292.8" y="264" textLength="378.2" clip-path="url(#terminal-3169403077-line-10)">show&#160;this&#160;help&#160;message&#160;and&#160;exit</text><text class="terminal-3169403077-r2" x="1464" y="264" textLength="12.2" clip-path="url(#terminal-3169403077-line-10)">
-</text><text class="terminal-3169403077-r4" x="24.4" y="288.4" textLength="109.8" clip-path="url(#terminal-3169403077-line-11)">--version</text><text class="terminal-3169403077-r2" x="292.8" y="288.4" textLength="463.6" clip-path="url(#terminal-3169403077-line-11)">show&#160;program&#x27;s&#160;version&#160;number&#160;and&#160;exit</text><text class="terminal-3169403077-r2" x="1464" y="288.4" textLength="12.2" clip-path="url(#terminal-3169403077-line-11)">
-</text><text class="terminal-3169403077-r2" x="1464" y="312.8" textLength="12.2" clip-path="url(#terminal-3169403077-line-12)">
+        
+    <g transform="translate(9, 41)" clip-path="url(#terminal-2748238008-clip-terminal)">
+    
+    <g class="terminal-2748238008-matrix">
+    <text class="terminal-2748238008-r1" x="0" y="20" textLength="829.6" clip-path="url(#terminal-2748238008-line-0)">Usage:&#160;mediux-posters&#160;[-h]&#160;[--version]&#160;{media,set,settings,sync}&#160;...</text><text class="terminal-2748238008-r1" x="1464" y="20" textLength="12.2" clip-path="url(#terminal-2748238008-line-0)">
+</text><text class="terminal-2748238008-r1" x="1464" y="44.4" textLength="12.2" clip-path="url(#terminal-2748238008-line-1)">
+</text><text class="terminal-2748238008-r1" x="0" y="68.8" textLength="256.2" clip-path="url(#terminal-2748238008-line-2)">Positional&#160;Arguments:</text><text class="terminal-2748238008-r1" x="1464" y="68.8" textLength="12.2" clip-path="url(#terminal-2748238008-line-2)">
+</text><text class="terminal-2748238008-r1" x="0" y="93.2" textLength="329.4" clip-path="url(#terminal-2748238008-line-3)">&#160;&#160;{media,set,settings,sync}</text><text class="terminal-2748238008-r1" x="1464" y="93.2" textLength="12.2" clip-path="url(#terminal-2748238008-line-3)">
+</text><text class="terminal-2748238008-r1" x="0" y="117.6" textLength="1000.4" clip-path="url(#terminal-2748238008-line-4)">&#160;&#160;&#160;&#160;media&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Manually&#160;set&#160;posters&#160;for&#160;specific&#160;Mediux&#160;media&#160;using&#160;URLs.</text><text class="terminal-2748238008-r1" x="1464" y="117.6" textLength="12.2" clip-path="url(#terminal-2748238008-line-4)">
+</text><text class="terminal-2748238008-r1" x="0" y="142" textLength="988.2" clip-path="url(#terminal-2748238008-line-5)">&#160;&#160;&#160;&#160;set&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Manually&#160;set&#160;posters&#160;for&#160;specific&#160;Mediux&#160;sets&#160;using&#160;URLs.</text><text class="terminal-2748238008-r1" x="1464" y="142" textLength="12.2" clip-path="url(#terminal-2748238008-line-5)">
+</text><text class="terminal-2748238008-r1" x="0" y="166.4" textLength="707.6" clip-path="url(#terminal-2748238008-line-6)">&#160;&#160;&#160;&#160;settings&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Display&#160;app&#160;settings&#160;and&#160;defaults.</text><text class="terminal-2748238008-r1" x="1464" y="166.4" textLength="12.2" clip-path="url(#terminal-2748238008-line-6)">
+</text><text class="terminal-2748238008-r1" x="0" y="190.8" textLength="1207.8" clip-path="url(#terminal-2748238008-line-7)">&#160;&#160;&#160;&#160;sync&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Synchronize&#160;posters&#160;by&#160;fetching&#160;data&#160;from&#160;Mediux&#160;and&#160;updating&#160;your&#160;services</text><text class="terminal-2748238008-r1" x="1464" y="190.8" textLength="12.2" clip-path="url(#terminal-2748238008-line-7)">
+</text><text class="terminal-2748238008-r1" x="1464" y="215.2" textLength="12.2" clip-path="url(#terminal-2748238008-line-8)">
+</text><text class="terminal-2748238008-r1" x="0" y="239.6" textLength="97.6" clip-path="url(#terminal-2748238008-line-9)">Options:</text><text class="terminal-2748238008-r1" x="1464" y="239.6" textLength="12.2" clip-path="url(#terminal-2748238008-line-9)">
+</text><text class="terminal-2748238008-r1" x="0" y="264" textLength="671" clip-path="url(#terminal-2748238008-line-10)">&#160;&#160;-h,&#160;--help&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;show&#160;this&#160;help&#160;message&#160;and&#160;exit</text><text class="terminal-2748238008-r1" x="1464" y="264" textLength="12.2" clip-path="url(#terminal-2748238008-line-10)">
+</text><text class="terminal-2748238008-r1" x="0" y="288.4" textLength="756.4" clip-path="url(#terminal-2748238008-line-11)">&#160;&#160;--version&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;show&#160;program&#x27;s&#160;version&#160;number&#160;and&#160;exit</text><text class="terminal-2748238008-r1" x="1464" y="288.4" textLength="12.2" clip-path="url(#terminal-2748238008-line-11)">
+</text><text class="terminal-2748238008-r1" x="1464" y="312.8" textLength="12.2" clip-path="url(#terminal-2748238008-line-12)">
 </text>
     </g>
     </g>
