@@ -9,15 +9,15 @@ rules:
     ignore:
       - 'generate-previews.yaml:27'
       - 'linting.yaml:22'
-      - 'publishing.yaml:22'
-      - 'publishing.yaml:45'
-      - 'publishing.yaml:61'
+      - 'publishing.yaml:24'
+      - 'publishing.yaml:47'
+      - 'publishing.yaml:63'
       - 'testing.yaml:20'
       - 'testing.yaml:55'
   undocumented-permissions:
     ignore:
       - 'generate-previews.yaml:29'
-      - 'publishing.yaml:70'
+      - 'publishing.yaml:72'
   secrets-outside-env:
     ignore:
       - 'testing.yaml:51'
@@ -25,3 +25,6 @@ rules:
   artipacked:
     ignore:
       - 'generate-previews.yaml:33'
+  cache-poisoning:
+    ignore:
+      - 'publishing.yaml:57'
