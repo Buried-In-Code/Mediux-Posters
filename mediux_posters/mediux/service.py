@@ -5,12 +5,13 @@ import platform
 from pathlib import Path
 from typing import ClassVar
 
+import requests
 from gql import Client
 from gql.dsl import DSLField, DSLQuery, DSLSchema, dsl_gql
 from gql.transport.exceptions import TransportQueryError
-from gql.transport.httpx import HTTPXTransport
-from httpx import RequestError, TimeoutException, stream
+from gql.transport.requests import RequestsHTTPTransport
 from pydantic import TypeAdapter, ValidationError
+from requests.exceptions import RequestException, Timeout
 from rich.progress import Progress
 
 from mediux_posters import __version__
@@ -28,7 +29,7 @@ class Mediux:
     def __init__(self, base_url: str, token: str):
         self.base_url = base_url
         self.token = token
-        transport = HTTPXTransport(
+        transport = RequestsHTTPTransport(
             url=self.base_url + "/graphql",
             headers={
                 "Authorization": f"Bearer {self.token}",
@@ -253,29 +254,27 @@ class Mediux:
     def download_image(self, file_id: str, output: Path, parent_str: str) -> None:
         output.parent.mkdir(parents=True, exist_ok=True)
         output.unlink(missing_ok=True)
+        url = f"{self.base_url}/assets/{file_id}"
         try:
-            with stream(
-                method="GET",
-                url=f"{self.base_url}/assets/{file_id}",
-                headers={"Authorization": f"Bearer {self.token}"},
+            with requests.get(
+                url=url, headers={"Authorization": f"Bearer {self.token}"}, stream=True, timeout=30
             ) as response:
-                if not response.is_success:
+                if not response.ok:
                     if response.status_code in (401, 403):
-                        raise AuthenticationError(
-                            f"{response.status_code}: {response.reason_phrase}"
-                        )
-                    raise ServiceError(f"{response.status_code}: {response.reason_phrase}")
+                        raise AuthenticationError(f"{response.status_code}: {response.reason}")
+                    raise ServiceError(f"{response.status_code}: {response.reason}")
                 total = int(response.headers.get("Content-Length", 0))
-
                 with Progress(console=CONSOLE, expand=True) as progress:
-                    download_task = progress.add_task(
-                        f"Downloading {parent_str}/{output.name}", total=total
-                    )
+                    task = progress.add_task(f"Downloading {parent_str}/{output.name}", total=total)
+                    downloaded = 0
                     with output.open("wb") as file_stream:
-                        for chunk in response.iter_bytes():
+                        for chunk in response.iter_content(chunk_size=8192):
+                            if not chunk:
+                                continue
                             file_stream.write(chunk)
-                            progress.update(download_task, completed=response.num_bytes_downloaded)
-        except RequestError as err:
-            raise ServiceError(f"Unable to connect to '{err.request.url.path}'") from err
-        except TimeoutException as err:
+                            downloaded += len(chunk)
+                            progress.update(task, completed=downloaded)
+        except Timeout as err:
             raise ServiceError("Service took too long to respond") from err
+        except RequestException as err:
+            raise ServiceError(str(err)) from err

@@ -1,0 +1,27 @@
+rules:
+  unpinned-uses:
+    ignore:
+      - generate-previews.yaml
+      - linting.yaml
+      - testing.yaml
+      - publishing.yaml
+  anonymous-definition:
+    ignore:
+      - 'generate-previews.yaml:27'
+      - 'linting.yaml:22'
+      - 'publishing.yaml:22'
+      - 'publishing.yaml:45'
+      - 'publishing.yaml:61'
+      - 'testing.yaml:20'
+      - 'testing.yaml:55'
+  undocumented-permissions:
+    ignore:
+      - 'generate-previews.yaml:29'
+      - 'publishing.yaml:70'
+  secrets-outside-env:
+    ignore:
+      - 'testing.yaml:51'
+      - 'testing.yaml:52'
+  artipacked:
+    ignore:
+      - 'generate-previews.yaml:33'

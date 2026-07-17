@@ -1,32 +1,39 @@
 name: Linting
-
 on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - docs/**
   pull_request:
     branches:
       - main
     paths-ignore:
       - docs/**
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - docs/**
 
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
 env:
   PY_VERSION: '3.10'
+permissions: {}
 
 jobs:
   prek:
     permissions:
       contents: read
-    runs-on: ubuntu-latest
 
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.0
-      - uses: astral-sh/setup-uv@v8.3.2
+        with:
+          persist-credentials: false
+      - uses: pdm-project/setup-pdm@v4.5
         with:
           python-version: ${{ env.PY_VERSION }}
+          cache: true
+          cache-dependency-path: pylock.toml
       - name: Install project
-        run: uv sync --locked --dev --all-extras --managed-python
+        run: pdm install -G :all
       - name: Run prek
-        run: uv run prek run -a
+        run: pdm run prek run -a

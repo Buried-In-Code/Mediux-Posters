@@ -28,32 +28,27 @@ _Jellyfin Collections are not yet supported._
 
 <details><summary>mediux-posters Commands</summary>
 
-  <!-- RICH-CODEX hide_command: true -->
-  ![`uv run mediux-posters`](docs/img/mediux-posters.svg)
+![mediux-posters help](docs/img/mediux-posters.svg)
 
 </details>
 <details><summary>mediux-posters sync</summary>
 
-  <!-- RICH-CODEX hide_command: true -->
-  ![`uv run mediux-posters sync --help`](docs/img/mediux-posters_sync.svg)
+![mediux-posters sync command help](docs/img/mediux-posters_sync.svg)
 
 </details>
 <details><summary>mediux-posters media</summary>
 
-  <!-- RICH-CODEX hide_command: true -->
-  ![`uv run mediux-posters media --help`](docs/img/mediux-posters_media.svg)
+![mediux-posters media help](docs/img/mediux-posters_media.svg)
 
 </details>
 <details><summary>mediux-posters set</summary>
 
-  <!-- RICH-CODEX hide_command: true -->
-  ![`uv run mediux-posters set --help`](docs/img/mediux-posters_set.svg)
+![mediux-posters set help](docs/img/mediux-posters_set.svg)
 
 </details>
 <details><summary>mediux-posters settings</summary>
 
-  <!-- RICH-CODEX hide_command: true -->
-  ![`uv run mediux-posters settings --help`](docs/img/mediux-posters_settings.svg)
+![mediux-posters settings help](docs/img/mediux-posters_settings.svg)
 
 </details>
 
@@ -126,5 +121,4 @@ token = "<Token>"
 
 ## Socials
 
-[![Social - Fosstodon](https://img.shields.io/badge/%40BuriedInCode-teal?label=Fosstodon&logo=mastodon&style=for-the-badge)](https://fosstodon.org/@BuriedInCode)\
 [![Social - Matrix](https://img.shields.io/matrix/The-Dev-Environment:matrix.org?label=The-Dev-Environment&logo=matrix&style=for-the-badge)](https://matrix.to/#/#The-Dev-Environment:matrix.org)

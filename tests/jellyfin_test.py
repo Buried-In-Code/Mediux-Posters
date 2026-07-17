@@ -1,13 +1,12 @@
 import re
 
-import pytest
-from pytest_httpx import HTTPXMock
+from requests_mock import Mocker
 
 from mediux_posters.services import Jellyfin
 
 
-def add_list_libraries_mock(mock: HTTPXMock) -> None:
-    mock.add_response(
+def add_list_libraries_mock(mocker: Mocker) -> None:
+    mocker.get(
         url="http://localhost/Library/MediaFolders",
         json={
             "Items": [
@@ -23,12 +22,11 @@ def add_list_libraries_mock(mock: HTTPXMock) -> None:
                 },
             ]
         },
-        is_reusable=True,
     )
 
 
-def add_list_shows_mock(mock: HTTPXMock) -> None:
-    mock.add_response(
+def add_list_shows_mock(mocker: Mocker) -> None:
+    mocker.get(
         url=re.compile("http://localhost/Items.*IncludeItemTypes=Series"),
         json={
             "Items": [
@@ -46,12 +44,11 @@ def add_list_shows_mock(mock: HTTPXMock) -> None:
                 },
             ]
         },
-        is_reusable=True,
     )
 
 
-def add_get_show_mock(mock: HTTPXMock) -> None:
-    mock.add_response(
+def add_get_show_mock(mocker: Mocker) -> None:
+    mocker.get(
         url=re.compile("http://localhost/Items.*IncludeItemTypes=Series"),
         json={
             "Items": [
@@ -63,28 +60,25 @@ def add_get_show_mock(mock: HTTPXMock) -> None:
                 }
             ]
         },
-        is_reusable=True,
     )
 
 
-def add_list_seasons_mock(mock: HTTPXMock) -> None:
-    mock.add_response(
+def add_list_seasons_mock(mocker: Mocker) -> None:
+    mocker.get(
         url=re.compile("http://localhost/Shows/.*/Seasons.*"),
         json={"Items": [{"Id": "7b63c71486e0580c8154b23ef829cf99", "IndexNumber": 1}]},
-        is_reusable=True,
     )
 
 
-def add_list_episodes_mock(mock: HTTPXMock) -> None:
-    mock.add_response(
+def add_list_episodes_mock(mocker: Mocker) -> None:
+    mocker.get(
         url=re.compile("http://localhost/Shows/.*/Episodes.*"),
         json={"Items": [{"Id": "a375ae1a31b78c063f5e20c81d1f21e4", "IndexNumber": 1}]},
-        is_reusable=True,
     )
 
 
-def add_list_movies_mock(mock: HTTPXMock) -> None:
-    mock.add_response(
+def add_list_movies_mock(mocker: Mocker) -> None:
+    mocker.get(
         url=re.compile("http://localhost/Items.*IncludeItemTypes=Movie"),
         json={
             "Items": [
@@ -102,12 +96,11 @@ def add_list_movies_mock(mock: HTTPXMock) -> None:
                 },
             ]
         },
-        is_reusable=True,
     )
 
 
-def add_get_movie_mock(mock: HTTPXMock) -> None:
-    mock.add_response(
+def add_get_movie_mock(mocker: Mocker) -> None:
+    mocker.get(
         url=re.compile("http://localhost/Items.*IncludeItemTypes=Movie"),
         json={
             "Items": [
@@ -119,17 +112,13 @@ def add_get_movie_mock(mock: HTTPXMock) -> None:
                 }
             ]
         },
-        is_reusable=True,
     )
 
 
-@pytest.mark.httpx_mock(
-    should_mock=lambda request: request.url.host == "localhost",
-    assert_all_responses_were_requested=False,
-)
-def test_list_shows(jellyfin_session: Jellyfin, httpx_mock: HTTPXMock) -> None:
-    add_list_libraries_mock(mock=httpx_mock)
-    add_list_shows_mock(mock=httpx_mock)
+def test_list_shows(jellyfin_session: Jellyfin, requests_mock: Mocker) -> None:
+    if "localhost" in jellyfin_session.base_url:
+        add_list_libraries_mock(mocker=requests_mock)
+        add_list_shows_mock(mocker=requests_mock)
 
     results = jellyfin_session.list_shows()
     assert len(results) != 0
@@ -138,13 +127,10 @@ def test_list_shows(jellyfin_session: Jellyfin, httpx_mock: HTTPXMock) -> None:
     assert result is not None
 
 
-@pytest.mark.httpx_mock(
-    should_mock=lambda request: request.url.host == "localhost",
-    assert_all_responses_were_requested=False,
-)
-def test_get_series(jellyfin_session: Jellyfin, httpx_mock: HTTPXMock) -> None:
-    add_list_libraries_mock(mock=httpx_mock)
-    add_get_show_mock(mock=httpx_mock)
+def test_get_series(jellyfin_session: Jellyfin, requests_mock: Mocker) -> None:
+    if "localhost" in jellyfin_session.base_url:
+        add_list_libraries_mock(mocker=requests_mock)
+        add_get_show_mock(mocker=requests_mock)
 
     result = jellyfin_session.get_show(tmdb_id=1457)
     assert result is not None
@@ -155,12 +141,9 @@ def test_get_series(jellyfin_session: Jellyfin, httpx_mock: HTTPXMock) -> None:
     assert result.year == 1995
 
 
-@pytest.mark.httpx_mock(
-    should_mock=lambda request: request.url.host == "localhost",
-    assert_all_responses_were_requested=False,
-)
-def test_list_seasons(jellyfin_session: Jellyfin, httpx_mock: HTTPXMock) -> None:
-    add_list_seasons_mock(mock=httpx_mock)
+def test_list_seasons(jellyfin_session: Jellyfin, requests_mock: Mocker) -> None:
+    if "localhost" in jellyfin_session.base_url:
+        add_list_seasons_mock(mocker=requests_mock)
 
     results = jellyfin_session.list_seasons(show_id="ac666209a446f29d7538a5fe156ab440")
     assert len(results) != 0
@@ -168,12 +151,9 @@ def test_list_seasons(jellyfin_session: Jellyfin, httpx_mock: HTTPXMock) -> None
     assert results[0].id == "7b63c71486e0580c8154b23ef829cf99"
 
 
-@pytest.mark.httpx_mock(
-    should_mock=lambda request: request.url.host == "localhost",
-    assert_all_responses_were_requested=False,
-)
-def test_list_episodes(jellyfin_session: Jellyfin, httpx_mock: HTTPXMock) -> None:
-    add_list_episodes_mock(mock=httpx_mock)
+def test_list_episodes(jellyfin_session: Jellyfin, requests_mock: Mocker) -> None:
+    if "localhost" in jellyfin_session.base_url:
+        add_list_episodes_mock(mocker=requests_mock)
 
     results = jellyfin_session.list_episodes(
         show_id="ac666209a446f29d7538a5fe156ab440", season_id="7b63c71486e0580c8154b23ef829cf99"
@@ -183,13 +163,10 @@ def test_list_episodes(jellyfin_session: Jellyfin, httpx_mock: HTTPXMock) -> Non
     assert results[0].id == "a375ae1a31b78c063f5e20c81d1f21e4"
 
 
-@pytest.mark.httpx_mock(
-    should_mock=lambda request: request.url.host == "localhost",
-    assert_all_responses_were_requested=False,
-)
-def test_list_movies(jellyfin_session: Jellyfin, httpx_mock: HTTPXMock) -> None:
-    add_list_libraries_mock(mock=httpx_mock)
-    add_list_movies_mock(mock=httpx_mock)
+def test_list_movies(jellyfin_session: Jellyfin, requests_mock: Mocker) -> None:
+    if "localhost" in jellyfin_session.base_url:
+        add_list_libraries_mock(mocker=requests_mock)
+        add_list_movies_mock(mocker=requests_mock)
 
     results = jellyfin_session.list_movies()
     assert len(results) != 0
@@ -197,13 +174,10 @@ def test_list_movies(jellyfin_session: Jellyfin, httpx_mock: HTTPXMock) -> None:
     assert result is not None
 
 
-@pytest.mark.httpx_mock(
-    should_mock=lambda request: request.url.host == "localhost",
-    assert_all_responses_were_requested=False,
-)
-def test_get_movie(jellyfin_session: Jellyfin, httpx_mock: HTTPXMock) -> None:
-    add_list_libraries_mock(mock=httpx_mock)
-    add_get_movie_mock(mock=httpx_mock)
+def test_get_movie(jellyfin_session: Jellyfin, requests_mock: Mocker) -> None:
+    if "localhost" in jellyfin_session.base_url:
+        add_list_libraries_mock(mocker=requests_mock)
+        add_get_movie_mock(mocker=requests_mock)
 
     result = jellyfin_session.get_movie(tmdb_id=324857)
     assert result is not None

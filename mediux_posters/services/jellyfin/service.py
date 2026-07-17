@@ -4,12 +4,13 @@ import logging
 import mimetypes
 import platform
 from base64 import b64encode
-from json import JSONDecodeError
+from http import HTTPStatus
 from pathlib import Path
 from typing import Literal
 
-from httpx import Client, HTTPStatusError, RequestError, TimeoutException
 from pydantic import TypeAdapter, ValidationError
+from requests import Session
+from requests.exceptions import HTTPError, JSONDecodeError, RequestException, Timeout
 
 from mediux_posters import __version__
 from mediux_posters.console import CONSOLE
@@ -32,13 +33,14 @@ LOGGER = logging.getLogger(__name__)
 class Jellyfin(BaseService[str, Show, Season, Episode, Collection, Movie]):
     def __init__(self, base_url: str, token: str, cache: ServiceCache):
         super().__init__(cache=cache)
-        self.client = Client(
-            base_url=base_url,
-            headers={
+        self.base_url = base_url
+        self.client = Session()
+        self.client.headers.update(
+            {
                 "Accept": "application/json",
                 "Authorization": f'MediaBrowser Token="{token}"',
                 "User-Agent": f"Mediux-Posters/{__version__} ({platform.system()}: {platform.release()}; Python v{platform.python_version()})",  # noqa: E501
-            },
+            }
         )
 
     @classmethod
@@ -47,54 +49,64 @@ class Jellyfin(BaseService[str, Show, Season, Episode, Collection, Movie]):
     ) -> str | None:
         return entry.get("ProviderIds", {}).get(prefix)
 
-    def _perform_get_request(
-        self, endpoint: str, params: dict[str, bool | str | list[str | None]] | None = None
-    ) -> dict:
-        if params is None:
-            params = {}
+    def _perform_get_request(self, endpoint: str, params: dict[str, str] | None = None) -> dict:
+        params = params or {}
+        url = self.base_url + endpoint
 
         try:
-            response = self.client.get(endpoint, params=params)
+            response = self.client.get(url=url, params=params)
             response.raise_for_status()
             return response.json()
-        except RequestError as err:
-            raise ServiceError(f"Unable to connect to '{err.request.url.path}'") from err
-        except HTTPStatusError as err:
+        except Timeout as err:
+            raise ServiceError("Service took too long to respond") from err
+        except HTTPError as err:
+            status_code = (
+                HTTPStatus.INTERNAL_SERVER_ERROR
+                if err.response is None
+                else err.response.status_code
+            )
             try:
-                error_msg = f"{err.response.json()['title']}: {err.response.json()['detail']}"
-                if err.response.status_code in (401, 403):
-                    raise AuthenticationError(f"{err.response.status_code}: {error_msg}")
-                raise ServiceError(f"{err.response.status_code}: {error_msg}")
+                response = {} if err.response is None else err.response.json()
+                error_msg = f"{response['title']}: {response['detail']}"
+                if status_code in (401, 403):
+                    raise AuthenticationError(f"{status_code}: {error_msg}")
+                raise ServiceError(f"{status_code}: {error_msg}")
             except JSONDecodeError as err:
                 raise ServiceError("Unable to parse response as Json") from err
+        except RequestException as err:
+            raise ServiceError(f"Unable to connect to '{url}'") from err
         except JSONDecodeError as err:
             raise ServiceError("Unable to parse response as Json") from err
-        except TimeoutException as err:
-            raise ServiceError("Service took too long to respond") from err
 
     def _perform_post_request(
         self, endpoint: str, body: bytes, headers: dict[str, str] | None = None
     ) -> None:
-        if headers is None:
-            headers = {}
+        headers = headers or {}
+        url = self.base_url + endpoint
 
         try:
-            response = self.client.post(endpoint, headers=headers, data=body)  # ty: ignore[invalid-argument-type]
+            response = self.client.post(url=url, headers=headers, data=body)
             response.raise_for_status()
-        except RequestError as err:
-            raise ServiceError(f"Unable to connect to '{err.request.url.path}'") from err
-        except HTTPStatusError as err:
+        except Timeout as err:
+            raise ServiceError("Service took too long to respond") from err
+        except HTTPError as err:
+            status_code = (
+                HTTPStatus.INTERNAL_SERVER_ERROR
+                if err.response is None
+                else err.response.status_code
+            )
             try:
-                error_msg = f"{err.response.json()['title']}: {err.response.json()['detail']}"
-                if err.response.status_code in (401, 403):
-                    raise AuthenticationError(f"{err.response.status_code}: {error_msg}")
-                raise ServiceError(f"{err.response.status_code}: {error_msg}")
+                response = {} if err.response is None else err.response.json()
+                error_msg = f"{response['title']}: {response['detail']}"
+                if status_code in (401, 403):
+                    raise AuthenticationError(f"{status_code}: {error_msg}")
+                raise ServiceError(f"{status_code}: {error_msg}")
             except JSONDecodeError as err:
                 raise ServiceError("Unable to parse response as Json") from err
+        except RequestException as err:
+            raise ServiceError(f"Unable to connect to '{url}'") from err
         except JSONDecodeError as err:
             raise ServiceError("Unable to parse response as Json") from err
-        except TimeoutException as err:
-            raise ServiceError("Service took too long to respond") from err
 
     def _list_libraries(
         self,
@@ -125,7 +137,7 @@ class Jellyfin(BaseService[str, Show, Season, Episode, Collection, Movie]):
         try:
             results = self._perform_get_request(
                 endpoint=f"/Shows/{show_id}/Episodes",
-                params={"seasonId": season_id, "fields": ["ProviderIds"]},
+                params={"seasonId": season_id, "fields": ["ProviderIds"]},  # ty:ignore[invalid-argument-type]
             ).get("Items", [])
             return TypeAdapter(list[Episode]).validate_python(results)
         except ValidationError as err:
@@ -134,7 +146,8 @@ class Jellyfin(BaseService[str, Show, Season, Episode, Collection, Movie]):
     def list_seasons(self, show_id: str) -> list[Season]:
         try:
             results = self._perform_get_request(
-                endpoint=f"/Shows/{show_id}/Seasons", params={"fields": ["ProviderIds"]}
+                endpoint=f"/Shows/{show_id}/Seasons",
+                params={"fields": ["ProviderIds"]},  # ty:ignore[invalid-argument-type]
             ).get("Items", [])
             return TypeAdapter(list[Season]).validate_python(results)
         except ValidationError as err:
@@ -158,7 +171,7 @@ class Jellyfin(BaseService[str, Show, Season, Episode, Collection, Movie]):
                     "Recursive": True,
                     "IncludeItemTypes": "Series",
                     "Ids": [series_id],
-                },
+                },  # ty:ignore[invalid-argument-type]
             ).get("Items", [])
             for result in results:
                 tmdb = self.extract_id(entry=result)
@@ -204,7 +217,7 @@ class Jellyfin(BaseService[str, Show, Season, Episode, Collection, Movie]):
                     "Recursive": True,
                     "IncludeItemTypes": "Movie",
                     "Ids": [movie_id],
-                },
+                },  # ty:ignore[invalid-argument-type]
             ).get("Items", [])
             for result in results:
                 tmdb = self.extract_id(entry=result)

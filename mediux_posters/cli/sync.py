@@ -1,9 +1,8 @@
 import logging
-from typing import Annotated
+from argparse import _SubParsersAction
 
-from typer import Option
+from rich_argparse import HelpPreviewAction, RichHelpFormatter
 
-from mediux_posters.cli._typer import app
 from mediux_posters.cli.common import (
     ProcessContext,
     ServiceOption,
@@ -13,6 +12,7 @@ from mediux_posters.cli.common import (
     process_show_data,
     setup_services,
 )
+from mediux_posters.cli.enum import enum_arg
 from mediux_posters.console import CONSOLE
 from mediux_posters.errors import ServiceError
 from mediux_posters.mediux import CollectionSet, MovieSet, ShowSet
@@ -21,74 +21,88 @@ from mediux_posters.utils import MediaType
 LOGGER = logging.getLogger(__name__)
 
 
-@app.command(
-    name="sync", help="Synchronize posters by fetching data from Mediux and updating your services"
-)
-def sync_posters(  # noqa: C901
-    skip_services: Annotated[
-        list[ServiceOption],
-        Option(
-            "--skip-service",
-            "-S",
-            show_default=False,
-            case_sensitive=False,
-            default_factory=list,
-            help="List of Services to skip. "
-            "Specify this option multiple times for skipping multiple services.",
+def register(subparsers: _SubParsersAction) -> None:
+    parser = subparsers.add_parser(
+        "sync",
+        help="Synchronize posters by fetching data from Mediux and updating your services",
+        formatter_class=RichHelpFormatter,
+    )
+    parser.add_argument(
+        "-S",
+        "--skip-service",
+        action="append",
+        type=enum_arg(enum_type=ServiceOption),
+        choices=list(ServiceOption),
+        default=[],
+        metavar="SERVICE",
+        help=(
+            "List of services to skip. "
+            "Specify this option multiple times for skipping multiple services."
         ),
-    ],
-    skip_media_types: Annotated[
-        list[MediaType],
-        Option(
-            "--skip-type",
-            "-T",
-            show_default=False,
-            case_sensitive=False,
-            default_factory=list,
-            help="List of MediaTypes to skip. "
-            "Specify this option multiple times for skipping multiple types.",
+    )
+    parser.add_argument(
+        "-T",
+        "--skip-type",
+        action="append",
+        type=enum_arg(enum_type=MediaType),
+        choices=list(MediaType),
+        default=[],
+        metavar="TYPE",
+        help=(
+            "List of media types to skip. "
+            "Specify this option multiple times for skipping multiple types."
         ),
-    ],
-    skip_libraries: Annotated[
-        list[str],
-        Option(
-            "--skip-library",
-            "-L",
-            show_default=False,
-            default_factory=list,
-            help="List of libraries to skip. "
-            "Specify this option multiple times for skipping multiple libraries.",
+    )
+    parser.add_argument(
+        "-L",
+        "--skip-library",
+        action="append",
+        default=[],
+        metavar="LIBRARY",
+        help=(
+            "List of libraries to skip. "
+            "Specify this option multiple times for skipping multiple libraries."
         ),
-    ],
-    interactive: Annotated[
-        bool,
-        Option(
-            "--interactive",
-            "-i",
-            show_default=False,
-            help="Pause script to allow user selection of set.",
-        ),
-    ] = False,
-    start: Annotated[
-        int, Option("--start", "-s", help="The starting index for processing media.")
-    ] = 0,
-    end: Annotated[
-        int, Option("--end", "-e", help="The ending index for processing media.")
-    ] = 100_000,
-    clean: Annotated[
-        bool,
-        Option("--clean", "-c", show_default=False, help="Delete the whole cache before starting."),
-    ] = False,
-    debug: Annotated[
-        bool,
-        Option(
-            "--debug",
-            help="Enable debug mode to show extra logging information for troubleshooting.",
-        ),
-    ] = False,
-) -> None:
+    )
+    parser.add_argument(
+        "-i",
+        "--interactive",
+        action="store_true",
+        help="Pause script to allow user selection of set.",
+    )
+    parser.add_argument(
+        "-s",
+        "--start",
+        type=int,
+        default=0,
+        metavar="INDEX",
+        help="The starting index for processing media.",
+    )
+    parser.add_argument(
+        "-e",
+        "--end",
+        type=int,
+        default=100_000,
+        metavar="INDEX",
+        help="The ending index for processing media.",
+    )
+    parser.add_argument(
+        "-c", "--clean", action="store_true", help="Delete the whole cache before starting."
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Enable debug mode to show extra logging information for troubleshooting.",
+    )
+    parser.add_argument(
+        "--generate-help-preview", action=HelpPreviewAction, path="docs/img/mediux-posters_sync.svg"
+    )
+    parser.set_defaults(func=run)
+
+
+def run(args) -> None:  # noqa: ANN001, C901
     settings, mediux, services = setup_services(
-        skip_services=skip_services, clean=clean, debug=debug
+        skip_services=args.skip_services, clean=args.clean, debug=args.debug
     )
     service_count = len(services)
     for service_idx, service in enumerate(services, start=1):
@@ -98,13 +112,13 @@ def sync_posters(  # noqa: C901
             style="title",
         )
         for media_type in MediaType:
-            if media_type in skip_media_types:
+            if media_type in args.skip_media_types:
                 continue
             with CONSOLE.status(rf"\[{type(service).__name__}] Fetching {media_type.value} media"):
                 try:
-                    entries = service.list(media_type=media_type, skip_libraries=skip_libraries)[
-                        start:end
-                    ]
+                    entries = service.list(
+                        media_type=media_type, skip_libraries=args.skip_libraries
+                    )[args.start : args.end]
                 except ServiceError as err:
                     LOGGER.error("[%s] %s", type(service).__name__, err)
                     continue
@@ -136,7 +150,7 @@ def sync_posters(  # noqa: C901
                         set_list=set_list,
                         priority_usernames=settings.priority_usernames,
                         only_priority_usernames=settings.only_priority_usernames,
-                        interactive=interactive,
+                        interactive=args.interactive,
                     )
                 for set_data in filtered_sets:
                     if media_type is MediaType.SHOW:

@@ -19,7 +19,6 @@ from typing import Final, Protocol, TypeVar
 
 from prompt_toolkit.styles import Style
 from questionary import Choice, select
-from typer import Abort
 
 from mediux_posters import __version__, get_cache_root, setup_logging
 from mediux_posters.errors import ServiceError
@@ -104,10 +103,10 @@ def setup_services(
 
     if not settings.mediux.token:
         LOGGER.error("Missing Mediux token, check your settings")
-        raise Abort
+        raise SystemExit(1)
     mediux = Mediux(base_url=settings.mediux.base_url, token=settings.mediux.token)
     if not mediux.validate():
-        raise Abort
+        raise SystemExit(1)
 
     cache = ServiceCache()
     skip_names = {x.value for x in skip_services}
@@ -124,7 +123,7 @@ def setup_services(
             services.append(svc)
     if not services:
         LOGGER.error("No services configured, check your settings")
-        raise Abort
+        raise SystemExit(1)
 
     return settings, mediux, services
 
@@ -169,7 +168,7 @@ def filter_sets(
                     style=Style([("dim", "dim")]),
                 ).ask()
                 if not selected:
-                    raise Abort
+                    raise SystemExit(1)
                 yield selected
                 user_sets = [x for x in user_sets if x != selected]
         else:

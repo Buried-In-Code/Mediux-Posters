@@ -1,35 +1,42 @@
 name: Publishing
-
 on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - docs/**
   pull_request:
     branches:
       - main
     paths-ignore:
       - docs/**
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - docs/**
 
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
 env:
-  PY_VERSION: 3.14
+  PY_VERSION: '3.14'
+permissions: {}
 
 jobs:
   build:
     permissions:
       contents: read
-    runs-on: ubuntu-latest
 
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.0
-      - uses: astral-sh/setup-uv@v8.3.2
+        with:
+          persist-credentials: false
+      - uses: pdm-project/setup-pdm@v4.5
         with:
           python-version: ${{ env.PY_VERSION }}
+          cache: true
+          cache-dependency-path: pylock.toml
       - name: Install project
-        run: uv sync --locked --no-dev
+        run: pdm install --prod
       - name: Run build
-        run: uv build
+        run: pdm build
       - uses: actions/upload-artifact@v7.0.1
         with:
           name: python-package-distributions
@@ -38,9 +45,8 @@ jobs:
   validate:
     needs:
       - build
-    permissions: {}
-    runs-on: ubuntu-latest
 
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v8.0.1
         with:
@@ -55,15 +61,15 @@ jobs:
   publish:
     environment:
       name: pypi
-      url: https://pypi.org/p/Mediux-Posters
+      url: 'https://pypi.org/p/Mediux-Posters'
     if: startsWith(github.ref, 'refs/tags/')
     needs:
       - build
       - validate
     permissions:
       id-token: write
-    runs-on: ubuntu-latest
 
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v8.0.1
         with:
