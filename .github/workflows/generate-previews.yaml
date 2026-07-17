@@ -44,7 +44,7 @@ jobs:
         with:
           python-version: ${{ env.PY_VERSION }}
       - name: Install project
-        run: uv sync --locked --no-dev
+        run: uv sync --locked --dev --all-extras --managed-python
       - name: Generate previews
         run: |
           COLUMNS=120 uv run mediux-posters --generate-help-preview
@@ -52,6 +52,8 @@ jobs:
           COLUMNS=120 uv run mediux-posters set --generate-help-preview
           COLUMNS=120 uv run mediux-posters settings --generate-help-preview
           COLUMNS=120 uv run mediux-posters sync --generate-help-preview
+      - name: Run prek
+        run: uv run prek run -a
       - name: Commit updated previews
         run: |
           git add docs/img/*.svg

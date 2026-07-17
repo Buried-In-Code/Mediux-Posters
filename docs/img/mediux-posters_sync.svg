@@ -89,9 +89,9 @@
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
-        
+
     <g transform="translate(9, 41)" clip-path="url(#terminal-3756146492-clip-terminal)">
-    
+
     <g class="terminal-3756146492-matrix">
     <text class="terminal-3756146492-r1" x="0" y="20" textLength="1329.8" clip-path="url(#terminal-3756146492-line-0)">Usage:&#160;mediux-posters&#160;sync&#160;[-h]&#160;[-S&#160;SERVICE]&#160;[-T&#160;TYPE]&#160;[-L&#160;LIBRARY]&#160;[-i]&#160;[-s&#160;INDEX]&#160;[-e&#160;INDEX]&#160;[-c]&#160;[--debug]</text><text class="terminal-3756146492-r1" x="1464" y="20" textLength="12.2" clip-path="url(#terminal-3756146492-line-0)">
 </text><text class="terminal-3756146492-r1" x="1464" y="44.4" textLength="12.2" clip-path="url(#terminal-3756146492-line-1)">
