@@ -45,7 +45,7 @@ jobs:
           cache: true
           cache-dependency-path: pylock.toml
       - name: Install project
-        run: pdm install -G tests --prod
+        run: pdm install -G tests
       - name: Run tests
         env:
           MEDIUX__BASE_URL: ${{ secrets.MEDIUX__BASE_URL }}
