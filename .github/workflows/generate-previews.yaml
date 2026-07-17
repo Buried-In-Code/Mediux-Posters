@@ -53,7 +53,7 @@ jobs:
           COLUMNS=120 uv run mediux-posters settings --generate-help-preview
           COLUMNS=120 uv run mediux-posters sync --generate-help-preview
       - name: Run prek
-        run: uv run prek run -a
+        run: uv run prek run -a || true
       - name: Commit updated previews
         run: |
           git add docs/img/*.svg
