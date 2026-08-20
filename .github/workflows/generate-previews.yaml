@@ -40,7 +40,7 @@ jobs:
               && github.event.pull_request.head.ref
               || github.ref_name
             }}
-      - uses: pdm-project/setup-pdm@v4.5
+      - uses: pdm-project/setup-pdm@v4.6
         with:
           python-version: ${{ env.PY_VERSION }}
           cache: true
