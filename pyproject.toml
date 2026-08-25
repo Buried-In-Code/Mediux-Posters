@@ -93,13 +93,16 @@ skip-magic-trailing-comma = true
 [tool.ruff.lint]
 ignore = [
   "COM812",
+  "CPY001",
   "D",
-  "EM",
-  "FBT",
+  "EM101",
+  "EM102",
+  "FBT001",
+  "FBT002",
   "PLR0913",
   "PLR2004",
   "PLW2901",
-  "TCH",
+  "TC001",
   "TRY003",
   "TRY300",
   "TRY400",
@@ -128,13 +131,10 @@ classmethod-decorators = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["PLR2004", "S101"]
+"tests/*" = ["D", "PLR2004", "S101"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
-
-[tool.ruff.lint.pyupgrade]
-keep-runtime-typing = true
 
 [tool.tomlsort]
 all = true

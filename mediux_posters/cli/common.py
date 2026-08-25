@@ -199,7 +199,7 @@ def find_matching_file(
     return None
 
 
-def determine_action(  # noqa: PLR0911
+def determine_action(  # noqa: PLR0911, PLR0917
     existing: CacheData | None,
     service_timestamp: datetime | None,
     set_data: ShowSet | CollectionSet | MovieSet,
@@ -235,7 +235,7 @@ def determine_action(  # noqa: PLR0911
     return Action.UPLOAD
 
 
-def download_image(
+def download_image(  # noqa: PLR0917
     image_file: Path,
     ctx: ProcessContext,
     file: File,
@@ -307,7 +307,7 @@ def upload_image(
     setattr(obj, uploaded_attr, True)
 
 
-def process_image(
+def process_image(  # noqa: PLR0917
     obj: Show | Season | Episode | Collection | Movie,
     cache_key: CacheKey,
     id_value: int | str,

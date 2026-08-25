@@ -36,7 +36,7 @@ repos:
       - id: ty
         entry: ty check .
         language: system
-        name: ruff check
+        name: ty check
         pass_filenames: false
         types:
           - python
