@@ -8,16 +8,16 @@ dev = [
   "mdformat-gfm >= 1.0.0",
   "mdformat-ruff >= 0.1.0",
   "prek >= 0.4.0",
-  "ruff >= 0.15.0",
+  "ruff >= 0.16.0",
   "toml-sort >= 0.24.0",
-  "ty >= 0.0.60",
+  "ty >= 0.0.70",
 ]
 tests = [
   "pytest >= 9.1.0",
   "pytest-cov >= 7.1.0",
   "requests-mock >= 1.12.0",
-  "tox >= 4.56.0",
-  "tox-uv >= 1.35.0",
+  "tox >= 4.60.0",
+  "tox-uv >= 1.36.0",
 ]
 
 [project]
@@ -36,7 +36,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "gql[requests] >= 4.0.0",
+  "gql[requests] >= 4.4.0b0",
   "pydantic >= 2.13.0",
   "questionary >= 2.1.0",
   "requests >= 2.34.0",
