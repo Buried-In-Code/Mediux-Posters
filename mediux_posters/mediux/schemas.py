@@ -11,7 +11,7 @@ __all__ = [
 ]
 
 from datetime import date, datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Annotated
 
 from pydantic import AliasPath, BeforeValidator, Field, TypeAdapter, ValidationError
@@ -29,7 +29,7 @@ def int_or_str(val: int | str | None) -> int | str | None:
 class MediuxModel(BaseModel, extra="ignore"): ...
 
 
-class FileType(str, Enum):
+class FileType(StrEnum):
     ALBUM = "album"
     BACKDROP = "backdrop"
     LOGO = "logo"

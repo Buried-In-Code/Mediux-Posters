@@ -8,7 +8,7 @@ __all__ = [
     "setup_logging",
 ]
 __project__ = "mediux-posters"
-__version__ = "2026.1.1"
+__version__ = "2026.2.0"
 
 import logging
 import os

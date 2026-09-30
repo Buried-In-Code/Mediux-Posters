@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: true
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
 env:
-  PY_VERSION: '3.10'
+  PY_VERSION: '3.11'
 permissions: {}
 
 jobs:

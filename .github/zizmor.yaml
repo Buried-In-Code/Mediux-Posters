@@ -1,13 +1,11 @@
 rules:
   unpinned-uses:
     ignore:
-      - generate-previews.yaml
       - linting.yaml
       - testing.yaml
       - publishing.yaml
   anonymous-definition:
     ignore:
-      - 'generate-previews.yaml:27'
       - 'linting.yaml:22'
       - 'publishing.yaml:24'
       - 'publishing.yaml:47'
@@ -22,9 +20,3 @@ rules:
     ignore:
       - 'testing.yaml:51'
       - 'testing.yaml:52'
-  artipacked:
-    ignore:
-      - 'generate-previews.yaml:33'
-  cache-poisoning:
-    ignore:
-      - 'publishing.yaml:57'

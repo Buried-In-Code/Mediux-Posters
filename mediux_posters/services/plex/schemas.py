@@ -1,6 +1,6 @@
 __all__ = ["Collection", "Episode", "Library", "Movie", "Season", "Show"]
 
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import Field, model_validator
@@ -19,7 +19,7 @@ from mediux_posters.utils import BaseModel
 class PlexModel(BaseModel, alias_generator=to_camel, extra="ignore"): ...
 
 
-class MediaType(str, Enum):
+class MediaType(StrEnum):
     ARTIST = "artist"
     MOVIE = "movie"
     PHOTO = "photo"
