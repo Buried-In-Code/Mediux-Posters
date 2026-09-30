@@ -11,8 +11,8 @@ __all__ = [
 import logging
 from collections.abc import Generator
 from dataclasses import dataclass
-from datetime import datetime, timezone
-from enum import Enum
+from datetime import UTC, datetime
+from enum import StrEnum
 from pathlib import Path
 from platform import python_version
 from typing import Final, Protocol, TypeVar
@@ -57,7 +57,7 @@ EPISODE_FILE_MAP: Final[dict[FileType, str]] = {
 }
 
 
-class ServiceOption(str, Enum):
+class ServiceOption(StrEnum):
     PLEX = Plex.__name__
     JELLYFIN = Jellyfin.__name__
 
@@ -77,7 +77,7 @@ class ProcessContext:
     store_cover: bool = True
 
 
-class Action(str, Enum):
+class Action(StrEnum):
     SKIP = "Skip"
     DOWNLOAD = "Download"
     UPLOAD = "Upload"
@@ -302,7 +302,7 @@ def upload_image(
     ctx.service.cache.update_service(
         key=cache_key,
         service=type(ctx.service).__name__,  # ty: ignore[invalid-argument-type]
-        timestamp=datetime.now(tz=timezone.utc),
+        timestamp=datetime.now(tz=UTC),
     )
     setattr(obj, uploaded_attr, True)
 

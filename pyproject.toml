@@ -7,42 +7,46 @@ dev = [
   "mdformat >= 1.0.0",
   "mdformat-gfm >= 1.0.0",
   "mdformat-ruff >= 0.1.0",
-  "prek >= 0.4.0",
+  "prek >= 0.5.0",
   "ruff >= 0.16.0",
-  "toml-sort >= 0.24.0",
-  "ty >= 0.0.70",
+  "toml-sort >= 0.25.0",
+  "ty >= 0.0.80",
 ]
 tests = [
   "pytest >= 9.1.0",
   "pytest-cov >= 7.1.0",
   "requests-mock >= 1.12.0",
-  "tox >= 4.60.0",
+  "tox >= 4.64.0",
   "tox-uv >= 1.36.0",
 ]
 
 [project]
-authors = [{email = "BuriedInCode@tuta.io", name = "BuriedInCode"}]
+authors = [
+  { email = "buriedincode@duckpond.nz", name = "BuriedInCode" },
+]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Environment :: Console",
   "Framework :: Pydantic :: 2",
+  "Intended Audience :: End Users/Desktop",
   "Natural Language :: English",
   "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
+  "Topic :: Internet",
   "Typing :: Typed",
 ]
 dependencies = [
-  "gql[requests] >= 4.4.0b0",
+  "gql[requests] >= 4.4.0",
   "pydantic >= 2.13.0",
   "questionary >= 2.1.0",
   "requests >= 2.34.0",
   "rich >= 15.0.0",
   "rich-argparse >= 1.8.0",
-  "tomli >= 2.4.0 ; python_version < '3.11'",
   "tomli-w >= 1.2.0",
 ]
 description = "Fetches Show, Movie, and Collection cover art from Mediux and updates Plex/Jellyfin using TMDB IDs."
@@ -50,9 +54,12 @@ dynamic = ["version"]
 keywords = []
 license = "MIT"
 license-files = ["LICENSE"]
+maintainers = [
+  { email = "buriedincode@duckpond.nz", name = "BuriedInCode" },
+]
 name = "mediux-posters"
 readme = "README.md"
-requires-python = ">= 3.10"
+requires-python = ">= 3.11"
 
 [project.scripts]
 Mediux-Posters = "mediux_posters.__main__:main"
@@ -139,12 +146,12 @@ convention = "google"
 [tool.tomlsort]
 all = true
 ignore_case = true
-trailing_comma_inline_array = true
 overrides."tool.tox.env_list".inline_arrays = false
 overrides."tool.tox.testenv.commands".inline_arrays = false
+trailing_comma_inline_array = true
 
 [tool.tox]
-env_list = ["3.10", "3.11", "3.12", "3.13", "3.14"]
+env_list = ["3.11", "3.12", "3.13", "3.14", "3.15"]
 min_version = "4.22"
 
 [tool.tox.env_run_base]

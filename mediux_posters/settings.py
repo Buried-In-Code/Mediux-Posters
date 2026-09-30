@@ -1,7 +1,8 @@
 __all__ = ["Settings"]
 
+import tomllib as tomlreader
 from pathlib import Path
-from typing import Annotated, Any, ClassVar
+from typing import Annotated, Any, ClassVar, Self
 
 import tomli_w as tomlwriter
 from pydantic import BeforeValidator, Field
@@ -10,16 +11,6 @@ from rich.panel import Panel
 from mediux_posters import get_cache_root, get_config_root
 from mediux_posters.console import CONSOLE
 from mediux_posters.utils import BaseModel, blank_is_none, flatten_dict
-
-try:
-    from typing import Self  # Python >= 3.11  # ty: ignore[unresolved-import]
-except ImportError:
-    from typing_extensions import Self  # Python < 3.11
-
-try:
-    import tomllib as tomlreader  # Python >= 3.11  # ty: ignore[unresolved-import]
-except ModuleNotFoundError:
-    import tomli as tomlreader  # Python < 3.11
 
 
 class SettingsModel(BaseModel, extra="ignore"): ...

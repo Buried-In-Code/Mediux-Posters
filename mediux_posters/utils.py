@@ -3,7 +3,7 @@ __all__ = ["BaseModel", "MediaType", "blank_is_none", "delete_folder", "flatten_
 import logging
 import re
 import unicodedata
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
@@ -31,7 +31,7 @@ class BaseModel(
         CONSOLE.print(Panel.fit("\n".join(content_vals), title=type(self).__name__))
 
 
-class MediaType(str, Enum):
+class MediaType(StrEnum):
     SHOW = "show"
     COLLECTION = "collection"
     MOVIE = "movie"

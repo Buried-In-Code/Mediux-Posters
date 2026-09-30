@@ -28,29 +28,27 @@ jobs:
           - macos-latest
           - windows-latest
         python-version:
-          - '3.10'
           - '3.11'
           - '3.12'
           - '3.13'
           - '3.14'
+          - '3.15'
 
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
-      - uses: pdm-project/setup-pdm@v4.6
+      - uses: astral-sh/setup-uv@v10.2.0
         with:
           python-version: ${{ matrix.python-version }}
-          cache: true
-          cache-dependency-path: pylock.toml
       - name: Install project
-        run: pdm install -G tests
+        run: uv sync --locked --no-dev --all-extras --group tests --managed-python
       - name: Run tests
         env:
           MEDIUX__BASE_URL: ${{ secrets.MEDIUX__BASE_URL }}
           MEDIUX__TOKEN: ${{ secrets.MEDIUX__TOKEN }}
-        run: pdm run pytest
+        run: uv run --no-dev pytest
 
   check:
     if: always()
